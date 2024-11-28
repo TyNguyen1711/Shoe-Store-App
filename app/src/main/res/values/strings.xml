@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">Shoe Store App</string>
+    <string name="app_name">shoeApp</string>
+    <string name="intro_title">Step into your <font color="#fdbd00">style\n A world of shoes</font> </string>
+    <string name="intro_text">Browse the latest styles from top brands\nGet personalized recommendations\nEnjoy fast, free shipping</string>
+    <string name="about">
+        Our shoe selling app offers an extensive collection of high-quality shoes from top brands, catering to a wide range of styles and preferences.
+        Navigating the app is easy, with a user-friendly interface that makes it simple to browse, filter, and discover the perfect pair of shoes.
+        We are committed to providing excellent customer service, with personalized recommendations and prompt support to ensure your satisfaction.\n
+        \nIf you need help or you have any questions, feel free to contact me by email:\n
+        <b>hello@mydomain.com</b>
+    </string>
 </resources>
