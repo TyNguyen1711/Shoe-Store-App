@@ -13,6 +13,9 @@
         android:theme="@style/Theme.ShoeStoreApp"
         tools:targetApi="31">
         <activity
+            android:name=".activity.CouponActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.SuccessOrderActivity"
             android:exported="false" />
         <activity
