@@ -8,11 +8,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.shoestoreapp.activity.CouponActivity
 import com.example.shoestoreapp.activity.IntroActivity
+import com.example.shoestoreapp.classes.HelpActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        val intent = Intent(this, CouponActivity::class.java)
+//        val intent = Intent(this, HelpActivity::class.java)
 //        startActivity(intent)
 
         enableEdgeToEdge()

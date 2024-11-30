@@ -9,4 +9,6 @@
         \nIf you need help or you have any questions, feel free to contact me by email:\n
         <b>hello@mydomain.com</b>
     </string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
