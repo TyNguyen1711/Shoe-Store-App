@@ -1,0 +1,122 @@
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="124.51dp"
+    android:layout_margin="15dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="#FFFFFF"
+    tools:context=".ProductCartDetails">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <CheckBox
+            android:id="@+id/checkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"/>
+
+        <ImageView
+            android:id="@+id/productImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/checkBox"
+            />
+
+
+        <TextView
+            android:id="@+id/fullNameTV"
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="false"
+            android:text="Testing product's name that is really long and might need truncating..."
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@+id/productImage"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/productImage"
+            tools:layout_editor_absoluteY="39dp"
+            android:layout_marginEnd="8sp"
+            />
+
+        <TextView
+            android:id="@+id/ratingsTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Colors"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:background="#FFF9C4"
+            app:layout_constraintTop_toBottomOf="@+id/fullNameTV"
+            app:layout_constraintStart_toStartOf="@+id/fullNameTV"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:id="@+id/soldLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="@id/productImage"
+            app:layout_constraintEnd_toEndOf="@+id/fullNameTV">
+
+            <Button
+                android:id="@+id/decreaseButton"
+                android:layout_width="30sp"
+                android:layout_height="30sp"
+                android:text="-"
+                android:textSize="12sp"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/black"
+                android:layout_marginEnd="4dp"/>
+
+            <TextView
+                android:id="@+id/soldTV"
+                android:layout_width="24sp"
+                android:layout_height="wrap_content"
+                android:text="805"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/increaseButton"
+                android:layout_width="30sp"
+                android:layout_height="30sp"
+                android:text="+"
+                android:textSize="10sp"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/black"
+                android:layout_marginStart="4dp" />
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/costTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="812.000đ"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/fullNameTV"
+            app:layout_constraintBottom_toBottomOf="@+id/productImage"
+            android:layout_marginBottom="2sp"
+            tools:ignore="HardcodedText" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
