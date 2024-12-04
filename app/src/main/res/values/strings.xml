@@ -9,4 +9,10 @@
         \nIf you need help or you have any questions, feel free to contact me by email:\n
         <b>hello@mydomain.com</b>
     </string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="enter_username">Enter usernanme</string>
+    <string name="enter_email">Enter email</string>
+    <string name="enter_password">Enter password</string>
 </resources>
