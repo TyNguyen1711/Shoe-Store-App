@@ -1,6 +1,10 @@
+
 package com.example.shoestoreapp.activity
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -17,5 +21,55 @@ class SettingActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val ordersSection = findViewById<LinearLayout>(R.id.option_orders)
+        val myDetailsSection = findViewById<LinearLayout>(R.id.option_myDetail)
+        val deliveryAddressSection = findViewById<LinearLayout>(R.id.option_delivery)
+        val paymentMethodsSection = findViewById<LinearLayout>(R.id.option_payment)
+        val couponSection = findViewById<LinearLayout>(R.id.option_coupon)
+        val notificationsSection = findViewById<LinearLayout>(R.id.option_notification)
+        val helpSection = findViewById<LinearLayout>(R.id.option_help)
+        val aboutSection = findViewById<LinearLayout>(R.id.option_about)
+        val logoutButton = findViewById<Button>(R.id.my_button)
+
+//        ordersSection.setOnClickListener {
+//            startActivity(Intent(this, OrdersActivity::class.java))
+//        }
+//
+//        myDetailsSection.setOnClickListener {
+//            startActivity(Intent(this, MyDetailsActivity::class.java))
+//        }
+//
+//        deliveryAddressSection.setOnClickListener {
+//            startActivity(Intent(this, DeliveryAddressActivity::class.java))
+//        }
+//
+//        paymentMethodsSection.setOnClickListener {
+//            startActivity(Intent(this, PaymentMethodsActivity::class.java))
+//        }
+
+        couponSection.setOnClickListener {
+            startActivity(Intent(this, CouponActivity::class.java))
+        }
+
+        notificationsSection.setOnClickListener {
+            startActivity(Intent(this, NotificationActivity::class.java))
+        }
+
+        helpSection.setOnClickListener {
+            startActivity(Intent(this, HelpActivity::class.java))
+        }
+
+        aboutSection.setOnClickListener {
+            startActivity(Intent(this, AboutActivity::class.java))
+        }
+
+        // Xử lý sự kiện click cho nút Logout
+//        logoutButton.setOnClickListener {
+//            // Thêm logic logout tại đây, ví dụ như xóa session hoặc chuyển về màn hình đăng nhập
+//            startActivity(Intent(this, LoginActivity::class.java))
+//            finish()  // Kết thúc activity hiện tại
+//        }
     }
 }
+

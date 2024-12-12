@@ -227,6 +227,7 @@
 
 
     <LinearLayout
+        android:id="@+id/option_coupon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -262,6 +263,7 @@
         android:background="#E0E0E0" />
 
     <LinearLayout
+        android:id="@+id/option_notification"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -299,6 +301,7 @@
         android:background="#E0E0E0" />
 
     <LinearLayout
+        android:id="@+id/option_help"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -335,6 +338,7 @@
 
 
     <LinearLayout
+        android:id="@+id/option_about"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"

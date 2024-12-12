@@ -1,6 +1,7 @@
 package com.example.shoestoreapp.activity
 
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ListView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,7 @@ import com.example.shoestoreapp.classes.CouponAdapter
 import com.example.shoestoreapp.classes.CouponModel
 
 class CouponActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -22,7 +24,6 @@ class CouponActivity : AppCompatActivity() {
         }
         val listView: ListView = findViewById(R.id.listview_coupons)
 
-        // Sample coupon data
         val coupons = listOf(
             CouponModel("WELCOME200", "Add items worth $2 more to unlock", "Get 50% OFF"),
             CouponModel("SUMMER50", "Minimum purchase $10", "Get 50% OFF on summer collection"),
@@ -35,5 +36,10 @@ class CouponActivity : AppCompatActivity() {
 
         val adapter = CouponAdapter(this, coupons)
         listView.adapter = adapter
+
+        val backButton = findViewById<Button>(R.id.btn_back)
+        backButton.setOnClickListener {
+            finish()
+        }
     }
 }

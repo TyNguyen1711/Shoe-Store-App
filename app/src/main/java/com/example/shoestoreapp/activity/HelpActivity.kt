@@ -1,12 +1,14 @@
-package com.example.shoestoreapp.classes
+package com.example.shoestoreapp.activity
 
 import android.os.Bundle
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.classes.TabPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -25,7 +27,6 @@ class HelpActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         tabLayout = findViewById(R.id.tabLayout)
         viewPager = findViewById(R.id.viewPager)
 
@@ -35,5 +36,10 @@ class HelpActivity : AppCompatActivity() {
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = tabPagerAdapter.getTabTitle(position)
         }.attach()
+
+        val backButton = findViewById<Button>(R.id.btn_back)
+        backButton.setOnClickListener {
+            finish()
+        }
     }
 }
