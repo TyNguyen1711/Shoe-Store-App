@@ -48,14 +48,14 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/your_button"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:id="@+id/btn_back"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="50dp"
         android:background="@drawable/rounded_button"
         android:drawableStart="@drawable/arrow_left"
-        android:paddingStart="6dp"
+        android:paddingStart="8dp"
         android:paddingEnd="16dp"
         android:textColor="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
