@@ -203,7 +203,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#00FFFFFF"
-            android:drawableTop="@drawable/cart"
+            android:drawableTop="@drawable/shopping_cart"
             android:text="Cart"
             android:textAllCaps="false"
             android:textSize="12sp" />
