@@ -6,8 +6,7 @@
     android:layout_height="124.51dp"
     android:layout_margin="15dp"
     app:cardElevation="8dp"
-    app:cardBackgroundColor="#FFFFFF"
-    tools:context=".ProductCartDetails">
+    app:cardBackgroundColor="#FFFFFF">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
@@ -15,7 +14,7 @@
         android:layout_height="match_parent">
 
         <CheckBox
-            android:id="@+id/checkBox"
+            android:id="@+id/productCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
@@ -31,7 +30,7 @@
             android:scaleType="centerCrop"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/checkBox"
+            app:layout_constraintStart_toEndOf="@id/productCheckBox"
             />
 
 
@@ -54,7 +53,7 @@
             />
 
         <TextView
-            android:id="@+id/ratingsTV"
+            android:id="@+id/sizeProductTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Colors"
