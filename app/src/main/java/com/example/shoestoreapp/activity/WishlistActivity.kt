@@ -44,7 +44,6 @@ class WishlistActivity : AppCompatActivity() {
         recyclerView.layoutManager = GridLayoutManager(this, 2)
 
         productList = ArrayList()
-        // Add your existing product list items here (same as before)
         productList.add(
             Product(
                 id = 1,
@@ -212,7 +211,6 @@ class WishlistActivity : AppCompatActivity() {
 
                 textView.setTextColor(Color.BLUE)
 
-                // If search is visible, reset search when changing filter
                 if (isSearchVisible) {
                     searchEditText.text.clear()
                 }
