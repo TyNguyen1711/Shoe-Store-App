@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.activity.ProductDetailActivity
 import com.example.shoestoreapp.adapter.ProductItemAdapter
 import com.google.firebase.database.DatabaseReference
 import com.example.shoestoreapp.classes.Product
@@ -22,33 +24,19 @@ import com.google.firebase.database.ValueEventListener
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class HomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
+class HomeFragment: Fragment(), ProductItemAdapter.OnProductClickListener {
     private lateinit var database: DatabaseReference
-
-    private lateinit var exclusiveRecyclerView: RecyclerView
-    private lateinit var bestSellingRecyclerView: RecyclerView
 
     private lateinit var exclusiveAdapter: ProductItemAdapter
     private lateinit var bestSellingAdapter: ProductItemAdapter
+    private val exclusiveProducts = mutableListOf<Product>()
+    private val bestSellingProducts = mutableListOf<Product>()
 
-    private val exclusiveList = mutableListOf<Product>()
-    private val bestSellingList = mutableListOf<Product>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    override fun onProductClick(productId: String) {
+        // Handle click event (e.g., navigate to ProductDetailActivity)
+        val intent = Intent(requireContext(), ProductDetailActivity::class.java)
+        intent.putExtra("PRODUCT_ID", productId)
+        startActivity(intent)
     }
 
     override fun onCreateView(
@@ -57,34 +45,30 @@ class HomeFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        // Setup Exclusive RecyclerView
-        exclusiveRecyclerView = view.findViewById(R.id.exclusiveOfferRV)
-        exclusiveRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        exclusiveAdapter = ProductItemAdapter(exclusiveList)
+        // Setup RecyclerView for Exclusive Offers
+        val exclusiveRecyclerView: RecyclerView = view.findViewById(R.id.exclusiveOfferRV)
+        exclusiveAdapter = ProductItemAdapter(exclusiveProducts, this)
         exclusiveRecyclerView.adapter = exclusiveAdapter
+        exclusiveRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-        // Setup Best Selling RecyclerView
-        bestSellingRecyclerView = view.findViewById(R.id.bestSellingRC)
-        bestSellingRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        bestSellingAdapter = ProductItemAdapter(bestSellingList)
+        // Setup RecyclerView for Best Selling
+        val bestSellingRecyclerView: RecyclerView = view.findViewById(R.id.bestSellingRC)
+        bestSellingAdapter = ProductItemAdapter(bestSellingProducts, this)
         bestSellingRecyclerView.adapter = bestSellingAdapter
-
-        // Load data from Firebase
-        loadExclusiveProducts()
-        loadBestSellingProducts()
+        bestSellingRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         return view
 
     }
 
     private fun loadExclusiveProducts() {
-        database = FirebaseDatabase.getInstance().getReference("products/exclusive")
+        database = FirebaseDatabase.getInstance().getReference("exclusive offer")
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                exclusiveList.clear()
+                exclusiveProducts.clear()
                 for (productSnapshot in snapshot.children) {
                     val product = productSnapshot.getValue(Product::class.java)
-                    product?.let { exclusiveList.add(it) }
+                    product?.let { exclusiveProducts.add(it) }
                 }
                 exclusiveAdapter.notifyDataSetChanged()
             }
@@ -96,13 +80,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadBestSellingProducts() {
-        database = FirebaseDatabase.getInstance().getReference("products/best_selling")
+        database = FirebaseDatabase.getInstance().getReference("best selling")
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                bestSellingList.clear()
+                bestSellingProducts.clear()
                 for (productSnapshot in snapshot.children) {
                     val product = productSnapshot.getValue(Product::class.java)
-                    product?.let { bestSellingList.add(it) }
+                    product?.let { bestSellingProducts.add(it) }
                 }
                 bestSellingAdapter.notifyDataSetChanged()
             }
@@ -111,25 +95,5 @@ class HomeFragment : Fragment() {
                 Log.e("FirebaseError", "Error: ${error.message}")
             }
         })
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
     }
 }

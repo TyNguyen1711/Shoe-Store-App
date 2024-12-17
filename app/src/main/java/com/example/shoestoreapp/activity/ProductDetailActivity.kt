@@ -30,8 +30,8 @@ class ProductDetailActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        readDataFromFirebase(0)
+        val productId = intent.getStringExtra("PRODUCT_ID")
+        readDataFromFirebase(productId!!.toInt())
     }
 
     private fun readDataFromFirebase(productId: Int) {

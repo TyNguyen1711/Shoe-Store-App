@@ -1,18 +1,24 @@
-package com.example.shoestoreapp.adapter
+    package com.example.shoestoreapp.adapter
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.shoestoreapp.R
-import com.example.shoestoreapp.classes.Product
+    import android.view.LayoutInflater
+    import android.view.View
+    import android.view.ViewGroup
+    import android.widget.ImageView
+    import android.widget.TextView
+    import androidx.recyclerview.widget.RecyclerView
+    import com.bumptech.glide.Glide
+    import com.example.shoestoreapp.R
+    import com.example.shoestoreapp.classes.Product
 
-class ProductItemAdapter (private val productList: List<Product>) : RecyclerView.Adapter<ProductItemAdapter.ProductViewHolder>() {
+    class ProductItemAdapter(
+        private val productList: List<Product>,
+        private val listener: OnProductClickListener
+    ) : RecyclerView.Adapter<ProductItemAdapter.ProductViewHolder>() {
 
-        // ViewHolder để quản lý các thành phần của product_detail.xml
+        interface OnProductClickListener {
+            fun onProductClick(productId: String)
+        }
+
         class ProductViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val productImage: ImageView = view.findViewById(R.id.productImage)
             val fullNameTV: TextView = view.findViewById(R.id.fullNameTV)
@@ -29,18 +35,18 @@ class ProductItemAdapter (private val productList: List<Product>) : RecyclerView
         override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
             val product = productList[position]
 
-            // Load dữ liệu từ product vào các View
-            Glide.with(holder.productImage.context)
-                .load(product.thumbnail) // Load ảnh đầu tiên trong danh sách URL
-                .into(holder.productImage)
-
+            // Load product data into views
+            Glide.with(holder.productImage.context).load(product.thumbnail).into(holder.productImage)
             holder.fullNameTV.text = product.name
             holder.ratingsTV.text = "${product.averageRating} stars"
             // holder.soldTV.text = "${product.sold} sold"
             holder.costTV.text = "${product.price}đ"
+
+            // Handle click event
+            holder.itemView.setOnClickListener {
+                listener.onProductClick(product.id.toString()) // Pass product ID
+            }
         }
 
-        override fun getItemCount(): Int {
-            return productList.size
-        }
-}
+        override fun getItemCount(): Int = productList.size
+    }
