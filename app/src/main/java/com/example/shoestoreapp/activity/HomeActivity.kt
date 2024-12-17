@@ -11,6 +11,7 @@ import com.example.shoestoreapp.R
 import com.example.shoestoreapp.fragment.ExploreFragment
 import com.example.shoestoreapp.fragment.HomeFragment
 import com.example.shoestoreapp.fragment.MyCartFragment
+import com.example.shoestoreapp.fragment.WishlistFragment
 
 class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +43,11 @@ class HomeActivity : AppCompatActivity() {
         // Gán sự kiện cho các button
         findViewById<Button>(R.id.button4).setOnClickListener {
             switchFragment(MyCartFragment())
+        }
+
+        // Gán sự kiện cho các button
+        findViewById<Button>(R.id.button5).setOnClickListener {
+            switchFragment(WishlistFragment())
         }
     }
 

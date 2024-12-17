@@ -2,29 +2,22 @@ package com.example.shoestoreapp.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.activity.ProductDetailActivity
 import com.example.shoestoreapp.adapter.ProductItemAdapter
-import com.google.firebase.database.DatabaseReference
+import com.example.shoestoreapp.adapter.SliderAdapter
 import com.example.shoestoreapp.classes.Product
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
+import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-class HomeFragment: Fragment(), ProductItemAdapter.OnProductClickListener {
+class HomeFragment : Fragment(), ProductItemAdapter.OnProductClickListener {
     private lateinit var database: DatabaseReference
 
     private lateinit var exclusiveAdapter: ProductItemAdapter
@@ -32,8 +25,17 @@ class HomeFragment: Fragment(), ProductItemAdapter.OnProductClickListener {
     private val exclusiveProducts = mutableListOf<Product>()
     private val bestSellingProducts = mutableListOf<Product>()
 
+    private lateinit var viewPagerSlider: ViewPager2
+    private lateinit var dotsIndicator: DotsIndicator
+    private lateinit var sliderAdapter: SliderAdapter
+    private val sliderImages = listOf(
+        R.drawable.slider_image1,
+        R.drawable.slider_image2,
+        R.drawable.slider_image3
+    )
+
     override fun onProductClick(productId: String) {
-        // Handle click event (e.g., navigate to ProductDetailActivity)
+        // Navigate to ProductDetailActivity
         val intent = Intent(requireContext(), ProductDetailActivity::class.java)
         intent.putExtra("PRODUCT_ID", productId)
         startActivity(intent)
@@ -44,6 +46,13 @@ class HomeFragment: Fragment(), ProductItemAdapter.OnProductClickListener {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+        // Setup Slider
+        viewPagerSlider = view.findViewById(R.id.viewPageSlider)
+        dotsIndicator = view.findViewById(R.id.dots_indicator)
+        sliderAdapter = SliderAdapter(sliderImages)
+        viewPagerSlider.adapter = sliderAdapter
+        dotsIndicator.setViewPager2(viewPagerSlider)
 
         // Setup RecyclerView for Exclusive Offers
         val exclusiveRecyclerView: RecyclerView = view.findViewById(R.id.exclusiveOfferRV)
@@ -57,10 +66,11 @@ class HomeFragment: Fragment(), ProductItemAdapter.OnProductClickListener {
         bestSellingRecyclerView.adapter = bestSellingAdapter
         bestSellingRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
+        // Load data
         loadExclusiveProducts()
         loadBestSellingProducts()
-        return view
 
+        return view
     }
 
     private fun loadExclusiveProducts() {
@@ -76,7 +86,7 @@ class HomeFragment: Fragment(), ProductItemAdapter.OnProductClickListener {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("FirebaseError", "Error: ${error.message}")
+                // Handle Firebase error
             }
         })
     }
@@ -94,7 +104,7 @@ class HomeFragment: Fragment(), ProductItemAdapter.OnProductClickListener {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("FirebaseError", "Error: ${error.message}")
+                // Handle Firebase error
             }
         })
     }
