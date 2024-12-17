@@ -1,22 +1,19 @@
 package com.example.shoestoreapp.activity
 
 import android.os.Bundle
-import android.util.Log
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
 import com.example.shoestoreapp.R
-import com.example.shoestoreapp.classes.Product
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.example.shoestoreapp.fragment.ExploreFragment
+import com.example.shoestoreapp.fragment.HomeFragment
+import com.example.shoestoreapp.fragment.MyCartFragment
 
 class HomeActivity : AppCompatActivity() {
-    private lateinit var database: DatabaseReference
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        database = FirebaseDatabase.getInstance().getReference("products")
-
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_home)
@@ -25,5 +22,33 @@ class HomeActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+
+        // Hiển thị Fragment mặc định
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, HomeFragment())
+            .commit()
+
+        // Gán sự kiện cho các button
+        findViewById<Button>(R.id.button).setOnClickListener {
+            switchFragment(HomeFragment())
+        }
+
+        // Gán sự kiện cho các button
+        findViewById<Button>(R.id.button3).setOnClickListener {
+            switchFragment(ExploreFragment())
+        }
+
+        // Gán sự kiện cho các button
+        findViewById<Button>(R.id.button4).setOnClickListener {
+            switchFragment(MyCartFragment())
+        }
+    }
+
+    // Hàm chuyển đổi fragment
+    private fun switchFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
     }
 }

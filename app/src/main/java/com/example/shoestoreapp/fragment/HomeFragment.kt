@@ -57,6 +57,8 @@ class HomeFragment: Fragment(), ProductItemAdapter.OnProductClickListener {
         bestSellingRecyclerView.adapter = bestSellingAdapter
         bestSellingRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
+        loadExclusiveProducts()
+        loadBestSellingProducts()
         return view
 
     }

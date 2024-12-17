@@ -7,8 +7,8 @@
     android:layout_margin="15dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="8dp"
-    app:cardBackgroundColor="#F8A44C"
-    tools:context=".RecommendProduct">
+    android:id="@+id/card_view"
+    app:cardBackgroundColor="#F8A44C">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
