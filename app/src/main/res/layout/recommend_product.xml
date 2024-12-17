@@ -4,11 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="174.5dp"
     android:layout_height="189.11dp"
-    android:layout_margin="15dp"
+    android:layout_margin="8dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="8dp"
+    app:cardElevation="12dp"
     android:id="@+id/card_view"
-    app:cardBackgroundColor="#F8A44C">
+    app:cardBackgroundColor="@android:color/white"
+    android:background="@drawable/border_card_coupon">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
@@ -17,7 +18,7 @@
 
         <ImageView
             android:id="@+id/avatarTV"
-            android:layout_width="102.13dp"
+            android:layout_width="match_parent"
             android:layout_height="72.69dp"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -32,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Frash Fruits &amp; Vegetable"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="17sp"
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
