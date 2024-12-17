@@ -25,7 +25,6 @@ package com.example.shoestoreapp.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -53,7 +52,7 @@ class IntroActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.txtLogin).setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
+            val intent = Intent(this, WishlistActivity::class.java)
             startActivity(intent)
         }
     }
