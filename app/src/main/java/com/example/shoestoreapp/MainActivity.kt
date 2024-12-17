@@ -10,6 +10,7 @@ import com.example.shoestoreapp.activity.IntroActivity
 import com.example.shoestoreapp.activity.NotificationActivity
 import com.example.shoestoreapp.activity.SettingActivity
 import com.example.shoestoreapp.activity.WishlistActivity
+import com.example.shoestoreapp.fragment.AccountFragment
 import com.example.shoestoreapp.fragment.WishlistFragment
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -18,8 +19,12 @@ import com.google.firebase.ktx.Firebase
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        supportFragmentManager.beginTransaction()
+//            .replace(R.id.fragment_container, WishlistFragment())
+//            .commit()
+
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, WishlistFragment())
+            .replace(R.id.fragment_container, AccountFragment())
             .commit()
 
         enableEdgeToEdge()
