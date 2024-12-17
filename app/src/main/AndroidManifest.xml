@@ -58,12 +58,12 @@
 <!--            android:name=".activity.IntroActivity"-->
 <!--            android:exported="false" /> &lt;!&ndash; <activity &ndash;&gt;-->
         <activity
-         android:name=".activity.IntroActivity"
-         android:exported="true" >
-         <intent-filter>
-         <action android:name="android.intent.action.MAIN" />
-         <category android:name="android.intent.category.LAUNCHER" />
-         </intent-filter>
+             android:name=".activity.IntroActivity"
+             android:exported="true" >
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
          </activity>
 
 

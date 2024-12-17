@@ -48,7 +48,7 @@ class WishlistAdapter(
             .into(holder.productImage)
 
         holder.fullNameTV.text = product.name
-        holder.ratingsTV.text = "${product.rating} stars"
+        holder.ratingsTV.text = "⭐ ${product.rating}"
         holder.soldTV.text = "${product.soldCount} sold"
         holder.costTV.text = "${String.format("%,.0f", product.price)}đ"
         holder.salePercentageTV.text = "sale ${product.salePercentage}"
