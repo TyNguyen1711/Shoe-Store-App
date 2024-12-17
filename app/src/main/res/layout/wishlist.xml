@@ -152,6 +152,11 @@
                 android:text="Item 2"
                 android:layout_marginEnd="12dp"/>
 
+
+
+
+
+
             <!-- Thêm nhiều phần tử theo chiều ngang ở đây -->
         </LinearLayout>
     </HorizontalScrollView>

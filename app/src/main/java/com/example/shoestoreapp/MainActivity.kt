@@ -9,6 +9,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.shoestoreapp.activity.IntroActivity
 import com.example.shoestoreapp.activity.NotificationActivity
 import com.example.shoestoreapp.activity.SettingActivity
+import com.example.shoestoreapp.activity.WishlistActivity
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
@@ -16,6 +17,8 @@ import com.google.firebase.ktx.Firebase
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        val intent = Intent(this, WishlistActivity::class.java)
+//        startActivity(intent)
 
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
