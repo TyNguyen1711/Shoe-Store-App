@@ -1,6 +1,6 @@
 package com.example.shoestoreapp.classes
 
-data class Product(
+data class ProductTemp(
     val id: Int,
     val name: String,
     val price: Double,

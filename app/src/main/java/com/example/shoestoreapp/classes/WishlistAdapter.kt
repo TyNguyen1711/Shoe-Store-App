@@ -12,18 +12,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.shoestoreapp.R
 
+
 class WishlistAdapter(
     private val context: Context,
-    private var productList: List<Product>
+    private var productList: List<ProductTemp>,
+    private val productCountListener: ProductCountListener? = null
 ) : RecyclerView.Adapter<WishlistAdapter.WishlistViewHolder>() {
-
+    interface ProductCountListener {
+        fun onProductCountChanged(count: Int)
+    }
     private val originalProductList = productList.toList()
     private var currentCategory: String = "All"
     private var currentSearchQuery: String = ""
 
     inner class WishlistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val heartBtn: ImageButton = itemView.findViewById(R.id.heartBtn)
-        val cartBtn: ImageButton = itemView.findViewById(R.id.cartBtn)
+//        val heartBtn: ImageButton = itemView.findViewById(R.id.heartBtn)
+//        val cartBtn: ImageButton = itemView.findViewById(R.id.cartBtn)
         val productImage: ImageView = itemView.findViewById(R.id.productImage)
         val fullNameTV: TextView = itemView.findViewById(R.id.fullNameTV)
         val ratingsTV: TextView = itemView.findViewById(R.id.ratingsTV)
@@ -39,7 +43,6 @@ class WishlistAdapter(
 
     override fun onBindViewHolder(holder: WishlistViewHolder, position: Int) {
         val product = productList[position]
-        Log.d("", product.imageUrl)
         Glide.with(context)
             .load(product.imageUrl)
             .into(holder.productImage)
@@ -48,7 +51,7 @@ class WishlistAdapter(
         holder.ratingsTV.text = "${product.rating} stars"
         holder.soldTV.text = "${product.soldCount} sold"
         holder.costTV.text = "${String.format("%,.0f", product.price)}đ"
-        holder.salePercentageTV.text = product.salePercentage
+        holder.salePercentageTV.text = "sale ${product.salePercentage}"
     }
 
     override fun getItemCount(): Int = productList.size
@@ -59,7 +62,7 @@ class WishlistAdapter(
     }
 
     fun filterProductsBySearch(query: String) {
-        currentSearchQuery = query.toLowerCase()
+        currentSearchQuery = query.lowercase()
         applyFilters()
     }
 
@@ -67,10 +70,12 @@ class WishlistAdapter(
         productList = originalProductList.filter { product ->
             val matchesCategory = currentCategory == "All" || product.category == currentCategory
             val matchesSearch = currentSearchQuery.isEmpty() ||
-                    product.name.toLowerCase().contains(currentSearchQuery)
+                    product.name.lowercase().contains(currentSearchQuery)
 
             matchesCategory && matchesSearch
         }
+
+        productCountListener?.onProductCountChanged(productList.size)
         notifyDataSetChanged()
     }
 }
