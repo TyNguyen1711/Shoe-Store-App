@@ -44,12 +44,82 @@ data class Variant(
     val size: String? = null,
     val stock: Int? = null
 ) {
-    // Hàm chuyển đổi Variant thành Map
     fun toMap(): Map<String, Any?> {
         return mapOf(
             "id" to id,
             "size" to size,
             "stock" to stock
-        ).filterValues { it != null } // Bỏ qua các giá trị null
+        ).filterValues { it != null }
     }
 }
+
+
+
+data class Category(
+    val id: String = "",
+    val name: String = "",
+    val description: String? = null
+)
+
+data class Brand(
+    val id: String = "",
+    val name: String = "",
+    val description: String = ""
+)
+
+data class OrderItem(
+    val productId: String = "",
+    val variantId: String = "",
+    val quantity: Int = 0,
+    val price: Double = 0.0,
+    val productName: String = "",
+    val variantDetails: Variant = Variant()
+)
+
+data class Order(
+    val id: String = "",
+    val userId: String = "",
+    val items: List<OrderItem> = emptyList(),
+    val totalAmount: Double = 0.0,
+    val status: OrderStatus = OrderStatus.PENDING,
+    val paymentMethod: PaymentMethod = PaymentMethod.COD,
+    val paymentStatus: PaymentStatus = PaymentStatus.PENDING
+)
+
+enum class OrderStatus {
+    PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED
+}
+
+enum class PaymentMethod {
+    COD, BANKING, E_WALLET
+}
+
+enum class PaymentStatus {
+    PENDING, PAID, FAILED
+}
+
+data class ReviewUserInfo(
+    val name: String = "",
+    val avatar: String? = null
+)
+
+data class Review(
+    val id: String = "",
+    val productId: String = "",
+    val userId: String = "",
+    val rating: Int = 0,
+    val comment: String? = null,
+    val userInfo: ReviewUserInfo = ReviewUserInfo()
+)
+
+
+data class CartItem(
+    val productId: String = "",
+    val variantId: String = "",
+    val quantity: Int = 0,
+)
+
+data class Cart(
+    val userId: String = "",
+    val items: List<CartItem> = emptyList()
+)
