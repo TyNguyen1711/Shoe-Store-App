@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.adapter.CartAdapter
 import com.example.shoestoreapp.R
-import com.example.shoestoreapp.classes.Product
+import com.example.shoestoreapp.data.model.CartItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -21,8 +21,8 @@ class MyCartFragment : Fragment() {
     private lateinit var cartAdapter: CartAdapter
     private lateinit var checkBoxAll: CheckBox
     private val firestore = FirebaseFirestore.getInstance()
-    private val localProducts = mutableListOf<Product>()
-    private val checkedProducts = mutableSetOf<Product>()
+    private val localCartItems = mutableListOf<CartItem>()
+    private val checkedCartItems = mutableSetOf<CartItem>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,9 +46,9 @@ class MyCartFragment : Fragment() {
         cartAdapter = CartAdapter(
             products = emptyList(),
             userId = userId,
-            onIncrease = { product -> updateProductQuantity(product, 1) },
-            onDecrease = { product -> updateProductQuantity(product, -1) },
-            onRemove = { product -> removeProductFromCart(product) },
+            onIncrease = { product -> updateCartItemQuantity(product, 1) },
+            onDecrease = { product -> updateCartItemQuantity(product, -1) },
+            onRemove = { product -> removeCartItemFromCart(product) },
             onCheckedChange = { position, isChecked -> handleCheckedChange(position, isChecked) }
         )
         recyclerView.adapter = cartAdapter
@@ -57,12 +57,12 @@ class MyCartFragment : Fragment() {
         loadCartData(view)
 
         checkBoxAll.setOnCheckedChangeListener { _, isChecked ->
-            toggleAllProducts(isChecked)
-            localProducts.forEach { it.isChecked = isChecked }
+            toggleAllCartItems(isChecked)
+            localCartItems.forEach { it.isChecked = isChecked }
 
-            checkedProducts.clear()
+            checkedCartItems.clear()
             if (isChecked) {
-                checkedProducts.addAll(localProducts)
+                checkedCartItems.addAll(localCartItems)
             }
 
             cartAdapter.setAllChecked(isChecked)
@@ -71,14 +71,14 @@ class MyCartFragment : Fragment() {
     }
 
     private fun handleCheckedChange(position: Int, isChecked: Boolean) {
-        localProducts[position].isChecked = isChecked
-        checkBoxAll.isChecked = localProducts.all { it.isChecked }
-        cartAdapter.updateData(localProducts)
+        localCartItems[position].isChecked = isChecked
+        checkBoxAll.isChecked = localCartItems.all { it.isChecked }
+        cartAdapter.updateData(localCartItems)
         updateCheckedTotalPrice(requireView())
     }
 
-    private fun toggleAllProducts(isChecked: Boolean) {
-        localProducts.forEach { it.isChecked = isChecked }
+    private fun toggleAllCartItems(isChecked: Boolean) {
+        localCartItems.forEach { it.isChecked = isChecked }
         cartAdapter.notifyDataSetChanged()
         updateCheckedTotalPrice(requireView())
     }
@@ -90,42 +90,42 @@ class MyCartFragment : Fragment() {
             .collection("products")
             .get()
             .addOnSuccessListener { result ->
-                val updatedProducts = mutableListOf<Product>()
+                val updatedCartItems = mutableListOf<CartItem>()
                 for (document in result) {
-                    val product = document.toObject(Product::class.java)
-                    if (product.id != null && product.price!! > 0 && product.quantity > 0) {
-                        updatedProducts.add(product)
+                    val product = document.toObject(CartItem::class.java)
+                    if (product.product.id != null && product.product.price!! > 0 && product.quantity > 0) {
+                        updatedCartItems.add(product)
                     }
                 }
 
-                if (localProducts != updatedProducts) {
-                    localProducts.clear()
-                    localProducts.addAll(updatedProducts)
-                    cartAdapter.updateData(localProducts)
+                if (localCartItems != updatedCartItems) {
+                    localCartItems.clear()
+                    localCartItems.addAll(updatedCartItems)
+                    cartAdapter.updateData(localCartItems)
                 }
 
-                view.findViewById<TextView>(R.id.productsNum).text = "(${localProducts.size})"
+                view.findViewById<TextView>(R.id.productsNum).text = "(${localCartItems.size})"
                 updateCheckedTotalPrice(view)
             }.addOnFailureListener { exception ->
                 Toast.makeText(requireContext(), "Error loading cart: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
-    private fun updateProductQuantity(product: Product, change: Int) {
+    private fun updateCartItemQuantity(product: CartItem, change: Int) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
         val productRef = firestore.collection("carts").document(userId)
-            .collection("products").document(product.id.toString())
+            .collection("products").document(product.product.id)
 
-        val updatedProducts = localProducts.map { it.copy() }.toMutableList()
-        val index = localProducts.indexOfFirst { it.id == product.id }
+        val updatedCartItems = localCartItems.map { it.copy() }.toMutableList()
+        val index = localCartItems.indexOfFirst { it.product.id == product.product.id }
         if (index != -1) {
-            updatedProducts[index].quantity += change
-            if (updatedProducts[index].quantity < 1) {
-                updatedProducts.removeAt(index)
+            updatedCartItems[index].quantity += change
+            if (updatedCartItems[index].quantity < 1) {
+                updatedCartItems.removeAt(index)
             }
-            localProducts.clear()
-            localProducts.addAll(updatedProducts)
-            cartAdapter.updateData(localProducts)
+            localCartItems.clear()
+            localCartItems.addAll(updatedCartItems)
+            cartAdapter.updateData(localCartItems)
             updateCheckedTotalPrice(requireView())
         }
 
@@ -142,10 +142,10 @@ class MyCartFragment : Fragment() {
         }
     }
 
-    private fun removeProductFromCart(product: Product) {
+    private fun removeCartItemFromCart(product: CartItem) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
         firestore.collection("carts").document(userId)
-            .collection("products").document(product.id.toString())
+            .collection("products").document(product.product.id)
             .delete()
             .addOnSuccessListener {
                 loadCartData(requireView())
@@ -159,7 +159,7 @@ class MyCartFragment : Fragment() {
     }
 
     private fun updateCheckedTotalPrice(view: View) {
-        val totalPrice = localProducts.filter { it.isChecked }.sumOf { it.quantity * it.price!! }
+        val totalPrice = localCartItems.filter { it.isChecked }.sumOf { it.quantity * it.product.price}
         view.findViewById<TextView>(R.id.textViewTotal).text = "Total: ${totalPrice}đ"
     }
 }
