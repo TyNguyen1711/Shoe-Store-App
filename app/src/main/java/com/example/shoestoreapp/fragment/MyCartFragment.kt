@@ -14,8 +14,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.adapter.CartAdapter
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.data.model.CartItem
+import com.example.shoestoreapp.data.repository.ProductRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MyCartFragment : Fragment() {
     private lateinit var cartAdapter: CartAdapter
@@ -23,6 +28,9 @@ class MyCartFragment : Fragment() {
     private val firestore = FirebaseFirestore.getInstance()
     private val localCartItems = mutableListOf<CartItem>()
     private val checkedCartItems = mutableSetOf<CartItem>()
+    private val prices = mutableListOf<Double>()
+    private val names = mutableListOf<String>()
+    private val thumbnail = mutableListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +57,10 @@ class MyCartFragment : Fragment() {
             onIncrease = { product -> updateCartItemQuantity(product, 1) },
             onDecrease = { product -> updateCartItemQuantity(product, -1) },
             onRemove = { product -> removeCartItemFromCart(product) },
-            onCheckedChange = { position, isChecked -> handleCheckedChange(position, isChecked) }
+            onCheckedChange = { position, isChecked -> handleCheckedChange(position, isChecked) },
+            images = emptyList(),
+            prices = emptyList(),
+            names = emptyList()
         )
         recyclerView.adapter = cartAdapter
 
@@ -68,6 +79,7 @@ class MyCartFragment : Fragment() {
             cartAdapter.setAllChecked(isChecked)
             updateCheckedTotalPrice(view)
         }
+        cartAdapter.notifyDataSetChanged()
     }
 
     private fun handleCheckedChange(position: Int, isChecked: Boolean) {
@@ -91,33 +103,63 @@ class MyCartFragment : Fragment() {
             .get()
             .addOnSuccessListener { result ->
                 val updatedCartItems = mutableListOf<CartItem>()
-                for (document in result) {
-                    val product = document.toObject(CartItem::class.java)
-                    if (product.product.id != null && product.product.price!! > 0 && product.quantity > 0) {
-                        updatedCartItems.add(product)
+                val productRepository = ProductRepository(firestore) // Tạo một instance của ProductRepository
+
+                // Sử dụng CoroutineScope để xử lý các hàm suspend
+                CoroutineScope(Dispatchers.IO).launch {
+                    for (document in result) {
+                        val cartItem = document.toObject(CartItem::class.java)
+                        val productId = cartItem.productId
+                        updatedCartItems.add(cartItem)
+                        // Gọi getProduct để lấy thông tin sản phẩm
+                        val productResult = productRepository.getProduct(productId)
+                        productResult.onSuccess { product ->
+                            prices.add(product.price)
+                            thumbnail.add(product.thumbnail)
+                            names.add(product.name)
+                            println(product.price)
+                        }.onFailure { error ->
+                            // Xử lý lỗi nếu không lấy được sản phẩm
+                            println("Failed to fetch product: ${error.message}")
+                        }
+                    }
+
+                    // Chuyển về Main thread để cập nhật UI nếu cần
+                    withContext(Dispatchers.Main) {
+                        // Xử lý updatedCartItems ở đây (ví dụ: cập nhật giao diện)
+                        if (localCartItems != updatedCartItems) {
+                            localCartItems.clear()
+                            localCartItems.addAll(updatedCartItems)
+                            cartAdapter.updateData(localCartItems, thumbnail, names, prices)
+                            println(cartAdapter)
+                        }
+                        view.findViewById<TextView>(R.id.productsNum).text = localCartItems.size.toString()
+                        updateCheckedTotalPrice(view)
                     }
                 }
-
-                if (localCartItems != updatedCartItems) {
-                    localCartItems.clear()
-                    localCartItems.addAll(updatedCartItems)
-                    cartAdapter.updateData(localCartItems)
-                }
-
-                view.findViewById<TextView>(R.id.productsNum).text = "(${localCartItems.size})"
-                updateCheckedTotalPrice(view)
             }.addOnFailureListener { exception ->
                 Toast.makeText(requireContext(), "Error loading cart: ${exception.message}", Toast.LENGTH_SHORT).show()
-            }
+        }
     }
 
     private fun updateCartItemQuantity(product: CartItem, change: Int) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
-        val productRef = firestore.collection("carts").document(userId)
-            .collection("products").document(product.product.id)
+        var index:Int = 0
+        firestore.collection("carts").document(userId)
+            .collection("products").get().addOnSuccessListener { result ->
+                for (document in result)
+                {
+                    val cartItem = document.toObject(CartItem::class.java)
+                    val productId = cartItem.productId
+                    if (productId == product.productId)
+                    {
+                        break
+                    }
+                    index ++
+                }
+            }
 
         val updatedCartItems = localCartItems.map { it.copy() }.toMutableList()
-        val index = localCartItems.indexOfFirst { it.product.id == product.product.id }
         if (index != -1) {
             updatedCartItems[index].quantity += change
             if (updatedCartItems[index].quantity < 1) {
@@ -129,23 +171,40 @@ class MyCartFragment : Fragment() {
             updateCheckedTotalPrice(requireView())
         }
 
-        firestore.runTransaction { transaction ->
-            val snapshot = transaction.get(productRef)
-            val updatedQuantity = snapshot.getLong("quantity")?.toInt()?.plus(change) ?: 0
-            if (updatedQuantity > 0) {
-                transaction.update(productRef, "quantity", updatedQuantity)
-            } else {
-                transaction.delete(productRef)
+        // Query for the document that has the productId field matching the given productId
+        firestore.collection("carts").document(userId)
+            .collection("products").get()
+            .addOnSuccessListener { snapshot ->
+                if (!snapshot.isEmpty) {
+                    // If a matching document is found, get the reference to the document
+                    val productRef = snapshot.documents[0].reference
+                    firestore.runTransaction { transaction ->
+                        val productSnapshot = transaction.get(productRef)
+                        val updatedQuantity = productSnapshot.getLong("quantity")?.toInt()?.plus(change) ?: 0
+                        if (updatedQuantity > 0) {
+                            transaction.update(productRef, "quantity", updatedQuantity)
+                        } else {
+                            transaction.delete(productRef)
+                        }
+                    }.addOnFailureListener { exception ->
+                        Toast.makeText(requireContext(), "Error updating product: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Product not found in cart.", Toast.LENGTH_SHORT).show()
+                }
             }
-        }.addOnFailureListener { exception ->
-            Toast.makeText(requireContext(), "Error updating product: ${exception.message}", Toast.LENGTH_SHORT).show()
-        }
+            .addOnFailureListener { exception ->
+                Toast.makeText(requireContext(), "Error fetching product: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
     }
+
+
+
 
     private fun removeCartItemFromCart(product: CartItem) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
         firestore.collection("carts").document(userId)
-            .collection("products").document(product.product.id)
+            .collection("products").document(product.productId)
             .delete()
             .addOnSuccessListener {
                 loadCartData(requireView())
@@ -159,7 +218,12 @@ class MyCartFragment : Fragment() {
     }
 
     private fun updateCheckedTotalPrice(view: View) {
-        val totalPrice = localCartItems.filter { it.isChecked }.sumOf { it.quantity * it.product.price}
+        val totalPrice = localCartItems.filter { it.isChecked }
+            .sumOf { cartItem ->
+                val index = localCartItems.indexOf(cartItem)
+                val price = prices.getOrElse(index) { 0.0 } // Lấy giá tại index tương ứng
+                cartItem.quantity * price
+            }
         view.findViewById<TextView>(R.id.textViewTotal).text = "Total: ${totalPrice}đ"
     }
 }

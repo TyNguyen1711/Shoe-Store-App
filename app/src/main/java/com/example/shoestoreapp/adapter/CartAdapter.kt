@@ -21,7 +21,10 @@ class CartAdapter(
     private val onIncrease: (CartItem) -> Unit,
     private val onDecrease: (CartItem) -> Unit,
     private val onRemove: (CartItem) -> Unit,
-    private val onCheckedChange: (Int, Boolean) -> Unit
+    private val onCheckedChange: (Int, Boolean) -> Unit,
+    private var images: List<String>,
+    private var prices: List<Double>,
+    private var names: List<String>,
 ) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
     inner class CartViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -34,14 +37,14 @@ class CartAdapter(
         val productImage: ImageView = itemView.findViewById(R.id.productImage)
         private val checkBox: CheckBox = itemView.findViewById(R.id.productCheckBox)
 
-        fun bind(product: CartItem) {
-            fullNameTV.text = product.product.name
-            costTV.text = "${product.product.price}đ"
+        fun bind(product: CartItem, name: String, price: Double, thumbnail: String) {
+            fullNameTV.text = name
+            costTV.text = price.toString()
             soldTV.text = product.quantity.toString()
-            sizeTV.text = product.variant.size.toString()
+            sizeTV.text = product.size
 
             // Load ảnh
-            Glide.with(productImage.context).load(product.product.thumbnail).into(productImage)
+            Glide.with(productImage.context).load(thumbnail).into(productImage)
 
             // Đặt lại trạng thái CheckBox
             checkBox.setOnCheckedChangeListener(null) // Xóa listener trước khi cập nhật
@@ -75,12 +78,17 @@ class CartAdapter(
     }
 
     override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
-        holder.bind(products[position])
+        holder.bind(products[position], names[position], prices[position], images[position])
     }
 
     override fun getItemCount(): Int = products.size
 
-    fun updateData(newCartItems: List<CartItem>) {
+    fun updateData(
+        newCartItems: List<CartItem>,
+        newImages: List<String> = emptyList(),
+        newNames: List<String> = emptyList(),
+        newPrices: List<Double> = emptyList()
+    ) {
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize() = products.size
 
@@ -88,7 +96,7 @@ class CartAdapter(
 
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                 // So sánh ID sản phẩm
-                return products[oldItemPosition].product.id == newCartItems[newItemPosition].product.id
+                return products[oldItemPosition].productId == newCartItems[newItemPosition].productId
             }
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
@@ -96,16 +104,31 @@ class CartAdapter(
                 val oldCartItem = products[oldItemPosition]
                 val newCartItem = newCartItems[newItemPosition]
 
-                return  oldCartItem.product.name == newCartItem.product.name &&
-                        oldCartItem.product.price == newCartItem.product.price &&
+                return oldCartItem.productId == newCartItem.productId &&
                         oldCartItem.quantity == newCartItem.quantity &&
                         oldCartItem.isChecked == newCartItem.isChecked
             }
         })
 
-        products = newCartItems.toList() // Cập nhật danh sách sản phẩm
-        diffResult.dispatchUpdatesTo(this) // Cập nhật RecyclerView
+        // Cập nhật danh sách sản phẩm
+        products = newCartItems.toList()
+        println(products)
+
+        // Gán images, names, và prices chỉ khi có giá trị mới
+        if (newImages.isNotEmpty()) {
+            images = newImages
+        }
+        if (newNames.isNotEmpty()) {
+            names = newNames
+        }
+        if (newPrices.isNotEmpty()) {
+            prices = newPrices
+        }
+
+        // Cập nhật RecyclerView
+        diffResult.dispatchUpdatesTo(this)
     }
+
 
     fun setAllChecked(isChecked: Boolean) {
         val updatedCartItems = products.map { it.copy(isChecked = isChecked) }
@@ -119,12 +142,12 @@ class CartAdapter(
             .collection("carts")
             .document(userId)
             .collection("products")
-            .document(product.product.id.toString())
+            .document(product.productId.toString())
             .update("quantity", updatedQuantity)  // Cập nhật trường quantity
             .addOnSuccessListener {
                 // Cập nhật lại dữ liệu trong adapter sau khi thành công
                 val updatedCartItems = products.map {
-                    if (it.product.id == product.product.id) it.copy(quantity = updatedQuantity) else it
+                    if (it.productId == product.productId) it.copy(quantity = updatedQuantity) else it
                 }
                 updateData(updatedCartItems)
             }
@@ -141,12 +164,12 @@ class CartAdapter(
                 .collection("carts")
                 .document(userId)
                 .collection("products")
-                .document(product.product.id.toString())
+                .document(product.productId)
                 .update("quantity", updatedQuantity)  // Cập nhật trường quantity
                 .addOnSuccessListener {
                     // Cập nhật lại dữ liệu trong adapter sau khi thành công
                     val updatedCartItems = products.map {
-                        if (it.product.id == product.product.id) it.copy(quantity = updatedQuantity) else it
+                        if (it.productId == product.productId) it.copy(quantity = updatedQuantity) else it
                     }
                     updateData(updatedCartItems)
                 }

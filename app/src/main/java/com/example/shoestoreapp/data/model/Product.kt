@@ -10,10 +10,10 @@ data class Product(
     val thumbnail: String = "",
     val description: String = "",
 
-    @field:PropertyName("category_id")
+    @field:PropertyName("categoryId")
     val categoryId: String = "",
 
-    @field:PropertyName("brand_id")
+    @field:PropertyName("brandId")
     val brandId: String = "",
 
     val price: Double = 0.0,
@@ -31,6 +31,7 @@ data class Product(
             "description" to description,
             "price" to price,
             "images" to images,
+            "brandId" to brandId,
             "discountPrice" to discountPrice,
             "averageRating" to averageRating,
             "reviewCount" to reviewCount,
