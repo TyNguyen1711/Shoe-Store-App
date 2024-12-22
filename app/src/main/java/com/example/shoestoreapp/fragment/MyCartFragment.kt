@@ -1,18 +1,21 @@
 package com.example.shoestoreapp.fragment
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.adapter.CartAdapter
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.activity.PayActivity
 import com.example.shoestoreapp.classes.Product
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -40,6 +43,7 @@ class MyCartFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         checkBoxAll = view.findViewById(R.id.checkBoxAll)
+        val checkoutTV = view.findViewById<TextView>(R.id.textViewCheckout)
 
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
         // Khởi tạo CartAdapter với các callback
@@ -67,6 +71,11 @@ class MyCartFragment : Fragment() {
 
             cartAdapter.setAllChecked(isChecked)
             updateCheckedTotalPrice(view)
+        }
+
+        checkoutTV.setOnClickListener {
+            val intent = Intent(requireContext(), PayActivity::class.java)
+            startActivity(intent)
         }
     }
 
