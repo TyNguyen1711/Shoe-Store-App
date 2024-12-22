@@ -49,7 +49,7 @@ class AccountFragment : Fragment() {
         aboutSection.setOnClickListener {
             startActivity(Intent(requireContext(), AboutActivity::class.java))
         }
-
-
     }
 }
+
+

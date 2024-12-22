@@ -1,10 +1,10 @@
-package com.example.shoestoreapp.classes
+package com.example.shoestoreapp.data.repository
 
 import com.example.shoestoreapp.classes.Product
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FieldValue
 
-class FirestoreRepository {
+class GetCartRepository {
     private val db = FirebaseFirestore.getInstance()
     private val cartRef = db.collection("carts")
 
