@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.adapter.CartAdapter
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.data.model.CartItem
+import com.example.shoestoreapp.data.repository.CartRepository
 import com.example.shoestoreapp.data.repository.ProductRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -96,66 +97,68 @@ class MyCartFragment : Fragment() {
     }
 
     private fun loadCartData(view: View) {
+        val cartRepository = CartRepository(firestore)
+        val productRepository =
+            ProductRepository(firestore) // Tạo một instance của ProductRepository
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
-        firestore.collection("carts")
-            .document(userId)
-            .collection("products")
-            .get()
-            .addOnSuccessListener { result ->
-                val updatedCartItems = mutableListOf<CartItem>()
-                val productRepository = ProductRepository(firestore) // Tạo một instance của ProductRepository
 
-                // Sử dụng CoroutineScope để xử lý các hàm suspend
-                CoroutineScope(Dispatchers.IO).launch {
-                    for (document in result) {
-                        val cartItem = document.toObject(CartItem::class.java)
-                        val productId = cartItem.productId
-                        updatedCartItems.add(cartItem)
-                        // Gọi getProduct để lấy thông tin sản phẩm
-                        val productResult = productRepository.getProduct(productId)
-                        productResult.onSuccess { product ->
-                            prices.add(product.price)
-                            thumbnail.add(product.thumbnail)
-                            names.add(product.name)
-                            println(product.price)
-                        }.onFailure { error ->
-                            // Xử lý lỗi nếu không lấy được sản phẩm
-                            println("Failed to fetch product: ${error.message}")
-                        }
-                    }
+        val updatedCartItems = mutableListOf<CartItem>()
 
-                    // Chuyển về Main thread để cập nhật UI nếu cần
-                    withContext(Dispatchers.Main) {
-                        // Xử lý updatedCartItems ở đây (ví dụ: cập nhật giao diện)
-                        if (localCartItems != updatedCartItems) {
-                            localCartItems.clear()
-                            localCartItems.addAll(updatedCartItems)
-                            cartAdapter.updateData(localCartItems, thumbnail, names, prices)
-                            println(cartAdapter)
-                        }
-                        view.findViewById<TextView>(R.id.productsNum).text = localCartItems.size.toString()
-                        updateCheckedTotalPrice(view)
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = cartRepository.getCartItems(userId)
+            // Sử dụng CoroutineScope để xử lý các hàm suspend
+
+            result.onSuccess { cartItems ->
+                println("cart: ${cartItems}")
+                for (cartItem in cartItems) {
+                    val productId = cartItem.productId
+                    updatedCartItems.add(cartItem)
+
+                    // Gọi getProduct để lấy thông tin sản phẩm
+                    val productResult = productRepository.getProduct(productId)
+                    productResult.onSuccess { product ->
+                        prices.add(product.price)
+                        thumbnail.add(product.thumbnail)
+                        names.add(product.name)
+                        println(product.price)
+                    }.onFailure { error ->
+                        // Xử lý lỗi nếu không lấy được sản phẩm
+                        println("Failed to fetch product: ${error.message}")
                     }
                 }
-            }.addOnFailureListener { exception ->
-                Toast.makeText(requireContext(), "Error loading cart: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }.onFailure { error ->
+                // Xử lý lỗi nếu không lấy được danh sách giỏ hàng
+                println("Failed to fetch cart items: ${error.message}")
+            }
+
+
+            // Chuyển về Main thread để cập nhật UI nếu cần
+            withContext(Dispatchers.Main) {
+                // Xử lý updatedCartItems ở đây (ví dụ: cập nhật giao diện)
+                if (localCartItems != updatedCartItems) {
+                    localCartItems.clear()
+                    localCartItems.addAll(updatedCartItems)
+                    cartAdapter.updateData(localCartItems, thumbnail, names, prices)
+                    println(cartAdapter)
+                }
+                view.findViewById<TextView>(R.id.productsNum).text = localCartItems.size.toString()
+                updateCheckedTotalPrice(view)
+            }
         }
     }
 
     private fun updateCartItemQuantity(product: CartItem, change: Int) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
-        var index:Int = 0
+        var index: Int = 0
         firestore.collection("carts").document(userId)
             .collection("products").get().addOnSuccessListener { result ->
-                for (document in result)
-                {
+                for (document in result) {
                     val cartItem = document.toObject(CartItem::class.java)
                     val productId = cartItem.productId
-                    if (productId == product.productId)
-                    {
+                    if (productId == product.productId) {
                         break
                     }
-                    index ++
+                    index++
                 }
             }
 
@@ -180,23 +183,37 @@ class MyCartFragment : Fragment() {
                     val productRef = snapshot.documents[0].reference
                     firestore.runTransaction { transaction ->
                         val productSnapshot = transaction.get(productRef)
-                        val updatedQuantity = productSnapshot.getLong("quantity")?.toInt()?.plus(change) ?: 0
+                        val updatedQuantity =
+                            productSnapshot.getLong("quantity")?.toInt()?.plus(change) ?: 0
                         if (updatedQuantity > 0) {
                             transaction.update(productRef, "quantity", updatedQuantity)
                         } else {
                             transaction.delete(productRef)
                         }
                     }.addOnFailureListener { exception ->
-                        Toast.makeText(requireContext(), "Error updating product: ${exception.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Error updating product: ${exception.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Product not found in cart.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Product not found in cart.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
             .addOnFailureListener { exception ->
-                Toast.makeText(requireContext(), "Error fetching product: ${exception.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Error fetching product: ${exception.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
     }
+
 
     private fun removeCartItemFromCart(product: CartItem) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
@@ -221,6 +238,7 @@ class MyCartFragment : Fragment() {
                 val price = prices.getOrElse(index) { 0.0 } // Lấy giá tại index tương ứng
                 cartItem.quantity * price
             }
-        view.findViewById<TextView>(R.id.textViewTotal).text = "Total: ${totalPrice}đ"
+        view.findViewById<TextView>(R.id.textViewTotal).text =
+            "Total: ${String.format("%,.0f", totalPrice)}đ"
     }
 }

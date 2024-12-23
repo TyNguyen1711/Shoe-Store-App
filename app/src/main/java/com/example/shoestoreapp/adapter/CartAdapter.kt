@@ -39,7 +39,7 @@ class CartAdapter(
 
         fun bind(product: CartItem, name: String, price: Double, thumbnail: String) {
             fullNameTV.text = name
-            costTV.text = price.toString()
+            costTV.text = "${String.format("%,.0f",price)}đ"
             soldTV.text = product.quantity.toString()
             sizeTV.text = product.size
 
@@ -175,6 +175,7 @@ class CartAdapter(
                 }
         } else {
             // Nếu số lượng <= 1, xóa sản phẩm
+            images
             onRemove(product)
         }
     }
