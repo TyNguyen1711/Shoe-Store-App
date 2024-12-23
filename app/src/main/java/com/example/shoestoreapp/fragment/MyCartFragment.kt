@@ -47,6 +47,7 @@ class MyCartFragment : Fragment() {
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
+        val checkoutTV = view.findViewById<TextView>(R.id.buttonCheckout)
         checkBoxAll = view.findViewById(R.id.checkBoxAll)
 
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
@@ -197,9 +198,6 @@ class MyCartFragment : Fragment() {
                 Toast.makeText(requireContext(), "Error fetching product: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
     }
-
-
-
 
     private fun removeCartItemFromCart(product: CartItem) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
