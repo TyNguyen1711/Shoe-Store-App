@@ -34,6 +34,7 @@ class MyCartFragment : Fragment() {
     private val prices = mutableListOf<Double>()
     private val names = mutableListOf<String>()
     private val thumbnail = mutableListOf<String>()
+    private val cartRepository = CartRepository(firestore)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,7 +61,6 @@ class MyCartFragment : Fragment() {
             userId = userId,
             onIncrease = { product -> updateCartItemQuantity(product, 1) },
             onDecrease = { product -> updateCartItemQuantity(product, -1) },
-            onRemove = { product -> removeCartItemFromCart(product) },
             onCheckedChange = { position, isChecked -> handleCheckedChange(position, isChecked) },
             images = emptyList(),
             prices = emptyList(),
@@ -118,7 +118,6 @@ class MyCartFragment : Fragment() {
     }
 
     private fun loadCartData(view: View) {
-        val cartRepository = CartRepository(firestore)
         val productRepository =
             ProductRepository(firestore) // Tạo một instance của ProductRepository
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
@@ -160,7 +159,6 @@ class MyCartFragment : Fragment() {
                     localCartItems.clear()
                     localCartItems.addAll(updatedCartItems)
                     cartAdapter.updateData(localCartItems, thumbnail, names, prices)
-                    println(cartAdapter)
                 }
                 view.findViewById<TextView>(R.id.productsNum).text = localCartItems.size.toString()
                 updateCheckedTotalPrice(view)
@@ -170,87 +168,41 @@ class MyCartFragment : Fragment() {
 
     private fun updateCartItemQuantity(product: CartItem, change: Int) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
-        var index: Int = 0
-        firestore.collection("carts").document(userId)
-            .collection("products").get().addOnSuccessListener { result ->
-                for (document in result) {
-                    val cartItem = document.toObject(CartItem::class.java)
-                    val productId = cartItem.productId
-                    if (productId == product.productId) {
-                        break
-                    }
-                    index++
-                }
-            }
+        var idx: Int = -1
 
-        val updatedCartItems = localCartItems.map { it.copy() }.toMutableList()
-        if (index != -1) {
-            updatedCartItems[index].quantity += change
-            if (updatedCartItems[index].quantity < 1) {
-                updatedCartItems.removeAt(index)
-            }
-            localCartItems.clear()
-            localCartItems.addAll(updatedCartItems)
-            cartAdapter.updateData(localCartItems)
-            updateCheckedTotalPrice(requireView())
-        }
-
-        // Query for the document that has the productId field matching the given productId
-        firestore.collection("carts").document(userId)
-            .collection("products").get()
-            .addOnSuccessListener { snapshot ->
-                if (!snapshot.isEmpty) {
-                    // If a matching document is found, get the reference to the document
-                    val productRef = snapshot.documents[0].reference
-                    firestore.runTransaction { transaction ->
-                        val productSnapshot = transaction.get(productRef)
-                        val updatedQuantity =
-                            productSnapshot.getLong("quantity")?.toInt()?.plus(change) ?: 0
-                        if (updatedQuantity > 0) {
-                            transaction.update(productRef, "quantity", updatedQuantity)
-                        } else {
-                            transaction.delete(productRef)
-                        }
-                    }.addOnFailureListener { exception ->
-                        Toast.makeText(
-                            requireContext(),
-                            "Error updating product: ${exception.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = cartRepository.updateProductQuantity(userId, product.productId, product.quantity + change)
+            result.onSuccess { (isSuccess, index) ->
+                if (isSuccess) {
+                    // Xử lý thành công
+                    println("Cập nhật số lượng sản phẩm thành công")
+                    idx = index
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Product not found in cart.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    // Xử lý trường hợp không thành công (nếu cần)
+                    println("Không thể cập nhật số lượng sản phẩm")
                 }
+            }.onFailure { error ->
+                // Xử lý lỗi nếu không lấy được danh sách giỏ hàng
+                println("Failed to fetch cart items: ${error.message}")
             }
-            .addOnFailureListener { exception ->
-                Toast.makeText(
-                    requireContext(),
-                    "Error fetching product: ${exception.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-    }
 
 
-    private fun removeCartItemFromCart(product: CartItem) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
-        firestore.collection("carts").document(userId)
-            .collection("products").document(product.productId)
-            .delete()
-            .addOnSuccessListener {
-                loadCartData(requireView())
-            }.addOnFailureListener { exception ->
-                Toast.makeText(
-                    requireContext(),
-                    "Error removing product: ${exception.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+            // Chuyển về Main thread để cập nhật UI nếu cần
+            withContext(Dispatchers.Main) {
+                val updatedCartItems = localCartItems.map { it.copy() }.toMutableList()
+                updatedCartItems[idx].quantity += change
+                if (updatedCartItems[idx].quantity < 1) {
+                    updatedCartItems.removeAt(idx)
+                    requireView().findViewById<TextView>(R.id.productsNum).text = localCartItems.size.toString()
+                }
+                localCartItems.clear()
+                localCartItems.addAll(updatedCartItems)
+                cartAdapter.updateData(localCartItems)
+                updateCheckedTotalPrice(requireView())
             }
+        }
     }
+
 
     private fun updateCheckedTotalPrice(view: View) {
         val totalPrice = localCartItems.filter { it.isChecked }

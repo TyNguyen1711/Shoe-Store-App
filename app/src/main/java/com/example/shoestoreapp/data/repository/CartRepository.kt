@@ -27,18 +27,26 @@ class CartRepository(private val db: FirebaseFirestore = FirebaseFirestore.getIn
     }
 
     // Cập nhật số lượng sản phẩm
-    suspend fun updateProductQuantity(userId: String, productId: String, quantity: Int): Result<Boolean> = runCatching {
-        if (quantity <= 0) {
-            removeProductFromCart(userId, productId)
-        } else {
-            cartRef.document(userId).update("$productId.quantity", quantity).await()
-        }
-        true
-    }
+    suspend fun updateProductQuantity(userId: String, productId: String, quantity: Int): Result<Pair<Boolean, Int>> = runCatching {
+        val productsSnapshot = cartRef.document(userId).collection("products").get().await()
 
-    // Xóa sản phẩm khỏi giỏ hàng
-    suspend fun removeProductFromCart(userId: String, productId: String): Result<Boolean> = runCatching {
-        cartRef.document(userId).update(productId, FieldValue.delete()).await()
-        true
+        // Tìm vị trí của document
+        val productList = productsSnapshot.documents
+        val index = productList.indexOfFirst { it.id == productId }
+
+        if (index == -1) throw Exception("Product not found")
+
+        // Truy cập document theo productId
+        val productRef = cartRef.document(userId).collection("products").document(productId)
+        println("Quantity: ${quantity}")
+        if (quantity <= 0) {
+            // Xóa document nếu quantity <= 0
+            productRef.delete().await()
+        } else {
+            // Cập nhật quantity nếu quantity > 0
+            productRef.update("quantity", quantity).await()
+        }
+
+        true to index // Trả về kết quả
     }
 }
