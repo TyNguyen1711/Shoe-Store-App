@@ -47,7 +47,6 @@ class MyCartFragment : Fragment() {
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val checkoutTV = view.findViewById<TextView>(R.id.buttonCheckout)
         checkBoxAll = view.findViewById(R.id.checkBoxAll)
 
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
