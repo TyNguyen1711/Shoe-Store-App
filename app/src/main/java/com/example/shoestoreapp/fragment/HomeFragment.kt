@@ -1,111 +1,116 @@
 package com.example.shoestoreapp.fragment
 
-import android.content.Intent
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.activity.ProductDetailActivity
 import com.example.shoestoreapp.adapter.ProductItemAdapter
 import com.example.shoestoreapp.adapter.SliderAdapter
 import com.example.shoestoreapp.classes.Product
+import com.example.shoestoreapp.data.repository.ProductRepository
 import com.google.firebase.database.*
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(), ProductItemAdapter.OnProductClickListener {
-    private lateinit var database: DatabaseReference
-
-    private lateinit var exclusiveAdapter: ProductItemAdapter
+    private lateinit var exclusiveOfferAdapter: ProductItemAdapter
     private lateinit var bestSellingAdapter: ProductItemAdapter
-    private val exclusiveProducts = mutableListOf<Product>()
-    private val bestSellingProducts = mutableListOf<Product>()
 
-    private lateinit var viewPagerSlider: ViewPager2
-    private lateinit var dotsIndicator: DotsIndicator
-    private lateinit var sliderAdapter: SliderAdapter
-    private val sliderImages = listOf(
-        R.drawable.slider_image1,
-        R.drawable.slider_image2,
-        R.drawable.slider_image3
-    )
+    private var exclusiveOfferList = mutableListOf<Product>()
+    private var bestSellingList = mutableListOf<Product>()
 
-    override fun onProductClick(productId: String) {
-        // Navigate to ProductDetailActivity
-        val intent = Intent(requireContext(), ProductDetailActivity::class.java)
-        intent.putExtra("PRODUCT_ID", productId)
-        startActivity(intent)
-    }
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-
-        // Setup Slider
-        viewPagerSlider = view.findViewById(R.id.viewPageSlider)
-        dotsIndicator = view.findViewById(R.id.dots_indicator)
-        sliderAdapter = SliderAdapter(sliderImages)
-        viewPagerSlider.adapter = sliderAdapter
-        dotsIndicator.setViewPager2(viewPagerSlider)
-
-        // Setup RecyclerView for Exclusive Offers
-        val exclusiveRecyclerView: RecyclerView = view.findViewById(R.id.exclusiveOfferRV)
-        exclusiveAdapter = ProductItemAdapter(exclusiveProducts, this)
-        exclusiveRecyclerView.adapter = exclusiveAdapter
-        exclusiveRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-
-        // Setup RecyclerView for Best Selling
-        val bestSellingRecyclerView: RecyclerView = view.findViewById(R.id.bestSellingRC)
-        bestSellingAdapter = ProductItemAdapter(bestSellingProducts, this)
-        bestSellingRecyclerView.adapter = bestSellingAdapter
-        bestSellingRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-
-        // Load data
-        loadExclusiveProducts()
-        loadBestSellingProducts()
-
+        setupRecyclerViews(view)
+        loadDataFromFirestore()
         return view
     }
 
-    private fun loadExclusiveProducts() {
-        database = FirebaseDatabase.getInstance().getReference("exclusive offer")
-        database.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                exclusiveProducts.clear()
-                for (productSnapshot in snapshot.children) {
-                    val product = productSnapshot.getValue(Product::class.java)
-                    product?.let { exclusiveProducts.add(it) }
-                }
-                exclusiveAdapter.notifyDataSetChanged()
-            }
+    private fun setupRecyclerViews(view: View) {
+        val exclusiveOfferRecyclerView: RecyclerView = view.findViewById(R.id.exclusiveOfferRV)
+        val bestSellingRecyclerView: RecyclerView = view.findViewById(R.id.bestSellingRV)
 
-            override fun onCancelled(error: DatabaseError) {
-                // Handle Firebase error
-            }
-        })
+        exclusiveOfferAdapter = ProductItemAdapter(exclusiveOfferList, this)
+        bestSellingAdapter = ProductItemAdapter(bestSellingList, this)
+
+        exclusiveOfferRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        bestSellingRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
+        exclusiveOfferRecyclerView.adapter = exclusiveOfferAdapter
+        bestSellingRecyclerView.adapter = bestSellingAdapter
     }
 
-    private fun loadBestSellingProducts() {
-        database = FirebaseDatabase.getInstance().getReference("best selling")
-        database.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                bestSellingProducts.clear()
-                for (productSnapshot in snapshot.children) {
-                    val product = productSnapshot.getValue(Product::class.java)
-                    product?.let { bestSellingProducts.add(it) }
+    private fun loadDataFromFirestore() {
+        // Lấy danh sách exclusive offer
+        db.collection("products")
+            .document("BS")
+            .collection("best selling")
+            .get()
+            .addOnSuccessListener { result ->
+                exclusiveOfferList.clear()
+                for (document in result) {
+                    val product = document.toObject(Product::class.java)
+                    exclusiveOfferList.add(product)
+                    Log.d(TAG, "${document.id} => ${document.data}")
                 }
-                bestSellingAdapter.notifyDataSetChanged()
+                exclusiveOfferAdapter.notifyDataSetChanged()
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                // Handle Firebase error
+        // Lấy danh sách best selling
+        db.collection("products")
+            .document("BS")
+            .collection("best selling")
+            .get()
+            .addOnSuccessListener { result ->
+                Log.d("Result Size", "Size: ${result.size()}")
+                for (document in result) {
+                    Log.d("Document", "${document.id} => ${document.data}")
+                }
             }
-        })
+            .addOnFailureListener { exception ->
+                Log.e("Firestore Error", "Error fetching documents", exception)
+            }
+
+
+
+        db.collection("products")
+            .get()
+            .addOnSuccessListener { result ->
+                Log.d("Firestore Test Size", "Documents found: ${result.size()}")
+                for (document in result) {
+                    Log.d("Firestore Test", "${document.id} => ${document.data}")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore Test Error", "Error fetching documents", exception)
+            }
+    }
+
+    override fun onProductClick(productId: String) {
+        Toast.makeText(requireContext(), "Clicked Product: $productId", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onMoreButtonClick() {
+        Toast.makeText(requireContext(), "More Button Clicked!", Toast.LENGTH_SHORT).show()
+        // Thêm logic khi nhấn "More Button" (ví dụ: chuyển tới danh sách đầy đủ)
     }
 }
+

@@ -17,7 +17,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
-import com.example.shoestoreapp.classes.WishlistAdapter
+import com.example.shoestoreapp.adapter.WishlistAdapter
 import com.example.shoestoreapp.classes.ProductTemp
 
 class WishlistActivity : AppCompatActivity(), WishlistAdapter.ProductCountListener {

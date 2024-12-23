@@ -1,7 +1,7 @@
 package com.example.shoestoreapp.classes
 
 data class Product(
-    val id: Int? = null,
+    var id: Int? = null,
     val name: String? = null,
     val description: String? = null,
     val price: Int? = null,

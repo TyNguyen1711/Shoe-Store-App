@@ -3,6 +3,7 @@
     import android.view.LayoutInflater
     import android.view.View
     import android.view.ViewGroup
+    import android.widget.ImageButton
     import android.widget.ImageView
     import android.widget.TextView
     import androidx.recyclerview.widget.RecyclerView
@@ -13,40 +14,70 @@
     class ProductItemAdapter(
         private val productList: List<Product>,
         private val listener: OnProductClickListener
-    ) : RecyclerView.Adapter<ProductItemAdapter.ProductViewHolder>() {
+    ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+        companion object {
+            private const val VIEW_TYPE_PRODUCT = 0
+            private const val VIEW_TYPE_MORE_BUTTON = 1
+        }
 
         interface OnProductClickListener {
             fun onProductClick(productId: String)
+            fun onMoreButtonClick()
         }
 
-        class ProductViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val productImage: ImageView = view.findViewById(R.id.productImage)
-            val fullNameTV: TextView = view.findViewById(R.id.fullNameTV)
-            val ratingsTV: TextView = view.findViewById(R.id.ratingsTV)
-            val soldTV: TextView = view.findViewById(R.id.soldTV)
-            val costTV: TextView = view.findViewById(R.id.costTV)
+        override fun getItemViewType(position: Int): Int {
+            return if (position == productList.size) VIEW_TYPE_MORE_BUTTON else VIEW_TYPE_PRODUCT
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.product_details, parent, false)
-            return ProductViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
-            val product = productList[position]
-
-            // Load product data into views
-            Glide.with(holder.productImage.context).load(product.thumbnail).into(holder.productImage)
-            holder.fullNameTV.text = product.name
-            holder.ratingsTV.text = "${product.averageRating} stars"
-            // holder.soldTV.text = "${product.sold} sold"
-            holder.costTV.text = "${product.price}đ"
-
-            // Handle click event
-            holder.itemView.setOnClickListener {
-                listener.onProductClick(product.id.toString()) // Pass product ID
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            return if (viewType == VIEW_TYPE_PRODUCT) {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.product_details, parent, false)
+                ProductViewHolder(view)
+            } else {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.more_button, parent, false)
+                MoreButtonViewHolder(view)
             }
         }
 
-        override fun getItemCount(): Int = productList.size
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            if (holder is ProductViewHolder) {
+                val product = productList[position]
+                holder.bind(product, listener)
+            } else if (holder is MoreButtonViewHolder) {
+                holder.bind(listener)
+            }
+        }
+
+        override fun getItemCount(): Int {
+            return productList.size + 1 // Thêm 1 cho thẻ "More Button"
+        }
+
+        class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            private val productImage: ImageView = itemView.findViewById(R.id.productImage)
+            private val productName: TextView = itemView.findViewById(R.id.fullNameTV)
+            private val productPrice: TextView = itemView.findViewById(R.id.costTV)
+
+            fun bind(product: Product, listener: OnProductClickListener) {
+                // Gắn dữ liệu sản phẩm
+                Glide.with(productImage.context).load(product.thumbnail).into(productImage)
+                productName.text = product.name
+                productPrice.text = "${product.price}đ"
+
+                itemView.setOnClickListener {
+                    listener.onProductClick(product.id.toString())
+                }
+            }
+        }
+
+        class MoreButtonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            private val moreButton: ImageButton = itemView.findViewById(R.id.moreBtn)
+
+            fun bind(listener: OnProductClickListener) {
+                moreButton.setOnClickListener {
+                    listener.onMoreButtonClick()
+                }
+            }
+        }
     }
+

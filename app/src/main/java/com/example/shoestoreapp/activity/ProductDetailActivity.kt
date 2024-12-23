@@ -1,7 +1,9 @@
 package com.example.shoestoreapp.activity
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -12,16 +14,14 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.ImageSliderAdapter
 import com.example.shoestoreapp.classes.Product
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 
 class ProductDetailActivity : AppCompatActivity() {
-    private lateinit var database: DatabaseReference
+    private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        database = FirebaseDatabase.getInstance().getReference("products")
-
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_product_detail)
@@ -30,24 +30,30 @@ class ProductDetailActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val productId = intent.getStringExtra("PRODUCT_ID")
-        readDataFromFirebase(productId!!.toInt())
+        val documentId = intent.getStringExtra("DOCUMENT ID")
+        readDataFromFirebase(documentId!!)
+
+        val backBtn = findViewById<Button>(R.id.backBtn)
+
+        backBtn!!.setOnClickListener() {
+            finish()
+        }
     }
 
-    private fun readDataFromFirebase(productId: Int) {
-        database.child(productId.toString()).get().addOnSuccessListener { snapshot ->
-            if (snapshot.exists()) {
-                val product = snapshot.getValue(Product::class.java)
-                product?.let {
-                    Log.d("ProductData", "Name: ${it.name}, Price: ${it.price}")
-                    updateUI(product)
+    private fun readDataFromFirebase(documentId: String) {
+        db.collection("products")
+            .document(documentId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    updateUI(document.toObject(Product::class.java)!!)
+                } else {
+                    Log.d(TAG, "No such document")
                 }
-            } else {
-                Log.e("ProductData", "Product with id $productId not found")
             }
-        }.addOnFailureListener { error ->
-            Log.e("FirebaseError", "Error: ${error.message}")
-        }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "get failed with ", exception)
+            }
     }
 
     private fun updateUI(product: Product) {

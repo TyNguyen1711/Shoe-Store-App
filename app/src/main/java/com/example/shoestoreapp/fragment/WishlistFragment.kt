@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.classes.ProductTemp
-import com.example.shoestoreapp.classes.WishlistAdapter
+import com.example.shoestoreapp.adapter.WishlistAdapter
 
 class WishlistFragment : Fragment(), WishlistAdapter.ProductCountListener {
     private lateinit var recyclerView: RecyclerView
