@@ -1,13 +1,13 @@
 package com.example.shoestoreapp.data.repository
 
-import android.util.Log
-import com.example.shoestoreapp.data.model.Brand
+
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.model.Wishlist
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+
 
 class WishlistRepository(private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()) {
     private val productsCollection: CollectionReference = firestore.collection("products")
@@ -66,6 +66,38 @@ class WishlistRepository(private val firestore: FirebaseFirestore = FirebaseFire
             }
 
             Result.success(products)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun removeFromWishlist(userId: String, productId: String): Result<Unit> {
+        return try {
+            val wishlistDocRef = wishlistsCollection.document(userId)
+            val wishlistSnapshot = wishlistDocRef.get().await()
+
+            if (!wishlistSnapshot.exists()) {
+                return Result.failure(Exception("Wishlist not found"))
+            }
+
+            val currentProducts = wishlistSnapshot.get("products") as? List<String> ?: listOf()
+
+            if (!currentProducts.contains(productId)) {
+                return Result.failure(Exception("Product not found in wishlist"))
+            }
+
+            val updatedProducts = currentProducts.filter { it != productId }
+
+            // If the wishlist becomes empty, you can either:
+            // Option 1: Delete the entire wishlist document
+            if (updatedProducts.isEmpty()) {
+                wishlistDocRef.delete().await()
+            } else {
+                // Option 2: Update the wishlist with the remaining products
+                wishlistDocRef.update("products", updatedProducts).await()
+            }
+
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }

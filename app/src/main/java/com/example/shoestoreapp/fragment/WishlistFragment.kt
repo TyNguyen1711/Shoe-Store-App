@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,27 +12,77 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
-import com.example.shoestoreapp.classes.ProductTemp
-import com.example.shoestoreapp.classes.WishlistAdapter
+import com.example.shoestoreapp.adapter.WishlistAdapter
+import com.example.shoestoreapp.data.model.CartItem
+import com.example.shoestoreapp.data.model.Product
+import com.example.shoestoreapp.data.repository.CartRepository
+import com.example.shoestoreapp.data.repository.WishlistRepository
+import kotlinx.coroutines.launch
 
-class WishlistFragment : Fragment(), WishlistAdapter.ProductCountListener {
+
+class WishlistFragment : Fragment(), WishlistAdapter.ProductCountListener,
+    WishlistAdapter.OnHeartClickListener,
+    WishlistAdapter.OnCartClickListener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var wishlistAdapter: WishlistAdapter
-    private lateinit var productList: ArrayList<ProductTemp>
+    private lateinit var productList: ArrayList<Product>
     private lateinit var filterTextViews: List<TextView>
     private lateinit var searchEditText: EditText
     private lateinit var searchBtn: Button
     private lateinit var productsNumTV: TextView
+    private lateinit var cartBtn: Button
     private var isSearchVisible = false
-
+    private val wishlistRepository = WishlistRepository()
+    private val cartRepository = CartRepository()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_wishlist, container, false)
+    }
+
+    override fun onHeartClick(product: Product, position: Int) {
+
+        wishlistAdapter.removeItem(position)
+
+        val updatedProductCount = wishlistAdapter.itemCount
+        productsNumTV.text = "($updatedProductCount)"
+
+        lifecycleScope.launch {
+            try {
+                wishlistRepository.removeFromWishlist(
+                    userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2",
+                    productId = product.id
+                )
+                val result = wishlistRepository.getWishlistByUserId(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2")
+                if (result.isSuccess) {
+                    val updatedProducts = result.getOrNull() ?: emptyList()
+                    wishlistAdapter.updateData(updatedProducts)
+                    productsNumTV.text = "(${updatedProducts.size})"
+                }
+            } catch (e: Exception) {
+                wishlistAdapter.undoRemove(position, product)
+                Log.e("WishlistFragment", "Error removing from wishlist", e)
+            }
+        }
+    }
+
+    override fun onCartClick(product: Product) {
+        lifecycleScope.launch {
+            try {
+//                cartRepository.addProductToCart(
+//                    userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2",
+//                    product = product
+//                )
+                Log.d("t", "t")
+            } catch (e: Exception) {
+                Log.e("WishlistFragment", "fd", e)
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,9 +94,13 @@ class WishlistFragment : Fragment(), WishlistAdapter.ProductCountListener {
         productsNumTV = view.findViewById(R.id.productsNum)
         searchEditText = view.findViewById(R.id.searchEditText)
         searchBtn = view.findViewById(R.id.searchBtn)
+        cartBtn = view.findViewById(R.id.cartBtn)
 
-        setupProductList()
+        productList = ArrayList()
+
+
         setupRecyclerView()
+        fetchProductList()
 
         filterTextViews = listOf(
             view.findViewById(R.id.filter_all),
@@ -59,70 +114,40 @@ class WishlistFragment : Fragment(), WishlistAdapter.ProductCountListener {
 
         setupFilterClickListeners()
         setupSearchFunctionality()
-    }
 
-    private fun setupProductList() {
-        productList = ArrayList()
-        productList.addAll(
-            listOf(
-                ProductTemp(
-                    id = 1,
-                    name = "Nike Air Max 270",
-                    price = 812000.0,
-                    imageUrl = "https://myshoes.vn/image/cache/catalog/2024/adidas/ad5/giay-adidas-eq21-nu-trang-tim-01-800x800.jpg",
-                    rating = 4.8f,
-                    soldCount = 805,
-                    salePercentage = "20%",
-                    category = "Nike"
-                ),
-                ProductTemp(
-                    id = 2,
-                    name = "Adidas Ultraboost Light",
-                    price = 3500000.0,
-                    imageUrl = "https://myshoes.vn/image/cache/catalog/2024/adidas/ad5/giay-adidas-grand-court-base-2-nam-xam-01-800x800.jpg",
-                    rating = 4.7f,
-                    soldCount = 345,
-                    salePercentage = "20%",
-                    category = "Adidas"
-                ),
-                ProductTemp(
-                    id = 3,
-                    name = "Nike Air Zoom Pegasus 40",
-                    price = 3200000.0,
-                    imageUrl = "https://cdn.vuahanghieu.com/unsafe/0x900/left/top/smart/filters:quality(90)/https://admin.vuahanghieu.com/upload/product/2022/12/gia-y-the-thao-reebok-sole-fury-se-dv6923-ma-u-tra-ng-size-36-63a95bbc52f23-26122022153052.jpg",
-                    rating = 4.6f,
-                    soldCount = 512,
-                    salePercentage = "15%",
-                    category = "Nike"
-                ),
-                ProductTemp(
-                    id = 4,
-                    name = "Adidas EQ21 Nữ - Trắng Tím",
-                    price = 950000.0,
-                    imageUrl = "https://myshoes.vn/image/cache/catalog/2024/nike/nk8/giay-nike-air-max-sc-nu-trang-tim-01-800x800.jpg",
-                    rating = 4.5f,
-                    soldCount = 320,
-                    salePercentage = "25%",
-                    category = "Adidas"
-                ),
-                ProductTemp(
-                    id = 5,
-                    name = "Giày Nike Air Max SC Nữ - Trắng Tím",
-                    price = 1120000.0,
-                    imageUrl = "https://myshoes.vn/image/cache/catalog/2024/nike/nk8/giay-nike-air-max-sc-nu-trang-tim-01-800x800.jpg",
-                    rating = 4.6f,
-                    soldCount = 480,
-                    salePercentage = "15%",
-                    category = "Nike"
-                )
-            )
-        )
+        cartBtn.setOnClickListener {
+            val cartFragment = MyCartFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, cartFragment)
+                .addToBackStack(null)
+                .commit()
+        }
+    }
+    private fun fetchProductList() {
+        lifecycleScope.launch {
+            val result =
+                wishlistRepository.getWishlistByUserId(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2")
+            if (result.isSuccess) {
+                val products = result.getOrNull() ?: emptyList()
+                wishlistAdapter.updateData(products)
+                productsNumTV.text = "(${products.size})"
+            } else {
+                val error = result.exceptionOrNull()
+                Log.e("WishlistFragment", "Error fetching products: $error")
+            }
+        }
     }
 
     private fun setupRecyclerView() {
-        wishlistAdapter = WishlistAdapter(requireContext(), productList, this)
+        wishlistAdapter = WishlistAdapter(
+            requireContext(),
+            productList,
+            productCountListener = this,
+            onHeartClickListener = this,
+            onCartClickListener = this
+        )
         recyclerView.adapter = wishlistAdapter
-        productsNumTV.text = "(${productList.size})"
+//        productsNumTV.text = "(${productList.size})"
     }
 
     override fun onProductCountChanged(count: Int) {

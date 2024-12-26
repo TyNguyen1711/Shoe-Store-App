@@ -4,7 +4,7 @@ import com.google.firebase.firestore.DocumentId
 
 class Wishlist (
     @DocumentId
-    val id: String = "",
+    val userId: String = "",
     val products: List<String>,
-    val userId: String = ""
+
 )

@@ -8,8 +8,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.shoestoreapp.activity.IntroActivity
 import com.example.shoestoreapp.activity.NotificationActivity
-import com.example.shoestoreapp.activity.SettingActivity
-import com.example.shoestoreapp.activity.WishlistActivity
 import com.example.shoestoreapp.fragment.AccountFragment
 import com.example.shoestoreapp.fragment.WishlistFragment
 import com.google.firebase.database.ktx.database
