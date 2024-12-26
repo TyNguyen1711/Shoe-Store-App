@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -14,11 +15,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.classes.WishlistAdapter
 import com.example.shoestoreapp.classes.ProductTemp
+import com.example.shoestoreapp.data.repository.ProductRepository
+import com.example.shoestoreapp.data.repository.WishlistRepository
+import kotlinx.coroutines.launch
 
 class WishlistActivity : AppCompatActivity(), WishlistAdapter.ProductCountListener {
     private lateinit var recyclerView: RecyclerView
@@ -28,6 +33,7 @@ class WishlistActivity : AppCompatActivity(), WishlistAdapter.ProductCountListen
     private lateinit var searchEditText: EditText
     private lateinit var searchBtn: Button
     private lateinit var productsNumTV: TextView
+    private val wishlistRepository = WishlistRepository()
     private var isSearchVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +51,19 @@ class WishlistActivity : AppCompatActivity(), WishlistAdapter.ProductCountListen
         recyclerView.layoutManager = GridLayoutManager(this, 2)
 
         productList = ArrayList()
+        Log.d("345", "234")
+        lifecycleScope.launch {
+            Log.d("123", "1234")
+            val result = wishlistRepository.getWishlistByUserId(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2")
+            if (result.isSuccess) {
+                val products = result.getOrNull() ?: emptyList()
+
+                Log.d("tesss", "${products.size} products.")
+            } else {
+                val error = result.exceptionOrNull()
+                Log.e("tesss", "Error: $error")
+            }
+        }
         productList.add(
             ProductTemp(
                 id = 1,

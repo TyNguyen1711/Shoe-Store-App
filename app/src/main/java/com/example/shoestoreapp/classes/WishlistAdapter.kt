@@ -8,15 +8,20 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.data.repository.BrandRepository
+import com.example.shoestoreapp.data.repository.WishlistRepository
+import kotlinx.coroutines.launch
 
 
 class WishlistAdapter(
     private val context: Context,
     private var productList: List<ProductTemp>,
-    private val productCountListener: ProductCountListener? = null
+    private val productCountListener: ProductCountListener? = null,
 ) : RecyclerView.Adapter<WishlistAdapter.WishlistViewHolder>() {
     interface ProductCountListener {
         fun onProductCountChanged(count: Int)
@@ -24,7 +29,7 @@ class WishlistAdapter(
     private val originalProductList = productList.toList()
     private var currentCategory: String = "All"
     private var currentSearchQuery: String = ""
-
+    private val brandRepository = BrandRepository()
     inner class WishlistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 //        val heartBtn: ImageButton = itemView.findViewById(R.id.heartBtn)
 //        val cartBtn: ImageButton = itemView.findViewById(R.id.cartBtn)

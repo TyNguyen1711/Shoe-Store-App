@@ -16,7 +16,6 @@ class ProductRepository(
     suspend fun createProductWithNames(
         product: Product,
         categoryName: String,
-        brandName: String
     ): Result<Product> = runCatching {
         val categorySnapshot = categoriesCollection
             .whereEqualTo("name", categoryName)
@@ -25,16 +24,9 @@ class ProductRepository(
         val categoryId = categorySnapshot.documents.firstOrNull()?.id
             ?: throw Exception("Category not found: $categoryName")
 
-        val brandSnapshot = brandsCollection
-            .whereEqualTo("name", brandName)
-            .get()
-            .await()
-        val brandId = brandSnapshot.documents.firstOrNull()?.id
-            ?: throw Exception("Brand not found: $brandName")
 
         val productToCreate = product.copy(
             categoryId = categoryId,
-            brandId = brandId
         )
 
         val documentReference = productsCollection.add(productToCreate).await()
