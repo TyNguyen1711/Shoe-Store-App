@@ -20,7 +20,6 @@ class CartAdapter(
     private val userId: String,
     private val onIncrease: (CartItem) -> Unit,
     private val onDecrease: (CartItem) -> Unit,
-    private val onRemove: (CartItem) -> Unit,
     private val onCheckedChange: (Int, Boolean) -> Unit,
     private var images: List<String>,
     private var prices: List<Double>,
@@ -49,8 +48,10 @@ class CartAdapter(
             // Đặt lại trạng thái CheckBox
             checkBox.setOnCheckedChangeListener(null) // Xóa listener trước khi cập nhật
             checkBox.isChecked = product.isChecked
+            var pos = 0
             checkBox.setOnCheckedChangeListener { _, isChecked ->
                 val position = bindingAdapterPosition
+                pos = position
                 if (position != RecyclerView.NO_POSITION) {
                     onCheckedChange(position, isChecked)
                 }
@@ -61,12 +62,17 @@ class CartAdapter(
                 notifyItemChanged(adapterPosition)
                 onIncrease(product)
             }
+
             decreaseButton.setOnClickListener {
-                if (product.quantity > 1) {
-                    notifyItemChanged(adapterPosition)
-                    onDecrease(product)
-                } else {
-                    onRemove(product)
+                notifyItemChanged(adapterPosition)
+                onDecrease(product)
+                if (product.quantity <= 1) {
+                    var mutableList = images.toMutableList() // Chuyển thành MutableList
+                    mutableList.removeAt(pos) // Xóa phần tử tại vị trí idx
+                    mutableList = names.toMutableList() // Chuyển thành MutableList
+                    mutableList.removeAt(pos)
+                    val pricesMutableList: MutableList<Double> = prices.toMutableList()
+                    pricesMutableList.removeAt(pos)
                 }
             }
         }
@@ -135,49 +141,5 @@ class CartAdapter(
         updateData(updatedCartItems)
     }
 
-    fun onIncrease(product: CartItem) {
-        val updatedQuantity = product.quantity + 1  // Tăng số lượng
-        // Cập nhật vào Firestore, chỉ cập nhật trường "quantity"
-        FirebaseFirestore.getInstance()
-            .collection("carts")
-            .document(userId)
-            .collection("products")
-            .document(product.productId.toString())
-            .update("quantity", updatedQuantity)  // Cập nhật trường quantity
-            .addOnSuccessListener {
-                // Cập nhật lại dữ liệu trong adapter sau khi thành công
-                val updatedCartItems = products.map {
-                    if (it.productId == product.productId) it.copy(quantity = updatedQuantity) else it
-                }
-                updateData(updatedCartItems)
-            }
-            .addOnFailureListener { exception ->
-                Log.e("FirestoreError", "Error updating product: ${exception.message}")
-            }
-    }
-
-    fun onDecrease(product: CartItem) {
-        if (product.quantity > 1) {
-            val updatedQuantity = product.quantity - 1  // Giảm số lượng
-            // Cập nhật vào Firestore, chỉ cập nhật trường "quantity"
-            FirebaseFirestore.getInstance()
-                .collection("carts")
-                .document(userId)
-                .collection("products")
-                .document(product.productId)
-                .update("quantity", updatedQuantity)  // Cập nhật trường quantity
-                .addOnSuccessListener {
-                    // Cập nhật lại dữ liệu trong adapter sau khi thành công
-                    val updatedCartItems = products.map {
-                        if (it.productId == product.productId) it.copy(quantity = updatedQuantity) else it
-                    }
-                    updateData(updatedCartItems)
-                }
-        } else {
-            // Nếu số lượng <= 1, xóa sản phẩm
-            images
-            onRemove(product)
-        }
-    }
 }
 
