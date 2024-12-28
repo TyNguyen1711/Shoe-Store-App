@@ -1,110 +1,106 @@
 package com.example.shoestoreapp.fragment
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.example.shoestoreapp.R
-import com.example.shoestoreapp.activity.ProductDetailActivity
 import com.example.shoestoreapp.adapter.ProductItemAdapter
 import com.example.shoestoreapp.adapter.SliderAdapter
-import com.example.shoestoreapp.classes.Product
-import com.example.shoestoreapp.data.repository.ProductRepository
-import com.google.firebase.database.*
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.example.shoestoreapp.data.model.Product
+import com.example.shoestoreapp.data.repository.BestSellingRepository
+import com.example.shoestoreapp.data.repository.ExclusiveOfferRepository
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(), ProductItemAdapter.OnProductClickListener {
-    private lateinit var exclusiveOfferAdapter: ProductItemAdapter
+    private val exclusiveOfferRepository = ExclusiveOfferRepository()
+    private val bestSellingRepository = BestSellingRepository()
+
+    private lateinit var exclusiveAdapter: ProductItemAdapter
     private lateinit var bestSellingAdapter: ProductItemAdapter
+    private var exclusiveProducts = mutableListOf<Product>()
+    private val bestSellingProducts = mutableListOf<Product>()
 
-    private var exclusiveOfferList = mutableListOf<Product>()
-    private var bestSellingList = mutableListOf<Product>()
+    private lateinit var viewPagerSlider: ViewPager2
+    private lateinit var dotsIndicator: DotsIndicator
+    private lateinit var sliderAdapter: SliderAdapter
 
-    private val db = FirebaseFirestore.getInstance()
+    private val sliderImages = listOf(
+        R.drawable.slider_image1,
+        R.drawable.slider_image2,
+        R.drawable.slider_image3
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-        setupRecyclerViews(view)
-        loadDataFromFirestore()
+
+        // Setup Slider
+        viewPagerSlider = view.findViewById(R.id.viewPageSlider)
+        dotsIndicator = view.findViewById(R.id.dots_indicator)
+        sliderAdapter = SliderAdapter(sliderImages)
+        viewPagerSlider.adapter = sliderAdapter
+        dotsIndicator.setViewPager2(viewPagerSlider)
+
+        // Setup RecyclerView for Exclusive Offers
+        val exclusiveRecyclerView: RecyclerView = view.findViewById(R.id.exclusiveOfferRV)
+        exclusiveAdapter = ProductItemAdapter(exclusiveProducts, this, viewLifecycleOwner)
+        exclusiveRecyclerView.adapter = exclusiveAdapter
+        exclusiveRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
+        // Setup RecyclerView for Best Selling
+        val bestSellingRecyclerView: RecyclerView = view.findViewById(R.id.bestSellingRV)
+        bestSellingAdapter = ProductItemAdapter(bestSellingProducts, this, viewLifecycleOwner)
+        bestSellingRecyclerView.adapter = bestSellingAdapter
+        bestSellingRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
+        // Load data
+        // loadExclusiveOfferProducts()
+        // loadBestSellingProducts()
+
+        lifecycleScope.launch {
+            val result = exclusiveOfferRepository.getAllProducts()
+            // Sử dụng CoroutineScope để xử lý các hàm suspend
+            result.onSuccess { items ->
+                exclusiveProducts.clear()
+                exclusiveProducts.addAll(items)
+                exclusiveAdapter.notifyDataSetChanged()
+            }.onFailure { error ->
+                // Xử lý lỗi nếu không lấy được danh sách giỏ hàng
+                println("Failed to fetch exclusive offer items: ${error.message}")
+            }
+        }
+
+        lifecycleScope.launch {
+            val result = bestSellingRepository.getAllProducts()
+            // Sử dụng CoroutineScope để xử lý các hàm suspend
+
+            result.onSuccess { items ->
+                bestSellingProducts.clear()
+                bestSellingProducts.addAll(items)
+                bestSellingAdapter.notifyDataSetChanged()
+            }.onFailure { error ->
+                // Xử lý lỗi nếu không lấy được danh sách giỏ hàng
+                println("Failed to fetch best selling items: ${error.message}")
+            }
+        }
+
         return view
     }
 
-    private fun setupRecyclerViews(view: View) {
-        val exclusiveOfferRecyclerView: RecyclerView = view.findViewById(R.id.exclusiveOfferRV)
-        val bestSellingRecyclerView: RecyclerView = view.findViewById(R.id.bestSellingRV)
-
-        exclusiveOfferAdapter = ProductItemAdapter(exclusiveOfferList, this)
-        bestSellingAdapter = ProductItemAdapter(bestSellingList, this)
-
-        exclusiveOfferRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        bestSellingRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-
-        exclusiveOfferRecyclerView.adapter = exclusiveOfferAdapter
-        bestSellingRecyclerView.adapter = bestSellingAdapter
-    }
-
-    private fun loadDataFromFirestore() {
-        // Lấy danh sách exclusive offer
-        db.collection("products")
-            .document("BS")
-            .collection("best selling")
-            .get()
-            .addOnSuccessListener { result ->
-                exclusiveOfferList.clear()
-                for (document in result) {
-                    val product = document.toObject(Product::class.java)
-                    exclusiveOfferList.add(product)
-                    Log.d(TAG, "${document.id} => ${document.data}")
-                }
-                exclusiveOfferAdapter.notifyDataSetChanged()
-            }
-
-        // Lấy danh sách best selling
-        db.collection("products")
-            .document("BS")
-            .collection("best selling")
-            .get()
-            .addOnSuccessListener { result ->
-                Log.d("Result Size", "Size: ${result.size()}")
-                for (document in result) {
-                    Log.d("Document", "${document.id} => ${document.data}")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore Error", "Error fetching documents", exception)
-            }
-
-
-
-        db.collection("products")
-            .get()
-            .addOnSuccessListener { result ->
-                Log.d("Firestore Test Size", "Documents found: ${result.size()}")
-                for (document in result) {
-                    Log.d("Firestore Test", "${document.id} => ${document.data}")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore Test Error", "Error fetching documents", exception)
-            }
-    }
-
     override fun onProductClick(productId: String) {
+
         Toast.makeText(requireContext(), "Clicked Product: $productId", Toast.LENGTH_SHORT).show()
     }
 

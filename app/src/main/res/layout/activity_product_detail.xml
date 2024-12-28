@@ -151,7 +151,7 @@
                             android:backgroundTint="@color/login_activity_text" />
 
                         <EditText
-                            android:id="@+id/itemQuanEt"
+                            android:id="@+id/itemQuanET"
                             android:layout_width="64dp"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"

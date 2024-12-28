@@ -13,9 +13,8 @@ data class Product(
     @field:PropertyName("categoryId")
     val categoryId: String = "",
 
-    @field:PropertyName("brandId")
-    val brandId: String = "",
-
+    @field:PropertyName("brand")
+    val brand: String = "",
     val price: Double = 0.0,
     val discountPrice: Double? = null,
     val images: List<String> = emptyList(),
@@ -31,14 +30,13 @@ data class Product(
             "description" to description,
             "price" to price,
             "images" to images,
-            "brandId" to brandId,
+            "brand" to brand,
             "discountPrice" to discountPrice,
             "averageRating" to averageRating,
             "reviewCount" to reviewCount,
             "thumbnail" to thumbnail,
-            "brandId" to brandId,
             "categoryId" to categoryId,
-            "variants" to variants?.map { it.toMap() } // Chuyển danh sách variant thành map
+            "variants" to variants.map { it.toMap() } // Chuyển danh sách variant thành map
         ).filterValues { it != null } // Bỏ qua các giá trị null
     }
 }

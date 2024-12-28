@@ -4,6 +4,7 @@ import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -34,10 +35,11 @@ class ProductDetailActivity : AppCompatActivity() {
         readDataFromFirebase(documentId!!)
 
         val backBtn = findViewById<Button>(R.id.backBtn)
-
         backBtn!!.setOnClickListener() {
             finish()
         }
+
+        updateQuantity()
     }
 
     private fun readDataFromFirebase(documentId: String) {
@@ -76,5 +78,23 @@ class ProductDetailActivity : AppCompatActivity() {
 
         // Kết nối DotsIndicator với ViewPager2
         dotsIndicator.setViewPager2(viewPageSlider)
+    }
+
+    private fun updateQuantity() {
+        val removeBtn = findViewById<Button>(R.id.removeBtn)
+        val addBtn = findViewById<Button>(R.id.addBtn)
+        val itemQuanET = findViewById<EditText>(R.id.itemQuanET)
+
+        var itemQuantity = itemQuanET.text.toString().toInt()
+
+        removeBtn!!.setOnClickListener() {
+            itemQuantity -= 1
+        }
+
+        addBtn!!.setOnClickListener() {
+            itemQuantity += 1
+        }
+
+        itemQuanET.setText(itemQuantity.toString())
     }
 }
