@@ -11,9 +11,24 @@ import kotlinx.coroutines.tasks.await
 
 class WishListRepository(private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()) {
     private val productsCollection: CollectionReference = firestore.collection("products")
-    private val usersCollection: CollectionReference = firestore.collection("users")
     private val wishlistsCollection: CollectionReference = firestore.collection("wishlists")
-    private val brandsCollection: CollectionReference = firestore.collection("brands")
+    suspend fun getUserWishlist(userId: String): Result<Wishlist> = runCatching {
+        val document = wishlistsCollection.document(userId).get().await()
+        document.toObject(Wishlist::class.java)?: throw Exception("Product not found")
+    }
+
+    suspend fun updateUserWishlist(wishlist: Wishlist): Result<Unit> = runCatching {
+        wishlistsCollection.document(wishlist.userId).set(wishlist).await()
+    }
+
+    suspend fun deleteUserWishlist(userId: String): Result<Unit> = runCatching {
+        wishlistsCollection.document(userId).delete().await()
+    }
+
+    suspend fun addUserWishlist(wishlist: Wishlist): Result<Unit> = runCatching {
+        wishlistsCollection.add(wishlist).await()
+    }
+
     suspend fun addToWishlist(userId: String, productId: String): Result<Unit> {
         return try {
             val wishlistDocRef = wishlistsCollection.document(userId)
@@ -97,22 +112,5 @@ class WishListRepository(private val firestore: FirebaseFirestore = FirebaseFire
             Result.failure(e)
         }
     }
-    suspend fun getUserWishlist(userId: String): Result<Wishlist> = runCatching {
-        val document = wishlistsCollection.document(userId).get().await()
-        document.toObject(Wishlist::class.java)?: throw Exception("Product not found")
-    }
-
-    suspend fun updateUserWishlist(wishlist: Wishlist): Result<Unit> = runCatching {
-        wishlistsCollection.document(wishlist.userId).set(wishlist).await()
-    }
-
-    suspend fun deleteUserWishlist(userId: String): Result<Unit> = runCatching {
-        wishlistsCollection.document(userId).delete().await()
-    }
-
-    suspend fun addUserWishlist(wishlist: Wishlist): Result<Unit> = runCatching {
-        wishlistsCollection.add(wishlist).await()
-    }
-
 
 }
