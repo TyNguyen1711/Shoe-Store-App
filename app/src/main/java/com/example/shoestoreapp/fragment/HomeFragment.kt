@@ -13,11 +13,18 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.ProductItemAdapter
 import com.example.shoestoreapp.adapter.SliderAdapter
+import com.example.shoestoreapp.data.model.CartItem
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.repository.BestSellingRepository
+import com.example.shoestoreapp.data.repository.CartRepository
 import com.example.shoestoreapp.data.repository.ExclusiveOfferRepository
+import com.example.shoestoreapp.data.repository.ProductRepository
+import com.google.firebase.firestore.FirebaseFirestore
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment(), ProductItemAdapter.OnProductClickListener {
     private val exclusiveOfferRepository = ExclusiveOfferRepository()
@@ -43,7 +50,7 @@ class HomeFragment : Fragment(), ProductItemAdapter.OnProductClickListener {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-
+        val firestore = FirebaseFirestore.getInstance()
         // Setup Slider
         viewPagerSlider = view.findViewById(R.id.viewPageSlider)
         dotsIndicator = view.findViewById(R.id.dots_indicator)
@@ -93,6 +100,55 @@ class HomeFragment : Fragment(), ProductItemAdapter.OnProductClickListener {
                 println("Failed to fetch best selling items: ${error.message}")
             }
         }
+
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val sampleCartItems = listOf(
+//                CartItem(
+//                    productId = "39QYpPN3fr9Pyw1xbezv",
+//                    size = "42",
+//                    quantity = 2,
+//                ),
+//                CartItem(
+//                    productId = "4MsGcOqztbvAa8MW88oe",
+//                    size = "40",
+//                    quantity = 1,
+//                ),
+//                CartItem(
+//                    productId = "6BUWKsQLaj4mQC1F2IZa",
+//                    size = "38.5",
+//                    quantity = 3,
+//                ),
+//                CartItem(
+//                    productId = "FFHg5HJTo5FTwtaBHteB",
+//                    size = "39",
+//                    quantity = 5,
+//                )
+//            )
+//            sampleCartItems.forEach { product ->
+//                val result = CartRepository(firestore).addProductToCart("example_user_id", product)
+//                result.fold(
+//                    onSuccess = {
+//                        println("Sản phẩm ${product.productId} đã thêm thành công!")
+//                    },
+//                    onFailure = { exception ->
+//                        println("Lỗi khi thêm sản phẩm ${product.productId}: ${exception.message}")
+//                    }
+//                )
+//            }
+//            val result = ProductRepository(firestore).getAllProducts()
+//            result.onSuccess { items ->
+//                println(items)
+//            }.onFailure { error ->
+//                // Xử lý lỗi nếu không lấy được danh sách giỏ hàng
+//                println("Failed to fetch cart items: ${error.message}")
+//            }
+//
+//
+//            // Chuyển về Main thread để cập nhật UI nếu cần
+//            withContext(Dispatchers.Main) {
+//
+//            }
+//        }
 
         return view
     }
