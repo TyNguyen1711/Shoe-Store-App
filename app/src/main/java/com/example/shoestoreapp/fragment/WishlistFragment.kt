@@ -17,10 +17,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.WishlistAdapter
-import com.example.shoestoreapp.data.model.CartItem
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.repository.CartRepository
-import com.example.shoestoreapp.data.repository.WishlistRepository
+import com.example.shoestoreapp.data.repository.WishListRepository
 import kotlinx.coroutines.launch
 
 
@@ -36,7 +35,7 @@ class WishlistFragment : Fragment(), WishlistAdapter.ProductCountListener,
     private lateinit var productsNumTV: TextView
     private lateinit var cartBtn: Button
     private var isSearchVisible = false
-    private val wishlistRepository = WishlistRepository()
+    private val wishlistRepository = WishListRepository()
     private val cartRepository = CartRepository()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -147,7 +146,6 @@ class WishlistFragment : Fragment(), WishlistAdapter.ProductCountListener,
             onCartClickListener = this
         )
         recyclerView.adapter = wishlistAdapter
-//        productsNumTV.text = "(${productList.size})"
     }
 
     override fun onProductCountChanged(count: Int) {

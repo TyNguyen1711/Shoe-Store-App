@@ -5,7 +5,7 @@ import com.google.firebase.firestore.DocumentId
 data class Wishlist (
     @DocumentId
     val userId: String = "",
-    val products: List<String>?
+    val products: MutableList<String>?
 ) {
     fun toMap(): Map<String, Any?> {
         return mapOf(
