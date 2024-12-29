@@ -13,7 +13,7 @@ import com.example.shoestoreapp.R
 import com.example.shoestoreapp.activity.ProductDetailActivity
 import com.example.shoestoreapp.adapter.ProductItemAdapter
 import com.example.shoestoreapp.adapter.SliderAdapter
-import com.example.shoestoreapp.classes.Product
+import com.example.shoestoreapp.data.Product
 import com.google.firebase.database.*
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 

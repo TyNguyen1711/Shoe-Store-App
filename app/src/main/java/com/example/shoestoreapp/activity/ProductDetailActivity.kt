@@ -11,7 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.ImageSliderAdapter
-import com.example.shoestoreapp.classes.Product
+import com.example.shoestoreapp.data.Product
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator

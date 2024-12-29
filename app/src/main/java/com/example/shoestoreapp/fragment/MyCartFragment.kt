@@ -83,6 +83,7 @@ class MyCartFragment : Fragment() {
                 // Chuyển qua PayActivity và truyền danh sách ID sản phẩm đã chọn
                 val intent = Intent(requireContext(), PayActivity::class.java).apply {
                     putStringArrayListExtra("selectedProductIds", ArrayList(selectedProductIds))
+                    putExtra("userId", userId)
                 }
                 startActivity(intent)
             }

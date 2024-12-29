@@ -9,6 +9,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.data.Product
 
 class RecommendProductAdapter(
     private val productList: List<Product>,

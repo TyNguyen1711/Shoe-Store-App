@@ -14,7 +14,7 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/productImage"
+            android:id="@+id/productImageCheckoutIV"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:scaleType="centerCrop"
@@ -24,7 +24,7 @@
 
 
         <TextView
-            android:id="@+id/fullNameTV"
+            android:id="@+id/nameProductCheckoutTV"
             android:layout_width="0dp"
             android:layout_height="24dp"
             android:layout_marginStart="8dp"
@@ -34,23 +34,23 @@
             android:text="Testing product's name that is really long and might need truncating..."
             android:textColor="@color/black"
             android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@+id/productImage"
+            app:layout_constraintStart_toEndOf="@+id/productImageCheckoutIV"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/productImage"
+            app:layout_constraintTop_toTopOf="@+id/productImageCheckoutIV"
             tools:layout_editor_absoluteY="39dp"
             android:layout_marginEnd="8sp"
             />
 
         <TextView
-            android:id="@+id/sizeProductTV"
+            android:id="@+id/sizeProductCheckoutTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Colors"
             android:textColor="@color/black"
             android:textSize="12sp"
             android:background="#FFF9C4"
-            app:layout_constraintTop_toBottomOf="@+id/fullNameTV"
-            app:layout_constraintStart_toStartOf="@+id/fullNameTV"
+            app:layout_constraintTop_toBottomOf="@+id/nameProductCheckoutTV"
+            app:layout_constraintStart_toStartOf="@+id/nameProductCheckoutTV"
             tools:ignore="HardcodedText" />
 
         <TextView
@@ -65,14 +65,14 @@
             android:padding="5dp"/>
 
         <TextView
-            android:id="@+id/costTV"
+            android:id="@+id/costProductCheckoutTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="812.000đ"
             android:textColor="@color/black"
             android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="@+id/fullNameTV"
-            app:layout_constraintBottom_toBottomOf="@+id/productImage"
+            app:layout_constraintStart_toStartOf="@+id/nameProductCheckoutTV"
+            app:layout_constraintBottom_toBottomOf="@+id/productImageCheckoutIV"
             android:layout_marginBottom="2sp"
             tools:ignore="HardcodedText" />
 

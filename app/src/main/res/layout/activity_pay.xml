@@ -48,8 +48,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tiltleTV">
 
-        <!-- Nội dung của Address -->
-        <!-- Icon chỉnh sửa -->
         <ImageView
             android:id="@+id/baselineEditLocationIV"
             android:layout_width="wrap_content"
@@ -60,7 +58,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:tint="#ED2C2C" />
 
-        <!-- Tên người đặt hàng -->
         <TextView
             android:id="@+id/nameOrdererTV"
             android:layout_width="wrap_content"
@@ -72,7 +69,6 @@
             app:layout_constraintStart_toEndOf="@+id/baselineEditLocationIV"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Số điện thoại -->
         <TextView
             android:id="@+id/sdtPayTV"
             android:layout_width="wrap_content"
@@ -82,7 +78,6 @@
             app:layout_constraintStart_toEndOf="@id/nameOrdererTV"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Địa chỉ chi tiết -->
         <TextView
             android:id="@+id/addressDetailTV"
             android:layout_width="0dp"
@@ -94,7 +89,6 @@
             app:layout_constraintStart_toEndOf="@id/baselineEditLocationIV"
             app:layout_constraintTop_toBottomOf="@id/nameOrdererTV" />
 
-        <!-- Icon mũi tên bên phải -->
         <ImageView
             android:id="@+id/arrowIcon"
             android:layout_width="wrap_content"
@@ -113,14 +107,12 @@
         android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/address_section"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="5dp">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp"
             android:background="@color/gray_300">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -135,7 +127,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_corner"
-                android:padding="16dp"
+                android:padding="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/listProductPayLV"
