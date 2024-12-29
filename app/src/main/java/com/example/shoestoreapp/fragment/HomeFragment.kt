@@ -17,8 +17,6 @@ import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.repository.BestSellingRepository
 import com.example.shoestoreapp.data.repository.ExclusiveOfferRepository
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(), ProductItemAdapter.OnProductClickListener {
