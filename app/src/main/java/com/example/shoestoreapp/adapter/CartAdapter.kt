@@ -1,6 +1,5 @@
 package com.example.shoestoreapp.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.data.model.CartItem
-import com.google.firebase.firestore.FirebaseFirestore
 
 class CartAdapter(
     private var products: List<CartItem>,

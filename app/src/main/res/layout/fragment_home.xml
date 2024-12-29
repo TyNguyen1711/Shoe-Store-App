@@ -26,19 +26,6 @@
             android:layout_marginTop="16dp"
             app:srcCompat="@drawable/ic_launcher_background" />
 
-        <AutoCompleteTextView
-            android:id="@+id/searchET"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/roundstyle"
-            android:backgroundTint="@color/search_bar"
-            android:drawableLeft="@drawable/search"
-            android:hint="       Search"
-            android:paddingStart="15dp" />
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -93,6 +80,73 @@
                         app:selectedDotColor="@color/login_button" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/brandTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Brand"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_marginTop='8dp'
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center">
+
+                        <!-- Các view cần cuộn theo chiều ngang -->
+                        <TextView
+                            android:layout_width="80dp"
+                            android:gravity="center"
+                            android:textSize="16sp"
+                            android:layout_height="wrap_content"
+                            android:text="All"
+                            android:layout_marginEnd="20dp"/>
+                        <TextView
+                            android:layout_width="80dp"
+                            android:gravity="center"
+                            android:textSize="16sp"
+                            android:layout_height="wrap_content"
+                            android:text="Status"
+                            android:layout_marginEnd="20dp"/>
+                        <TextView
+                            android:layout_width="80dp"
+                            android:gravity="center"
+                            android:textSize="16sp"
+                            android:layout_height="wrap_content"
+                            android:text="Brand"
+                            android:layout_marginEnd="20dp"/>
+                        <TextView
+                            android:layout_width="80dp"
+                            android:gravity="center"
+                            android:textSize="16sp"
+                            android:layout_height="wrap_content"
+                            android:text="Item 2"
+                            android:layout_marginEnd="12dp"/>
+                        <!-- Thêm nhiều phần tử theo chiều ngang ở đây -->
+
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:layout_height="24dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"/>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -158,7 +212,7 @@
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/bestSellingRC"
+                    android:id="@+id/bestSellingRV"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
