@@ -12,11 +12,11 @@ class ProductRepository(
 ) {
     private val productsCollection: CollectionReference = firestore.collection("products")
     private val categoriesCollection: CollectionReference = firestore.collection("categories")
+    private val brandsCollection: CollectionReference = firestore.collection("brands")
 
     suspend fun createProductWithNames(
         product: Product,
         categoryName: String,
-        brandName: String
     ): Result<Product> = runCatching {
         val categorySnapshot = categoriesCollection
             .whereEqualTo("name", categoryName)
@@ -25,9 +25,9 @@ class ProductRepository(
         val categoryId = categorySnapshot.documents.firstOrNull()?.id
             ?: throw Exception("Category not found: $categoryName")
 
+
         val productToCreate = product.copy(
             categoryId = categoryId,
-            brand = brandName
         )
 
         val documentReference = productsCollection.add(productToCreate).await()
@@ -123,4 +123,6 @@ class ProductRepository(
             .await()
         snapshot.toObjects(Product::class.java)
     }
+
+
 }
