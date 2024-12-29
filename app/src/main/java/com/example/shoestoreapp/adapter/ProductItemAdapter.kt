@@ -8,7 +8,7 @@
     import androidx.recyclerview.widget.RecyclerView
     import com.bumptech.glide.Glide
     import com.example.shoestoreapp.R
-    import com.example.shoestoreapp.data.Product
+    import com.example.shoestoreapp.data.model.Product
 
     class ProductItemAdapter(
         private val productList: List<Product>,

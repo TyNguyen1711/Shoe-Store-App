@@ -13,7 +13,7 @@ import com.example.shoestoreapp.R
 import com.example.shoestoreapp.activity.ProductDetailActivity
 import com.example.shoestoreapp.adapter.ProductItemAdapter
 import com.example.shoestoreapp.adapter.SliderAdapter
-import com.example.shoestoreapp.data.Product
+import com.example.shoestoreapp.data.model.Product
 import com.google.firebase.database.*
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 
@@ -61,7 +61,7 @@ class HomeFragment : Fragment(), ProductItemAdapter.OnProductClickListener {
         exclusiveRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         // Setup RecyclerView for Best Selling
-        val bestSellingRecyclerView: RecyclerView = view.findViewById(R.id.bestSellingRC)
+        val bestSellingRecyclerView: RecyclerView = view.findViewById(R.id.bestSellingRV)
         bestSellingAdapter = ProductItemAdapter(bestSellingProducts, this)
         bestSellingRecyclerView.adapter = bestSellingAdapter
         bestSellingRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)

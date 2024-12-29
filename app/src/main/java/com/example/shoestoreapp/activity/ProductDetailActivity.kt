@@ -11,7 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.ImageSliderAdapter
-import com.example.shoestoreapp.data.Product
+import com.example.shoestoreapp.data.model.Product
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
@@ -62,7 +62,7 @@ class ProductDetailActivity : AppCompatActivity() {
         productTitleTV.text = product.name
         priceTV.text = product.price?.toString() ?: "0"
         productDescriptionTV.text = product.description
-        ratingStar.rating = product.averageRating ?: 0f
+        ratingStar.rating = (product.averageRating ?: 0f).toFloat()
 
         // Cài đặt ViewPager2 với Adapter
         val adapter = ImageSliderAdapter(product.images ?: emptyList())
