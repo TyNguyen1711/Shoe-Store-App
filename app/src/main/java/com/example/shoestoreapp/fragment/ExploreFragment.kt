@@ -13,9 +13,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
-import com.example.shoestoreapp.classes.Product
+import com.example.shoestoreapp.data.Product
 import com.example.shoestoreapp.classes.RecommendProductAdapter
-import com.example.shoestoreapp.classes.Variant
+import com.example.shoestoreapp.data.Variant
 
 class ExploreFragment : Fragment() {
 

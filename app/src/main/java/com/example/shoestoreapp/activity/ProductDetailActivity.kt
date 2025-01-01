@@ -1,10 +1,7 @@
 package com.example.shoestoreapp.activity
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -15,14 +12,16 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.ImageSliderAdapter
 import com.example.shoestoreapp.data.model.Product
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 
 class ProductDetailActivity : AppCompatActivity() {
-    private val db = Firebase.firestore
+    private lateinit var database: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        database = FirebaseDatabase.getInstance().getReference("products")
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_product_detail)
@@ -31,31 +30,24 @@ class ProductDetailActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val documentId = intent.getStringExtra("DOCUMENT ID")
-        readDataFromFirebase(documentId!!)
-
-        val backBtn = findViewById<Button>(R.id.backBtn)
-        backBtn!!.setOnClickListener() {
-            finish()
-        }
-
-        updateQuantity()
+        val productId = intent.getStringExtra("PRODUCT_ID")
+        readDataFromFirebase(productId!!.toInt())
     }
 
-    private fun readDataFromFirebase(documentId: String) {
-        db.collection("products")
-            .document(documentId)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    updateUI(document.toObject(Product::class.java)!!)
-                } else {
-                    Log.d(TAG, "No such document")
+    private fun readDataFromFirebase(productId: Int) {
+        database.child(productId.toString()).get().addOnSuccessListener { snapshot ->
+            if (snapshot.exists()) {
+                val product = snapshot.getValue(Product::class.java)
+                product?.let {
+                    Log.d("ProductData", "Name: ${it.name}, Price: ${it.price}")
+                    updateUI(product)
                 }
+            } else {
+                Log.e("ProductData", "Product with id $productId not found")
             }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "get failed with ", exception)
-            }
+        }.addOnFailureListener { error ->
+            Log.e("FirebaseError", "Error: ${error.message}")
+        }
     }
 
     private fun updateUI(product: Product) {
@@ -78,23 +70,5 @@ class ProductDetailActivity : AppCompatActivity() {
 
         // Kết nối DotsIndicator với ViewPager2
         dotsIndicator.setViewPager2(viewPageSlider)
-    }
-
-    private fun updateQuantity() {
-        val removeBtn = findViewById<Button>(R.id.removeBtn)
-        val addBtn = findViewById<Button>(R.id.addBtn)
-        val itemQuanET = findViewById<EditText>(R.id.itemQuanET)
-
-        var itemQuantity = itemQuanET.text.toString().toInt()
-
-        removeBtn!!.setOnClickListener() {
-            itemQuantity -= 1
-        }
-
-        addBtn!!.setOnClickListener() {
-            itemQuantity += 1
-        }
-
-        itemQuanET.setText(itemQuantity.toString())
     }
 }

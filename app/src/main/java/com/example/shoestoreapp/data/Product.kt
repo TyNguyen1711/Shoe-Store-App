@@ -1,4 +1,4 @@
-package com.example.shoestoreapp.classes
+package com.example.shoestoreapp.data
 
 data class Product(
     var id: Int? = null,
