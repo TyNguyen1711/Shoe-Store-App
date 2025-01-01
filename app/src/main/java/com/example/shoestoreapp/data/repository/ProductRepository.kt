@@ -1,6 +1,7 @@
 package com.example.shoestoreapp.data.repository
 
 import com.example.shoestoreapp.data.model.Product
+import com.example.shoestoreapp.data.model.ProductVariant
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import com.google.firebase.firestore.CollectionReference
@@ -11,11 +12,11 @@ class ProductRepository(
 ) {
     private val productsCollection: CollectionReference = firestore.collection("products")
     private val categoriesCollection: CollectionReference = firestore.collection("categories")
+    private val brandsCollection: CollectionReference = firestore.collection("brands")
 
     suspend fun createProductWithNames(
         product: Product,
         categoryName: String,
-        brandName: String
     ): Result<Product> = runCatching {
         val categorySnapshot = categoriesCollection
             .whereEqualTo("name", categoryName)
@@ -24,9 +25,9 @@ class ProductRepository(
         val categoryId = categorySnapshot.documents.firstOrNull()?.id
             ?: throw Exception("Category not found: $categoryName")
 
+
         val productToCreate = product.copy(
             categoryId = categoryId,
-            brand = brandName
         )
 
         val documentReference = productsCollection.add(productToCreate).await()
@@ -35,12 +36,58 @@ class ProductRepository(
 
     suspend fun getProduct(id: String): Result<Product> = runCatching {
         val document = productsCollection.document(id).get().await()
-        document.toObject(Product::class.java) ?: throw Exception("Product not found")
+        val documentData = document.data ?: throw Exception("Product not found")
+        // Lấy danh sách variants và ánh xạ từng phần tử
+        val variants = (documentData["variants"] as? List<Map<String, Any>>)?.map {
+            ProductVariant(
+                id = it["id"] as? String ?: "",
+                size = it["size"] as? String ?: "",
+                stock = (it["stock"] as? Number)?.toInt() ?: 0
+            )
+        } ?: emptyList()
+
+        // Trả về Product với danh sách variants đã được xử lý
+        Product(
+            id = document.id,
+            name = documentData["name"] as? String ?: "",
+            description = documentData["description"] as? String ?: "",
+            price = (documentData["price"] as? Number)?.toDouble() ?: 0.0,
+            categoryId = documentData["categoryId"] as? String ?: "",
+            brand = documentData["brand"] as? String ?: "",
+            variants = variants,
+            thumbnail =  documentData["thumbnail"] as? String?: "",
+            images = documentData["images"] as? List<String> ?: emptyList()
+        )
     }
 
     suspend fun getAllProducts(): Result<List<Product>> = runCatching {
         val snapshot = productsCollection.get().await()
-        snapshot.toObjects(Product::class.java)
+        // Ánh xạ tài liệu thành danh sách Product và xử lý variants riêng
+        snapshot.documents.map { document ->
+            val documentData = document.data ?: throw Exception("Product not found")
+
+            // Lấy danh sách variants và ánh xạ từng phần tử
+            val variants = (documentData["variants"] as? List<Map<String, Any>>)?.map { variantMap ->
+                ProductVariant(
+                    id = variantMap["id"] as? String ?: "",
+                    size = variantMap["size"] as? String ?: "",
+                    stock = (variantMap["stock"] as? Number)?.toInt() ?: 0
+                )
+            } ?: emptyList()
+
+            // Trả về Product với danh sách variants đã được xử lý
+            Product(
+                id = document.id,
+                name = documentData["name"] as? String ?: "",
+                description = documentData["description"] as? String ?: "",
+                price = (documentData["price"] as? Number)?.toDouble() ?: 0.0,
+                categoryId = documentData["categoryId"] as? String ?: "",
+                brand = documentData["brand"] as? String ?: "",
+                variants = variants,
+                thumbnail =  documentData["thumbnail"] as? String?: "",
+                images = documentData["images"] as? List<String> ?: emptyList()
+            )
+        }
     }
 
     suspend fun updateProduct(product: Product): Result<Unit> = runCatching {
@@ -76,4 +123,6 @@ class ProductRepository(
             .await()
         snapshot.toObjects(Product::class.java)
     }
+
+
 }

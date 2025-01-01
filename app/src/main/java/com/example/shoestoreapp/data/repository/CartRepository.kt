@@ -3,6 +3,7 @@ package com.example.shoestoreapp.data.repository
 import com.example.shoestoreapp.data.model.CartItem
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 
 class CartRepository(private val db: FirebaseFirestore = FirebaseFirestore.getInstance())
@@ -18,13 +19,18 @@ class CartRepository(private val db: FirebaseFirestore = FirebaseFirestore.getIn
     // Thêm sản phẩm vào giỏ hàng
     suspend fun addProductToCart(userId: String, product: CartItem): Result<Boolean> = runCatching {
         try {
-            cartRef.document(userId).update(product.productId, product.toMap()).await()
+            // Truy cập vào 'products' của userId và cập nhật productId
+            cartRef.document(userId)
+                .collection("products")
+                .document(product.productId)
+                .set(product.toMap(), SetOptions.merge()) // Merge dữ liệu nếu đã tồn tại
+                .await()
         } catch (e: Exception) {
-            // Nếu tài liệu chưa tồn tại, tạo mới
-            cartRef.document(userId).set(mapOf(product.productId to product.toMap())).await()
+            throw e // Ném lỗi ra để Result ghi nhận
         }
         true
     }
+
 
     // Cập nhật số lượng sản phẩm
     suspend fun updateProductQuantity(userId: String, productId: String, quantity: Int): Result<Pair<Boolean, Int>> = runCatching {
