@@ -7,7 +7,7 @@ import com.example.shoestoreapp.R
 class AdressSelectionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.`activity_address_selection.xml`)
+        setContentView(R.layout.activity_address_selection)
 
     }
 }
