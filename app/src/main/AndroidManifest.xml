@@ -15,6 +15,15 @@
         android:theme="@style/Theme.ShoeStoreApp"
         tools:targetApi="31">
         <activity
+            android:name=".activity.SelectCityActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.NewAddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AdressSelectionActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.PayActivity"
             android:exported="false" />
         <activity

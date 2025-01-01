@@ -10,20 +10,21 @@
         android:id="@+id/tiltleTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:background="#CDDCB0"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="#CDDCB0">
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/backPayIB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/arrow_left"
             android:backgroundTint="#CDDCB0"
-            app:tint="@color/signup_text_button"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:srcCompat="@drawable/arrow_left"
+            app:tint="@color/signup_text_button" />
 
         <!-- Tiêu đề -->
         <TextView
