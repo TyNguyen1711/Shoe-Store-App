@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray_300"
-    tools:context=".activity.AdressSelectionActivity">
+    tools:context=".activity.AddressSelectionActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/tiltleTV1"
@@ -60,10 +60,11 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:onClick="onAddNewAddressClick"
+        android:background="@drawable/ripple_effect"
         app:layout_constraintTop_toBottomOf="@+id/listProductASLV"
         app:layout_constraintStart_toStartOf="parent">
-        
+
         <ImageView
             android:id="@+id/addAddressIV"
             android:layout_width="wrap_content"

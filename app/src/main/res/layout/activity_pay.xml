@@ -43,8 +43,9 @@
         android:id="@+id/address_section"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F3FDFBFB"
+        android:background="@drawable/ripple_effect"
         android:padding="16dp"
+        android:onClick="onAddressSectionClick"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tiltleTV">
@@ -90,6 +91,16 @@
             app:layout_constraintStart_toEndOf="@id/baselineEditLocationIV"
             app:layout_constraintTop_toBottomOf="@id/nameOrdererTV" />
 
+        <TextView
+            android:id="@+id/cityNameTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phường Đông Hòa,Thành Phố Dĩ An, Bình Dương"
+            android:textColor="#555"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/addressDetailTV"
+            app:layout_constraintStart_toEndOf="@+id/baselineEditLocationIV"/>
+
         <ImageView
             android:id="@+id/arrowIcon"
             android:layout_width="wrap_content"
@@ -107,8 +118,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/address_section"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintBottom_toTopOf="@+id/order_section">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -120,8 +130,8 @@
                 android:id="@+id/listProductPayLV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/message_section"

@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
 
-class CityAdapter(private val cities: List<String>, private val onCityClick: (String) -> Unit) :
+class CityAdapter(private var cities: List<String>, private val onCityClick: (String) -> Unit) :
     RecyclerView.Adapter<CityAdapter.CityViewHolder>()  {
     inner class CityViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val cityName: TextView = itemView.findViewById(R.id.cityNameTextView)
@@ -31,4 +31,9 @@ class CityAdapter(private val cities: List<String>, private val onCityClick: (St
     }
 
     override fun getItemCount(): Int = cities.size
+
+    fun updateCities(newCities: List<String>) {
+        cities = newCities
+        notifyDataSetChanged()
+    }
 }
