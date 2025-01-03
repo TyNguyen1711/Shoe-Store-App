@@ -50,14 +50,15 @@ class AddressSelectionActivity : AppCompatActivity() {
         val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
         val addressesRef = db.collection("address").document(userId).collection("addresses")
 
-        addressesRef.get()
-            .addOnSuccessListener { querySnapshot ->
-                val addressList = mutableListOf<Address>()
-                // Kiểm tra nếu querySnapshot có dữ liệu
-                if (querySnapshot.isEmpty) {
-                    showToast("No addresses found.")
-                    return@addOnSuccessListener
-                }
+        // Lắng nghe sự thay đổi trong Firestore
+        addressesRef.addSnapshotListener { querySnapshot, e ->
+            if (e != null) {
+                showToast("Error loading addresses: ${e.message}")
+                return@addSnapshotListener
+            }
+
+            val addressList = mutableListOf<Address>()
+            if (querySnapshot != null && !querySnapshot.isEmpty) {
                 for (document in querySnapshot) {
                     val address = document.toObject(Address::class.java)
                     addressList.add(address)
@@ -71,10 +72,10 @@ class AddressSelectionActivity : AppCompatActivity() {
 
                 // Hiển thị danh sách địa chỉ trên RecyclerView.
                 setupRecyclerView(addressList)
+            } else {
+                showToast("No addresses found.")
             }
-            .addOnFailureListener { e ->
-                showToast("Error loading addresses: ${e.message}")
-            }
+        }
     }
 
     private fun setupRecyclerView(addressList: List<Address>) {

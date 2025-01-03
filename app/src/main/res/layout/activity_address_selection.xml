@@ -28,17 +28,15 @@
             app:srcCompat="@drawable/arrow_left"
             app:tint="@color/signup_text_button" />
 
-        <!-- Tiêu đề -->
         <TextView
-            android:id="@+id/thanhToanTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:text="Address Selection"
             android:textColor="@color/black"
             android:textSize="22sp"
             app:layout_constraintStart_toEndOf="@id/backAddressSelectionIB"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
@@ -51,39 +49,55 @@
         app:layout_constraintStart_toStartOf="parent"
         android:padding="10dp"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/listProductASLV"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/tiltleTV2"/>
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/tiltleTV2"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onAddNewAddressClick"
-        android:background="@drawable/ripple_effect"
-        app:layout_constraintTop_toBottomOf="@+id/listProductASLV"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <ImageView
-            android:id="@+id/addAddressIV"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:src="@drawable/baseline_add_circle_outline_24"
-            app:tint="@color/signup_text_button"
-            android:layout_marginStart="110dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:orientation="vertical"
+            android:background="@color/gray_300">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16dp"
-            android:text="Add a new address"
-            android:textColor="@color/signup_text_button"
-            app:layout_constraintStart_toEndOf="@+id/addAddressIV"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/listProductASLV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/tiltleTV2"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onAddNewAddressClick"
+                android:background="@drawable/ripple_effect"
+                app:layout_constraintTop_toBottomOf="@+id/listProductASLV"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <ImageView
+                    android:id="@+id/addAddressIV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:src="@drawable/baseline_add_circle_outline_24"
+                    app:tint="@color/signup_text_button"
+                    android:layout_marginStart="110dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dp"
+                    android:text="Add a new address"
+                    android:textColor="@color/signup_text_button"
+                    app:layout_constraintStart_toEndOf="@+id/addAddressIV"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

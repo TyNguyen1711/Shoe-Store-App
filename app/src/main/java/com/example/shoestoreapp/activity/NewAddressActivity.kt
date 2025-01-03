@@ -70,27 +70,32 @@ class NewAddressActivity : AppCompatActivity() {
         val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
         val addressesRef = db.collection("address").document(userId).collection("addresses")
 
-        // Kiểm tra nếu địa chỉ mới được đánh dấu là Default, cập nhật các địa chỉ còn lại
         if (address.isDefault) {
-            // Lấy tất cả địa chỉ cũ của người dùng
             addressesRef.get()
                 .addOnSuccessListener { documents ->
-                    for (document in documents) {
-                        val oldAddress = document.toObject(Address::class.java)
-                        // Nếu địa chỉ cũ có isDefault là true, đặt lại là false
-                        if (oldAddress.isDefault) {
-                            document.reference.update("isDefault", false)
+                    db.runTransaction { transaction ->
+                        for (document in documents) {
+                            val oldAddress = document.toObject(Address::class.java)
+                            // Nếu địa chỉ cũ là mặc định, cập nhật lại thành false
+                            if (oldAddress.isDefault) {
+                                val docRef = addressesRef.document(document.id)
+                                transaction.update(docRef, "default", false)
+                            }
                         }
+                        // Thêm địa chỉ mới vào
+                        val newAddressRef = addressesRef.document(addressId)
+                        transaction.set(newAddressRef, address)
+                    }.addOnSuccessListener {
+                        showToast("Address saved successfully!")
+                    }.addOnFailureListener { e ->
+                        showToast("Error saving address: ${e.message}")
                     }
-                    // Sau khi cập nhật tất cả các địa chỉ cũ, lưu địa chỉ mới
-                    saveNewAddress(addressesRef, address)
                 }
                 .addOnFailureListener { e ->
-                    // Hiển thị thông báo lỗi
                     showToast("Error fetching old addresses: ${e.message}")
                 }
         } else {
-            // Nếu địa chỉ không phải mặc định, chỉ lưu địa chỉ mới
+            // Nếu không phải default, chỉ cần thêm địa chỉ mới
             saveNewAddress(addressesRef, address)
         }
     }
@@ -117,7 +122,7 @@ class NewAddressActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            cityName = data?.getStringExtra("cityName")
+            cityName = data?.getStringExtra("location_result")
             cityTV.text = cityName
             cityTV.setTextColor(Color.BLACK)
         }
