@@ -57,7 +57,8 @@ class BestSellingRepository(
             brand = documentData["brand"] as? String ?: "",
             variants = variants,
             thumbnail =  documentData["thumbnail"] as? String?: "",
-            images = documentData["images"] as? List<String> ?: emptyList()
+            images = documentData["images"] as? List<String> ?: emptyList(),
+            soldCount = documentData["soldCount"] as? Int ?: 0
         )
     }
 
@@ -87,7 +88,8 @@ class BestSellingRepository(
                 brand = documentData["brand"] as? String ?: "",
                 variants = variants,
                 thumbnail =  documentData["thumbnail"] as? String?: "",
-                images = documentData["images"] as? List<String> ?: emptyList()
+                images = documentData["images"] as? List<String> ?: emptyList(),
+                soldCount = documentData["soldCount"] as? Int ?: 0
             )
         }
     }
@@ -136,7 +138,8 @@ class BestSellingRepository(
                 brand = documentData["brand"] as? String ?: "",
                 variants = variants,
                 thumbnail =  documentData["thumbnail"] as? String?: "",
-                images = documentData["images"] as? List<String> ?: emptyList()
+                images = documentData["images"] as? List<String> ?: emptyList(),
+                soldCount = documentData["soldCount"] as? Int ?: 0
             )
         }
     }
@@ -171,7 +174,8 @@ class BestSellingRepository(
                 brand = documentData["brand"] as? String ?: "",
                 variants = variants,
                 thumbnail =  documentData["thumbnail"] as? String?: "",
-                images = documentData["images"] as? List<String> ?: emptyList()
+                images = documentData["images"] as? List<String> ?: emptyList(),
+                soldCount = documentData["soldCount"] as? Int ?: 0
             )
         }
     }

@@ -13,6 +13,8 @@ data class Product(
     @field:PropertyName("categoryId")
     val categoryId: String = "",
 
+    val soldCount: Int = 0,
+
     @field:PropertyName("brand")
     val brand: String = "",
     val price: Double = 0.0,

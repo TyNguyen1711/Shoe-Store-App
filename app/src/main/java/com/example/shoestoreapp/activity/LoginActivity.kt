@@ -53,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
         forgotPasswordTV.setOnClickListener() {
             forgotPasswordTV.setPaintFlags(forgotPasswordTV.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
             // val intent = Intent(this)
-            startActivity(intent)
+            // startActivity(intent)
         }
 
         loginBtn.setOnClickListener() {

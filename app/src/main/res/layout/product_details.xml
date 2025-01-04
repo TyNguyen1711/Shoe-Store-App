@@ -33,22 +33,20 @@
             android:text="Sale off"
             android:textColor="@color/white"
             android:textSize="12sp"
-            app:layout_constraintTop_toTopOf="@+id/productImage"
-            app:layout_constraintEnd_toEndOf="@+id/productImage"
+            app:layout_constraintTop_toTopOf="@id/productImage"
+            app:layout_constraintEnd_toEndOf="@id/productImage"
             tools:ignore="HardcodedText" />
 
         <ImageView
             android:id="@+id/productImage"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:scaleType="fitCenter"
+            android:scaleType="centerCrop"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/fullNameTV"
             app:layout_constraintHeight_percent="0.7"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
-
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
             android:id="@+id/fullNameTV"

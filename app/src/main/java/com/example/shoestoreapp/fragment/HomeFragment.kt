@@ -1,5 +1,7 @@
 package com.example.shoestoreapp.fragment
 
+import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,14 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.activity.ProductDetailActivity
 import com.example.shoestoreapp.adapter.ProductItemAdapter
 import com.example.shoestoreapp.adapter.SliderAdapter
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.repository.BestSellingRepository
 import com.example.shoestoreapp.data.repository.ExclusiveOfferRepository
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(), ProductItemAdapter.OnProductClickListener {
@@ -100,8 +101,9 @@ class HomeFragment : Fragment(), ProductItemAdapter.OnProductClickListener {
     }
 
     override fun onProductClick(productId: String) {
-
-        Toast.makeText(requireContext(), "Clicked Product: $productId", Toast.LENGTH_SHORT).show()
+        val intent = Intent(requireContext(), ProductDetailActivity::class.java)
+        intent.putExtra("productId", productId)
+        startActivity(intent)
     }
 
     override fun onMoreButtonClick() {
