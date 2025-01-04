@@ -22,7 +22,8 @@
     class ProductItemAdapter(
         private val productList: List<Product>,
         private val listener: OnProductClickListener,
-        private val lifecycleOwner: LifecycleOwner
+        private val lifecycleOwner: LifecycleOwner,
+        private val isHome: Boolean = true
     ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         companion object {
@@ -36,11 +37,15 @@
         }
 
         override fun getItemViewType(position: Int): Int {
-            return if (position == productList.size) VIEW_TYPE_MORE_BUTTON else VIEW_TYPE_PRODUCT
+            return if (isHome && position == productList.size) {
+                VIEW_TYPE_MORE_BUTTON
+            } else {
+                VIEW_TYPE_PRODUCT
+            }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            return if (viewType == VIEW_TYPE_PRODUCT) {
+            return if ((viewType == VIEW_TYPE_PRODUCT)) {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.product_details, parent, false)
                 ProductViewHolder(view, lifecycleOwner)
             } else {
@@ -59,7 +64,7 @@
         }
 
         override fun getItemCount(): Int {
-            return productList.size + 1 // Thêm 1 cho thẻ "More Button"
+            return if (isHome) productList.size + 1 else productList.size
         }
 
         class ProductViewHolder(itemView: View, private val lifecycleOwner: LifecycleOwner)

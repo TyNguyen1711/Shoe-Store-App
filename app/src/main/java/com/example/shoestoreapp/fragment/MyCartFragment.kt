@@ -147,40 +147,38 @@ class MyCartFragment : Fragment() {
 
     private fun updateCartItemQuantity(product: CartItem, change: Int) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
-        var idx: Int = -1
+        var idx = localCartItems.indexOfFirst { it.productId == product.productId }
+        if (idx == -1) return // Nếu sản phẩm không tồn tại trong danh sách local
 
+        // Cập nhật UI ngay lập tức
+        val updatedCartItems = localCartItems.map { it.copy() }.toMutableList()
+        updatedCartItems[idx].quantity += change
+        if (updatedCartItems[idx].quantity < 1) {
+            updatedCartItems.removeAt(idx)
+            requireView().findViewById<TextView>(R.id.productsNum).text = updatedCartItems.size.toString()
+        }
+        localCartItems.clear()
+        localCartItems.addAll(updatedCartItems)
+        cartAdapter.updateData(localCartItems)
+        updateCheckedTotalPrice(requireView())
+
+        // Gửi yêu cầu cập nhật lên Firestore
         CoroutineScope(Dispatchers.IO).launch {
             val result = cartRepository.updateProductQuantity(userId, product.productId, product.quantity + change)
-            result.onSuccess { (isSuccess, index) ->
+            result.onSuccess { (isSuccess, _) ->
                 if (isSuccess) {
-                    // Xử lý thành công
                     println("Cập nhật số lượng sản phẩm thành công")
-                    idx = index
                 } else {
-                    // Xử lý trường hợp không thành công (nếu cần)
-                    println("Không thể cập nhật số lượng sản phẩm")
+                    println("Không thể cập nhật số lượng sản phẩm trên Firestore")
+                    // Có thể hiển thị thông báo hoặc khôi phục trạng thái nếu cần
                 }
             }.onFailure { error ->
-                // Xử lý lỗi nếu không lấy được danh sách giỏ hàng
                 println("Failed to fetch cart items: ${error.message}")
-            }
-
-
-            // Chuyển về Main thread để cập nhật UI nếu cần
-            withContext(Dispatchers.Main) {
-                val updatedCartItems = localCartItems.map { it.copy() }.toMutableList()
-                updatedCartItems[idx].quantity += change
-                if (updatedCartItems[idx].quantity < 1) {
-                    updatedCartItems.removeAt(idx)
-                    requireView().findViewById<TextView>(R.id.productsNum).text = localCartItems.size.toString()
-                }
-                localCartItems.clear()
-                localCartItems.addAll(updatedCartItems)
-                cartAdapter.updateData(localCartItems)
-                updateCheckedTotalPrice(requireView())
+                // Có thể hiển thị thông báo hoặc khôi phục trạng thái nếu cần
             }
         }
     }
+
 
 
     private fun updateCheckedTotalPrice(view: View) {

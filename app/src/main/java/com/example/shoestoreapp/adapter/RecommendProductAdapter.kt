@@ -1,4 +1,4 @@
-package com.example.shoestoreapp.classes
+package com.example.shoestoreapp.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +9,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.data.model.Product
 
 class RecommendProductAdapter(
     private val productList: List<Product>,

@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.data.repository
 
+import android.util.Log
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.model.ProductVariant
 import com.google.firebase.firestore.FirebaseFirestore
@@ -103,7 +104,31 @@ class ProductRepository(
             .whereEqualTo("category_id", categoryId)
             .get()
             .await()
-        snapshot.toObjects(Product::class.java)
+        snapshot.documents.map { document ->
+            val documentData = document.data ?: throw Exception("Product not found")
+
+            // Lấy danh sách variants và ánh xạ từng phần tử
+            val variants = (documentData["variants"] as? List<Map<String, Any>>)?.map { variantMap ->
+                ProductVariant(
+                    id = variantMap["id"] as? String ?: "",
+                    size = variantMap["size"] as? String ?: "",
+                    stock = (variantMap["stock"] as? Number)?.toInt() ?: 0
+                )
+            } ?: emptyList()
+
+            // Trả về Product với danh sách variants đã được xử lý
+            Product(
+                id = document.id,
+                name = documentData["name"] as? String ?: "",
+                description = documentData["description"] as? String ?: "",
+                price = (documentData["price"] as? Number)?.toDouble() ?: 0.0,
+                categoryId = documentData["categoryId"] as? String ?: "",
+                brand = documentData["brand"] as? String ?: "",
+                variants = variants,
+                thumbnail =  documentData["thumbnail"] as? String?: "",
+                images = documentData["images"] as? List<String> ?: emptyList()
+            )
+        }
     }
 
     suspend fun getProductsByBrand(brandId: String): Result<List<Product>> = runCatching {
@@ -111,16 +136,70 @@ class ProductRepository(
             .whereEqualTo("brand_id", brandId)
             .get()
             .await()
-        snapshot.toObjects(Product::class.java)
+        snapshot.documents.map { document ->
+            val documentData = document.data ?: throw Exception("Product not found")
+
+            // Lấy danh sách variants và ánh xạ từng phần tử
+            val variants = (documentData["variants"] as? List<Map<String, Any>>)?.map { variantMap ->
+                ProductVariant(
+                    id = variantMap["id"] as? String ?: "",
+                    size = variantMap["size"] as? String ?: "",
+                    stock = (variantMap["stock"] as? Number)?.toInt() ?: 0
+                )
+            } ?: emptyList()
+
+            // Trả về Product với danh sách variants đã được xử lý
+            Product(
+                id = document.id,
+                name = documentData["name"] as? String ?: "",
+                description = documentData["description"] as? String ?: "",
+                price = (documentData["price"] as? Number)?.toDouble() ?: 0.0,
+                categoryId = documentData["categoryId"] as? String ?: "",
+                brand = documentData["brand"] as? String ?: "",
+                variants = variants,
+                thumbnail =  documentData["thumbnail"] as? String?: "",
+                images = documentData["images"] as? List<String> ?: emptyList()
+            )
+        }
     }
 
     suspend fun searchProducts(query: String): Result<List<Product>> = runCatching {
-        val snapshot = productsCollection
-            .orderBy("name")
-            .startAt(query)
-            .endAt(query + '\uf8ff')
-            .get()
-            .await()
-        snapshot.toObjects(Product::class.java)
+        val snapshot = productsCollection.get().await()
+
+        // Lọc kết quả tại client (nếu cần)
+        val filteredProducts = snapshot.documents.filter { document ->
+            val name = document.getString("name") ?: ""
+            name.contains(query, ignoreCase = true)  // Kiểm tra nếu tên chứa từ khóa tìm kiếm
+        }
+
+        filteredProducts.map { document ->
+            val documentData = document.data ?: throw Exception("Product not found")
+            Log.d("SNAPSHOT RESULT:", document.id)
+
+            // Lấy danh sách variants và ánh xạ từng phần tử
+            val variants = (documentData["variants"] as? List<Map<String, Any>>)?.map { variantMap ->
+                ProductVariant(
+                    id = variantMap["id"] as? String ?: "",
+                    size = variantMap["size"] as? String ?: "",
+                    stock = (variantMap["stock"] as? Number)?.toInt() ?: 0
+                )
+            } ?: emptyList()
+
+            // Trả về Product với danh sách variants đã được xử lý
+            Product(
+                id = document.id,
+                name = documentData["name"] as? String ?: "",
+                description = documentData["description"] as? String ?: "",
+                price = (documentData["price"] as? Number)?.toDouble() ?: 0.0,
+                categoryId = documentData["categoryId"] as? String ?: "",
+                brand = documentData["brand"] as? String ?: "",
+                variants = variants,
+                thumbnail = documentData["thumbnail"] as? String ?: "",
+                images = documentData["images"] as? List<String> ?: emptyList()
+            )
+        }
     }
+
+
+
 }

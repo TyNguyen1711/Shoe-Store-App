@@ -15,6 +15,9 @@
         android:theme="@style/Theme.ShoeStoreApp"
         tools:targetApi="31">
         <activity
+            android:name=".activity.SearchActivity"
+            android:exported="false"/>
+        <activity
             android:name=".activity.PaymentActivity"
             android:exported="false" />
         <activity
