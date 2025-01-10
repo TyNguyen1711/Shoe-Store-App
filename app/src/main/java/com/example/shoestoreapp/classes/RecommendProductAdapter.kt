@@ -1,4 +1,4 @@
-package com.example.shoestoreapp.adapter
+package com.example.shoestoreapp.classes
 
 import android.view.LayoutInflater
 import android.view.View

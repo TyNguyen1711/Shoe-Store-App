@@ -11,4 +11,16 @@
     <color name="search_bar">#f2f3f2</color>
     <color name="red">#ff0000</color>
     <color name="purple_700">#512DA8</color>
+
+
+    <color name="text_dark">#2B2B2B</color>
+    <color name="text_secondary">#757575</color>
+    <color name="gradient_start">#FF6B95</color>
+    <color name="gradient_end">#FF8FA3</color>
+    <color name="gradient_right_start">#FFF0F3</color>
+    <color name="gradient_right_end">#FFFFFF</color>
+    <color name="button_gradient_start">#FF4778</color>
+    <color name="button_gradient_end">#FF6B95</color>
+
+
 </resources>

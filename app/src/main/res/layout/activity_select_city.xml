@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_300"
+    tools:context=".activity.SelectCityActivity">
+
+    <!-- Back Button and Search View -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/titleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#CDDCB0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/backSearchCityIB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#CDDCB0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/arrow_left"
+            app:tint="@color/signup_text_button" />
+
+        <TextView
+            android:id="@+id/searchCitySV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search City, District, Ward"
+            android:textSize="22dp"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/backSearchCityIB" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Use My Location Section -->
+    <LinearLayout
+        android:id="@+id/useMyLocationSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/titleLayout"
+        android:orientation="horizontal"
+        android:background="@drawable/rounded_corner"
+        android:layout_margin="16dp">
+
+        <ImageView
+            android:id="@+id/locationIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_address"
+            app:tint="@color/red"
+            android:paddingStart="80dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Use My Current Location"
+            android:textSize="16dp"
+            android:textColor="@color/black"
+            android:paddingStart="10dp" />
+    </LinearLayout>
+
+    <!-- Spinner Section -->
+    <TextView
+        android:id="@+id/cityLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="City"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@+id/useMyLocationSection"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingStart="16dp"
+        android:paddingTop="10dp" />
+
+    <Spinner
+        android:id="@+id/citySpinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_corner"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/cityLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="5dp" />
+
+    <TextView
+        android:id="@+id/districtLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="District"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@+id/citySpinner"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingStart="16dp"
+        android:paddingTop="10dp" />
+
+    <Spinner
+        android:id="@+id/districtSpinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_corner"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/districtLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="5dp" />
+
+    <TextView
+        android:id="@+id/wardLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ward"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@+id/districtSpinner"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingStart="16dp"
+        android:paddingTop="10dp" />
+
+    <Spinner
+        android:id="@+id/wardSpinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_corner"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/wardLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="5dp" />
+
+    <Button
+        android:id="@+id/confirmBT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Confirm"
+        android:background="@drawable/rounded_corner"
+        android:backgroundTint="@color/login_button"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/wardSpinner"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
