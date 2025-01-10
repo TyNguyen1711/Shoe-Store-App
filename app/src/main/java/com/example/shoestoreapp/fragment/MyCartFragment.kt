@@ -5,7 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.CheckBox
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -26,13 +28,24 @@ import kotlinx.coroutines.withContext
 class MyCartFragment : Fragment() {
     private lateinit var cartAdapter: CartAdapter
     private lateinit var checkBoxAll: CheckBox
+    private lateinit var editTV: TextView
+    private lateinit var checkOutTV: TextView
+    private lateinit var toWishListBtn: Button
+    private lateinit var deleteBtn: Button
+
+    private lateinit var topLayout: LinearLayout
+    private lateinit var bottomLayout: LinearLayout
+    private lateinit var couponLayout: LinearLayout
+
     private val firestore = FirebaseFirestore.getInstance()
     private val localCartItems = mutableListOf<CartItem>()
-    private val checkedCartItems = mutableSetOf<CartItem>()
     private val prices = mutableListOf<Double>()
     private val names = mutableListOf<String>()
     private val thumbnail = mutableListOf<String>()
+
     private val cartRepository = CartRepository(firestore)
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
+    var onEdit: Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,7 +53,7 @@ class MyCartFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate layout cho Fragment
-        return inflater.inflate(R.layout.activity_my_cart, container, false)
+        return inflater.inflate(R.layout.my_cart, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,10 +61,16 @@ class MyCartFragment : Fragment() {
 
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-
+        checkOutTV = view.findViewById(R.id.textViewCheckout)
         checkBoxAll = view.findViewById(R.id.checkBoxAll)
+        editTV = view.findViewById(R.id.editTV)
+        toWishListBtn = view.findViewById(R.id.toWishlist)
+        deleteBtn = view.findViewById(R.id.delete)
 
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
+        topLayout = view.findViewById(R.id.topLayout)
+        bottomLayout = view.findViewById(R.id.bottomLayout)
+        couponLayout = view.findViewById(R.id.couponLayout)
+
         // Khởi tạo CartAdapter với các callback
         cartAdapter = CartAdapter(
             products = emptyList(),
@@ -67,20 +86,37 @@ class MyCartFragment : Fragment() {
 
         // Load dữ liệu giỏ hàng từ Firebase Firestore
         loadCartData(view)
+        setupListeners()
 
         checkBoxAll.setOnCheckedChangeListener { _, isChecked ->
             toggleAllCartItems(isChecked)
             localCartItems.forEach { it.isChecked = isChecked }
-
-            checkedCartItems.clear()
-            if (isChecked) {
-                checkedCartItems.addAll(localCartItems)
-            }
-
             cartAdapter.setAllChecked(isChecked)
             updateCheckedTotalPrice(view)
         }
         cartAdapter.notifyDataSetChanged()
+
+        bottomLayout.visibility = View.GONE
+        topLayout.visibility = View.VISIBLE
+        onEdit = true
+
+        editTV.setOnClickListener() {
+            if(!onEdit){
+                editTV.text = "Done"
+                bottomLayout.visibility = View.GONE
+                topLayout.visibility = View.VISIBLE
+                couponLayout.visibility = View.VISIBLE
+                onEdit = true
+            }
+            else
+            {
+                editTV.text = "Edit"
+                topLayout.visibility = View.GONE
+                couponLayout.visibility = View.GONE
+                bottomLayout.visibility = View.VISIBLE
+                onEdit = false
+            }
+        }
     }
 
     private fun handleCheckedChange(position: Int, isChecked: Boolean) {
@@ -139,15 +175,14 @@ class MyCartFragment : Fragment() {
                     localCartItems.addAll(updatedCartItems)
                     cartAdapter.updateData(localCartItems, thumbnail, names, prices)
                 }
-                view.findViewById<TextView>(R.id.productsNum).text = localCartItems.size.toString()
+                view.findViewById<TextView>(R.id.productsNum).text = "(${localCartItems.size})"
                 updateCheckedTotalPrice(view)
             }
         }
     }
 
     private fun updateCartItemQuantity(product: CartItem, change: Int) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
-        var idx = localCartItems.indexOfFirst { it.productId == product.productId }
+        val idx = localCartItems.indexOfFirst { it.productId == product.productId }
         if (idx == -1) return // Nếu sản phẩm không tồn tại trong danh sách local
 
         // Cập nhật UI ngay lập tức
@@ -188,7 +223,43 @@ class MyCartFragment : Fragment() {
                 val price = prices.getOrElse(index) { 0.0 } // Lấy giá tại index tương ứng
                 cartItem.quantity * price
             }
+        val numsProduct = localCartItems.count { it.isChecked }
         view.findViewById<TextView>(R.id.textViewTotal).text =
             "Total: ${String.format("%,.0f", totalPrice)}đ"
+
+        checkOutTV.text = "Check Out\n(${numsProduct})"
+    }
+
+    private fun setupListeners () {
+        deleteBtn.setOnClickListener(){
+            // Cập nhật UI ngay lập tức
+            val updatedCartItems = localCartItems.filter { !it.isChecked }.toMutableList()
+            val idList = localCartItems.filter { it.isChecked }.map { it.productId }
+
+            localCartItems.clear()
+            localCartItems.addAll(updatedCartItems)
+            cartAdapter.updateData(localCartItems)
+            // Gửi yêu cầu cập nhật lên Firestore
+            CoroutineScope(Dispatchers.IO).launch {
+                val result = cartRepository.removeProductFromCart(userId, idList)
+                result.onSuccess { (isSuccess, list) ->
+                    println(list)
+                    if (isSuccess) {
+                        println("Cập nhật số lượng sản phẩm thành công")
+                    } else {
+                        println("Không thể cập nhật số lượng sản phẩm trên Firestore")
+                        // Có thể hiển thị thông báo hoặc khôi phục trạng thái nếu cần
+                    }
+                }.onFailure { error ->
+                    println("Failed to fetch cart items: ${error.message}")
+                    // Có thể hiển thị thông báo hoặc khôi phục trạng thái nếu cần
+                }
+            }
+        }
+
+        toWishListBtn.setOnClickListener()
+        {
+
+        }
     }
 }

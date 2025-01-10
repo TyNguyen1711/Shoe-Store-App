@@ -55,4 +55,41 @@ class CartRepository(private val db: FirebaseFirestore = FirebaseFirestore.getIn
 
         true to index // Trả về kết quả
     }
+
+    suspend fun removeProductFromCart(userId: String, idList: List<String>): Result<Pair<Boolean, List<Int>>> = runCatching {
+        val productsSnapshot = cartRef.document(userId).collection("products").get().await()
+        val productList = productsSnapshot.documents
+
+        val idxList = mutableListOf<Int>()
+
+        // Tạo Firestore batch
+        val batch = cartRef.firestore.batch()
+
+        // Duyệt qua từng productId trong idList
+        for (productId in idList) {
+            // Duyệt tất cả các tài liệu trong productList và xóa những tài liệu có trường productId khớp
+            val productDocsToDelete = productList.filterIndexed { index, document ->
+                document.getString("productId") == productId
+            }
+
+            if (productDocsToDelete.isEmpty()) throw Exception("No product found with productId $productId")
+
+            // Lặp qua các tài liệu cần xóa
+            for (productDoc in productDocsToDelete) {
+                // Lấy documentReference và thêm vào batch để xóa
+                val productRef = cartRef.document(userId).collection("products").document(productDoc.id)
+                batch.delete(productRef)
+
+                // Lưu vị trí của sản phẩm đã xóa
+                val originalIndex = productList.indexOf(productDoc)
+                idxList.add(originalIndex)
+            }
+        }
+
+        // Thực thi batch
+        batch.commit().await()
+
+        true to idxList // Trả về kết quả
+    }
+
 }
