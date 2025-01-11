@@ -16,12 +16,6 @@ class AddressAdapter(
 ) : RecyclerView.Adapter<AddressAdapter.AddressViewHolder>() {
     private var selectedAddressId: String? = null
 
-    // Hàm đặt địa chỉ mặc định khi vào màn hình
-    fun setDefaultAddress(defaultAddressId: String?) {
-        selectedAddressId = defaultAddressId
-        notifyDataSetChanged() // Cập nhật lại giao diện
-    }
-
     // Hàm thay đổi địa chỉ được chọn
     fun selectAddress(addressId: String) {
         selectedAddressId = addressId
@@ -37,11 +31,9 @@ class AddressAdapter(
         val address = addressList[position]
         holder.bind(address, address.id == selectedAddressId)
         holder.itemView.setOnClickListener {
-            if (selectedAddressId != address.id) {
-                selectedAddressId = address.id
-                onAddressSelected(address)
-                notifyDataSetChanged()
-            }
+            selectedAddressId = address.id
+            onAddressSelected(address)
+            notifyDataSetChanged()
         }
     }
 
@@ -63,18 +55,16 @@ class AddressAdapter(
             cityTV.text = address.city
 
             // Hiển thị trạng thái mặc định
-            isDefaultTextView.text = if (address.isDefault) "Default" else ""
+            isDefaultTextView.text = if (address.default) "Default" else ""
 
             // Hiển thị trạng thái được chọn
             isDefaultRB.isChecked = isSelected
 
             // Xử lý sự kiện chọn RadioButton
             isDefaultRB.setOnClickListener {
-                if (selectedAddressId != address.id) {
-                    selectedAddressId = address.id
-                    onAddressSelected(address)
-                    notifyDataSetChanged()
-                }
+                selectedAddressId = address.id
+                onAddressSelected(address)
+                notifyDataSetChanged()
             }
 
             // Xử lý sự kiện chỉnh sửa địa chỉ

@@ -42,6 +42,7 @@ class PayActivity : AppCompatActivity() {
     private lateinit var addressDetailTV: TextView
     private lateinit var nameOrdererTV: TextView
     private lateinit var sdtPayTV: TextView
+    private var selectedAddressId: String? = null // AddressID currently
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +78,6 @@ class PayActivity : AppCompatActivity() {
         nameOrdererTV = findViewById(R.id.nameOrdererTV)
         sdtPayTV = findViewById(R.id.sdtPayTV)
 
-
         backIB.setOnClickListener { finish() }
     }
 
@@ -89,7 +89,7 @@ class PayActivity : AppCompatActivity() {
             .addOnSuccessListener { querySnapshot ->
                 for (document in querySnapshot) {
                     val address = document.toObject(Address::class.java)
-                    if (address.isDefault == true) {
+                    if (address.default == true) {
                         updateAddressUI(address)
                         break
                     }
@@ -100,9 +100,9 @@ class PayActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            val selectedAddressId = data?.getStringExtra("selectedAddressId")
+            selectedAddressId = data?.getStringExtra("selectedAddressId")!!
             if (selectedAddressId != null) {
-                fetchAddressById(selectedAddressId)
+                fetchAddressById(selectedAddressId!!)
             }
         }
     }
@@ -135,6 +135,8 @@ class PayActivity : AppCompatActivity() {
 
     fun onAddressSectionClick(view: View) {
         val intent = Intent(this, AddressSelectionActivity::class.java)
+        intent.putExtra("userId", "example_userId")
+        intent.putExtra("addressId", selectedAddressId)
         startActivityForResult(intent, 1)
     }
 
