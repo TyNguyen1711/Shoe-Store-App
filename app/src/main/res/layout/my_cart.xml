@@ -123,7 +123,7 @@
             <!-- Top LinearLayout (Total and Checkout TextViews) -->
             <LinearLayout
                 android:id="@+id/topLayout"
-                android:layout_width="320dp"
+                android:layout_width="380dp"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:gravity="end|center_vertical"
