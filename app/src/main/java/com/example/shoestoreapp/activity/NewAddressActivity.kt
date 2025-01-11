@@ -53,7 +53,7 @@ class NewAddressActivity : AppCompatActivity() {
                 phoneNumber = phoneNumberET.text.toString(),
                 city = cityName ?: "",
                 houseNo = houseNoET.text.toString(),
-                isDefault = isDefault.isChecked
+                default = isDefault.isChecked
             )
             saveAddressToFirestore(userId, address)
 
@@ -70,14 +70,14 @@ class NewAddressActivity : AppCompatActivity() {
         val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
         val addressesRef = db.collection("address").document(userId).collection("addresses")
 
-        if (address.isDefault) {
+        if (address.default) {
             addressesRef.get()
                 .addOnSuccessListener { documents ->
                     db.runTransaction { transaction ->
                         for (document in documents) {
                             val oldAddress = document.toObject(Address::class.java)
                             // Nếu địa chỉ cũ là mặc định, cập nhật lại thành false
-                            if (oldAddress.isDefault) {
+                            if (oldAddress.default) {
                                 val docRef = addressesRef.document(document.id)
                                 transaction.update(docRef, "default", false)
                             }
