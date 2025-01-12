@@ -3,7 +3,11 @@ package com.example.shoestoreapp.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -15,11 +19,16 @@ import com.example.shoestoreapp.data.model.Address
 import com.example.shoestoreapp.data.model.CartItem
 import com.example.shoestoreapp.data.repository.CartRepository
 import com.example.shoestoreapp.data.repository.ProductRepository
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class PayActivity : AppCompatActivity() {
     private val userId_tmp = "example_userId"
@@ -43,6 +52,10 @@ class PayActivity : AppCompatActivity() {
     private lateinit var nameOrdererTV: TextView
     private lateinit var sdtPayTV: TextView
     private var selectedAddressId: String? = null // AddressID currently
+    private lateinit var messageET: EditText
+    private lateinit var paymentMethodRG: RadioGroup
+    private var selectedPaymentMethod: String? = null // Lưu phương thức thanh toán được chọn
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +77,7 @@ class PayActivity : AppCompatActivity() {
         loadAddressDefault(userId_tmp)
 
         val backIB = findViewById<ImageButton>(R.id.backPayIB)
+        val placeOrderBT = findViewById<Button>(R.id.orderBT)
 
         costProductsTV = findViewById(R.id.costProductsTV)
         costDeliveryTV = findViewById(R.id.costDeliveryTV)
@@ -71,6 +85,8 @@ class PayActivity : AppCompatActivity() {
         totalPaymentTV = findViewById(R.id.totalPaymentTV)
         priceOrderTV =  findViewById(R.id.priceOrderTV)
         saveOrderTV = findViewById(R.id.saveOrderTV)
+        messageET = findViewById(R.id.messageInput)
+        paymentMethodRG = findViewById(R.id.paymentMethodRG)
 
         // Address Detail
         cityNameTV = findViewById(R.id.cityNameTV)
@@ -78,7 +94,141 @@ class PayActivity : AppCompatActivity() {
         nameOrdererTV = findViewById(R.id.nameOrdererTV)
         sdtPayTV = findViewById(R.id.sdtPayTV)
 
+        paymentMethodRG.setOnCheckedChangeListener { group, checkedId ->
+            selectedPaymentMethod = when (checkedId) {
+                R.id.cashMethodRB -> "cash"
+                R.id.creditCardMethodRB -> "credit card"
+                else -> null
+            }
+        }
+
+        placeOrderBT.setOnClickListener {
+            if (selectedPaymentMethod == null) {
+                Toast.makeText(this, "Please select a payment method before placing the order.", Toast.LENGTH_SHORT).show()
+            } else {
+                saveOrderToFirestore { isSuccess ->
+                    if (isSuccess) {
+                        showOrderSuccessDialog()
+                    } else {
+                        Toast.makeText(this, "Failed to place order. Please try again.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
         backIB.setOnClickListener { finish() }
+    }
+
+    private fun saveOrderToFirestore(callback: (Boolean) -> Unit) {
+        val firestore = FirebaseFirestore.getInstance()
+        val ordersCollection = firestore.collection("orders").document(userId_tmp).collection("order details")
+        val productsCollection = firestore.collection("products")
+        val orderId = ordersCollection.document().id // Tạo ID ngẫu nhiên cho order
+
+        // Get currently date
+        val dateFormatter = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+        val currentDate = dateFormatter.format(Date(System.currentTimeMillis()))
+
+        // Chuẩn bị dữ liệu đơn hàng
+        val orderData = hashMapOf(
+            "id" to orderId,
+            "products" to selectedProducts.map { cartItem ->
+                mapOf(
+                    "productId" to cartItem.productId,
+                    "quantity" to cartItem.quantity,
+                    "size" to cartItem.size
+                )
+            },
+            "addressId" to selectedAddressId,
+            "message" to messageET.text.toString(),
+            "paymentMethod" to selectedPaymentMethod,
+            "orderTime" to currentDate
+        )
+
+        // Kiểm tra và cập nhật stock từng sản phẩm
+        val tasks = mutableListOf<Task<Void>>() // Danh sách các tác vụ Firebase
+        for (cartItem in selectedProducts) {
+            val productRef = productsCollection.document(cartItem.productId)
+            val task = productRef.get().continueWithTask { task ->
+                if (task.isSuccessful) {
+                    val productDoc = task.result
+                    if (productDoc != null && productDoc.exists()) {
+                        val variants = productDoc.get("variants") as? List<Map<String, Any>> ?: emptyList()
+
+                        // Tìm size cần giảm stock
+                        val updatedVariants = variants.map { variant ->
+                            if (variant["size"] == cartItem.size) {
+                                val currentStock = (variant["stock"] as? Long)?.toInt() ?: 0
+                                if (currentStock >= cartItem.quantity) {
+                                    variant.toMutableMap().apply {
+                                        this["stock"] = currentStock - cartItem.quantity
+                                    }
+                                } else {
+                                    throw Exception("Not enough stock for size ${cartItem.size}")
+                                }
+                            } else {
+                                variant
+                            }
+                        }
+                        // Cập nhật lại variants
+                        productRef.update("variants", updatedVariants)
+                    } else {
+                        throw Exception("Product not found: ${cartItem.productId}")
+                    }
+                } else {
+                    throw task.exception ?: Exception("Failed to fetch product: ${cartItem.productId}")
+                }
+            }
+            tasks.add(task)
+        }
+
+        // Chạy tất cả các tác vụ cập nhật stock
+        Tasks.whenAll(tasks).addOnCompleteListener { stockUpdateTask ->
+            if (stockUpdateTask.isSuccessful) {
+                // Lưu đơn hàng vào Firestore
+                ordersCollection.document(orderId)
+                    .set(orderData)
+                    .addOnSuccessListener {
+                        callback(true)
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, "Error saving order: ${e.message}", Toast.LENGTH_SHORT).show()
+                        callback(false)
+                    }
+            } else {
+                Toast.makeText(this, "Error updating stock: ${stockUpdateTask.exception?.message}", Toast.LENGTH_SHORT).show()
+                callback(false)
+            }
+        }
+    }
+
+    private fun showOrderSuccessDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_order_success, null)
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+
+        val backToHomeBT = dialogView.findViewById<Button>(R.id.backToHomeBT)
+        val viewOrderDetailsBT = dialogView.findViewById<Button>(R.id.viewOrderDetailsBT)
+
+        backToHomeBT.setOnClickListener {
+            dialog.dismiss()
+            // Quay về màn hình chính
+            val intent = Intent(this, HomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            finish()
+        }
+
+        viewOrderDetailsBT.setOnClickListener {
+            dialog.dismiss()
+            // Xem chi tiết đơn hàng
+
+        }
     }
 
     private fun loadAddressDefault(userId_tmp: String) {
@@ -90,6 +240,7 @@ class PayActivity : AppCompatActivity() {
                 for (document in querySnapshot) {
                     val address = document.toObject(Address::class.java)
                     if (address.default == true) {
+                        selectedAddressId = address.id
                         updateAddressUI(address)
                         break
                     }
@@ -109,9 +260,8 @@ class PayActivity : AppCompatActivity() {
 
     private fun fetchAddressById(addressId: String) {
         val db = FirebaseFirestore.getInstance()
-        val userId = "example_userId"
         db.collection("address")
-            .document(userId)
+            .document(userId_tmp)
             .collection("addresses")
             .document(addressId)
             .get()
@@ -135,7 +285,7 @@ class PayActivity : AppCompatActivity() {
 
     fun onAddressSectionClick(view: View) {
         val intent = Intent(this, AddressSelectionActivity::class.java)
-        intent.putExtra("userId", "example_userId")
+        intent.putExtra("userId", userId_tmp)
         intent.putExtra("addressId", selectedAddressId)
         startActivityForResult(intent, 1)
     }
