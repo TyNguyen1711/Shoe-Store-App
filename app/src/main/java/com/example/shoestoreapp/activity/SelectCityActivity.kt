@@ -1,7 +1,9 @@
 package com.example.shoestoreapp.activity
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.LocationManager
 import android.os.Bundle
@@ -21,6 +23,7 @@ import com.example.shoestoreapp.classes.ApiService
 import com.example.shoestoreapp.data.model.City
 import com.example.shoestoreapp.data.model.CityResponse
 import com.example.shoestoreapp.data.model.District
+import com.google.android.gms.common.api.ResolvableApiException
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -139,7 +142,7 @@ class SelectCityActivity : AppCompatActivity() {
         val task = client.checkLocationSettings(builder.build())
 
         // Kiểm tra quyền truy cập vị trí
-        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             task.addOnSuccessListener {
                 // Nếu GPS đã bật, lấy vị trí
                 fusedLocationClient.lastLocation
@@ -155,7 +158,7 @@ class SelectCityActivity : AppCompatActivity() {
             }
 
             task.addOnFailureListener { e ->
-                if (e is com.google.android.gms.common.api.ResolvableApiException) {
+                if (e is ResolvableApiException) {
                     e.startResolutionForResult(this, 100)
                 } else {
                     Toast.makeText(this, "Location services are not available.", Toast.LENGTH_SHORT).show()
@@ -163,7 +166,7 @@ class SelectCityActivity : AppCompatActivity() {
             }
         } else {
             // Yêu cầu quyền nếu chưa có
-            requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 100)
         }
     }
 
@@ -173,7 +176,7 @@ class SelectCityActivity : AppCompatActivity() {
 
         if (requestCode == 100) {
             // Nếu quyền được cấp, gọi lại phương thức để lấy vị trí
-            if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 onUseLocationClick(View(this))  // Gọi lại phương thức để lấy vị trí
             } else {
                 Toast.makeText(this, "Permission denied. Cannot get location.", Toast.LENGTH_SHORT).show()

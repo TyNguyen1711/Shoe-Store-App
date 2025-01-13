@@ -1,21 +1,40 @@
 package com.example.shoestoreapp.activity
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.shoestoreapp.R
 
-class PaymentActivity : AppCompatActivity() {
+
+class PaymentActivity : AppCompatActivity()  {
+    @SuppressLint("MissingInflatedId", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_payment)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        setContentView(R.layout.activity_payment_method)
+
+        var hideStatus: Boolean = false
+        val wallet = findViewById<TextView>(R.id.balanceWallet)
+        val hideEye = findViewById<ImageView>(R.id.hideEyeImg)
+        val money: String = "300.000"
+
+        val backButton = findViewById<Button>(R.id.backBtn)
+        backButton.setOnClickListener {
+            finish()
         }
+
+        hideEye.setOnClickListener{
+            hideStatus = !hideStatus
+            if (hideStatus) {
+                wallet.text = "₫ $money"
+            }
+            else {
+                wallet.text = "₫ ***"
+            }
+        }
+
     }
 }
+

@@ -1,6 +1,7 @@
 package com.example.shoestoreapp.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -25,11 +26,34 @@ class HomeActivity : AppCompatActivity() {
             insets
         }
 
+        val code = intent.getStringExtra("selectedCoupon")
+        val discount = intent.getStringExtra("discountCoupon")
+        val selectedProductIds = intent.getStringArrayListExtra("selectedProductIds")
+        Log.d("code", code.toString())
+        Log.d("discount", discount.toString())
+        println("Checked Product IDs_Home: $selectedProductIds")
 
-        // Hiển thị Fragment mặc định
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, HomeFragment())
-            .commit()
+        if (!code.isNullOrEmpty() && !discount.isNullOrEmpty()) {
+            // Tạo Bundle và truyền dữ liệu vào MyCartFragment
+            val bundle = Bundle().apply {
+                putString("selectedCoupon", code)
+                putString("discountCoupon", discount)
+                putStringArrayList("selectedProductIds", selectedProductIds)
+            }
+
+            // Tạo MyCartFragment và truyền Bundle vào
+            val myCartFragment = MyCartFragment().apply {
+                arguments = bundle
+            }
+
+            switchFragment(myCartFragment)
+
+        } else {
+            // Hiển thị Fragment mặc định (HomeFragment)
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, HomeFragment())
+                .commit()
+        }
 
         // Gán sự kiện cho các button
         findViewById<Button>(R.id.button).setOnClickListener {

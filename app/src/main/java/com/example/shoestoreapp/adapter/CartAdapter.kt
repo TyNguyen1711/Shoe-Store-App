@@ -139,5 +139,10 @@ class CartAdapter(
         updateData(updatedCartItems)
     }
 
+    fun getCheckedProductIds(): List<String> {
+        return products.filter { it.isChecked }.map { it.productId }
+    }
+
+
 }
 

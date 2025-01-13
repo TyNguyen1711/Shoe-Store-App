@@ -2,86 +2,83 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/root_block"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/block_1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/corner_shape"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="410dp"
+        android:layout_height="165dp"
+        android:background="@drawable/corner_shape_orders"
         tools:ignore="MissingConstraints">
 
-        <ImageButton
-            android:id="@+id/imageButton2"
-            android:layout_width="35dp"
-            android:layout_height="46dp"
-            android:layout_marginStart="7dp"
-            android:layout_marginTop="12dp"
-            android:background="#121E61"
-            android:backgroundTint="#EF4C2B"
-            android:scaleX="0.5"
-            android:scaleY="0.5"
+        <Button
+            android:id="@+id/backBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="22dp"
+            android:background="@drawable/rounded_button"
+            android:drawableStart="@drawable/arrow_left"
+            android:paddingStart="10dp"
+            android:paddingEnd="16dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/img_1"
-            app:tint="@color/white"
-            tools:ignore="MissingConstraints" />
+            app:layout_constraintTop_toTopOf="parent" />
+
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/titlePage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="17dp"
-            android:layout_marginBottom="120dp"
-            android:text="Ví tiền"
-            android:textColor="@color/white"
+            android:layout_marginStart="72dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="60dp"
+            android:text="Payment"
+            android:textColor="#000000"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageButton2"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/backBtn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="31dp"
-            android:layout_marginTop="2dp"
-            android:text="Số dư Ví"
-            android:textColor="@color/white"
+            android:layout_marginTop="12dp"
+            android:text="Balance wallet"
+            android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageButton2" />
+            app:layout_constraintTop_toBottomOf="@+id/backBtn" />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/hideEyeImg"
             android:layout_width="31dp"
             android:layout_height="28dp"
-            android:layout_marginTop="58dp"
-            app:layout_constraintStart_toEndOf="@+id/textView3"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="107dp"
+            android:tint="@color/black"
+            app:layout_constraintStart_toEndOf="@+id/balanceWallet"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/hidden_eyes"
-            app:tint="@color/white" />
+            app:srcCompat="@drawable/hidden_eyes" />
 
         <TextView
-            android:id="@+id/textView8"
+            android:id="@+id/balanceWallet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="31dp"
+            android:layout_marginStart="36dp"
             android:layout_marginTop="36dp"
             android:text="₫ *** "
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="19sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageButton2" />
+            app:layout_constraintTop_toBottomOf="@+id/backBtn" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -93,7 +90,7 @@
         android:layout_marginHorizontal="40dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="-20dp"
-        android:background="@drawable/corner_shape_1"
+        android:background="@drawable/corner_shape_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/block_1"
         tools:ignore="MissingConstraints">
@@ -106,7 +103,7 @@
             android:layout_marginTop="32dp"
             android:scaleX="2"
             android:scaleY="2.2"
-            app:tint="#EF4C2B"
+            android:tint="#000000"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/deposit" />
@@ -119,7 +116,7 @@
             android:layout_marginTop="120dp"
             android:scaleX="1.4"
             android:scaleY="1.4"
-            app:tint="#EF4C2B"
+            android:tint="#000000"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/transfer" />
@@ -132,10 +129,10 @@
             android:layout_marginTop="120dp"
             android:scaleX="1.2"
             android:scaleY="1.2"
-            app:tint="#EF4C2B"
+            android:tint="#000000"
             app:layout_constraintStart_toEndOf="@+id/imageView5"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/back_money" />
+            app:srcCompat="@drawable/back_money_icon" />
 
         <ImageView
             android:id="@+id/imageView7"
@@ -145,7 +142,7 @@
             android:layout_marginTop="28dp"
             android:scaleX="1.4"
             android:scaleY="1.4"
-            app:tint="#EF4C2B"
+            android:tint="#000000"
             app:layout_constraintStart_toEndOf="@+id/imageView4"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/payment" />
@@ -154,9 +151,9 @@
             android:id="@+id/textView9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="56dp"
+            android:layout_marginStart="58dp"
             android:layout_marginTop="10dp"
-            android:text="Nạp tiền"
+            android:text="Deposit"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView4" />
@@ -168,7 +165,7 @@
             android:layout_marginStart="235dp"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:text="Phương thức thanh toán"
+            android:text="Payment methods"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView7" />
@@ -177,9 +174,9 @@
             android:id="@+id/textView10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="46dp"
+            android:layout_marginStart="56dp"
             android:layout_marginTop="7dp"
-            android:text="Chuyển tiền"
+            android:text="Transfer"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView5" />
@@ -188,9 +185,9 @@
             android:id="@+id/textView12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="257dp"
+            android:layout_marginStart="253dp"
             android:layout_marginTop="7dp"
-            android:text="Rút tiền"
+            android:text="Withdraw"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView5" />
@@ -201,8 +198,8 @@
         android:id="@+id/block_3"
         android:layout_width="match_parent"
         android:layout_height="65dp"
-        android:layout_marginTop="395dp"
-        android:background="@drawable/corner_shape_1"
+        android:layout_marginTop="450dp"
+        android:background="@drawable/corner_shape_button"
         app:layout_constraintTop_toBottomOf="@+id/block_2"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="0dp">
@@ -215,7 +212,7 @@
             android:layout_marginTop="9dp"
             android:scaleX="1.2"
             android:scaleY="1.2"
-            app:tint="#EF4C2B"
+            android:tint="#FFC107"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/home_page" />
@@ -228,7 +225,7 @@
             android:layout_marginTop="9dp"
             android:scaleX="1"
             android:scaleY="1"
-            app:tint="#000000"
+            android:tint="#000000"
             app:layout_constraintStart_toEndOf="@+id/imageView8"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/history" />
@@ -241,7 +238,7 @@
             android:layout_marginTop="9dp"
             android:scaleX="1"
             android:scaleY="1"
-            app:tint="#000000"
+            android:tint="#000000"
             app:layout_constraintStart_toEndOf="@+id/imageView9"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/profile" />
@@ -250,10 +247,10 @@
             android:id="@+id/textView15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="34dp"
+            android:layout_marginStart="47dp"
             android:layout_marginTop="5dp"
-            android:text="Trang chủ"
-            android:textColor="#EF4C2B"
+            android:text="Home"
+            android:textColor="#FFC107"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView8" />
 
@@ -261,9 +258,9 @@
             android:id="@+id/textView16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="87dp"
+            android:layout_marginStart="100dp"
             android:layout_marginTop="5dp"
-            android:text="Lịch sử"
+            android:text="History"
             app:layout_constraintStart_toEndOf="@+id/textView15"
             app:layout_constraintTop_toBottomOf="@+id/imageView9" />
 
@@ -271,9 +268,9 @@
             android:id="@+id/textView17"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="113dp"
+            android:layout_marginStart="82dp"
             android:layout_marginTop="5dp"
-            android:text="Tôi"
+            android:text="My Account"
             app:layout_constraintStart_toEndOf="@+id/textView16"
             app:layout_constraintTop_toBottomOf="@+id/imageView10" />
 

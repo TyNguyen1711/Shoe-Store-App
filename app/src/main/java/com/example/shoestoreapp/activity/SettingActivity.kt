@@ -3,6 +3,7 @@ package com.example.shoestoreapp.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
@@ -32,10 +33,10 @@ class SettingActivity : AppCompatActivity() {
         val aboutSection = findViewById<LinearLayout>(R.id.option_about)
         val logoutButton = findViewById<Button>(R.id.my_button)
 
-//        ordersSection.setOnClickListener {
-//            startActivity(Intent(this, OrdersActivity::class.java))
-//        }
-//
+        ordersSection.setOnClickListener {
+            startActivity(Intent(this, OrderActivity::class.java))
+        }
+
 //        myDetailsSection.setOnClickListener {
 //            startActivity(Intent(this, MyDetailsActivity::class.java))
 //        }
@@ -43,10 +44,10 @@ class SettingActivity : AppCompatActivity() {
 //        deliveryAddressSection.setOnClickListener {
 //            startActivity(Intent(this, DeliveryAddressActivity::class.java))
 //        }
-//
-//        paymentMethodsSection.setOnClickListener {
-//            startActivity(Intent(this, PaymentMethodsActivity::class.java))
-//        }
+
+        paymentMethodsSection.setOnClickListener {
+            startActivity(Intent(this, PaymentActivity::class.java))
+        }
 
         couponSection.setOnClickListener {
             startActivity(Intent(this, CouponActivity::class.java))
