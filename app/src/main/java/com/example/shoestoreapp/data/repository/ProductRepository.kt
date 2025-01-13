@@ -166,12 +166,18 @@ class ProductRepository(
     suspend fun searchProducts(query: String): Result<List<Product>> = runCatching {
         val snapshot = productsCollection.get().await()
 
-        // Lọc kết quả tại client (nếu cần)
-        val filteredProducts = snapshot.documents.filter { document ->
-            val name = document.getString("name") ?: ""
-            name.contains(query, ignoreCase = true)  // Kiểm tra nếu tên chứa từ khóa tìm kiếm
+        // Chia query thành danh sách từ khóa
+        val keywords = query.split(" ").filter { it.isNotBlank() }
+
+        // Lọc kết quả tại client dần dần theo từng từ khóa
+        val filteredProducts = keywords.fold(snapshot.documents) { currentList, keyword ->
+            currentList.filter { document ->
+                val name = document.getString("name") ?: ""
+                name.contains(keyword, ignoreCase = true) // Kiểm tra nếu tên chứa từ khóa
+            }
         }
 
+        // Ánh xạ kết quả vào danh sách sản phẩm
         filteredProducts.map { document ->
             val documentData = document.data ?: throw Exception("Product not found")
             Log.d("SNAPSHOT RESULT:", document.id)
@@ -199,7 +205,4 @@ class ProductRepository(
             )
         }
     }
-
-
-
 }

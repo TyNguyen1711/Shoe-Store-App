@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,13 +16,13 @@ import com.example.shoestoreapp.data.model.CartItem
 
 class CartAdapter(
     private var products: List<CartItem>,
-    private val userId: String,
     private val onIncrease: (CartItem) -> Unit,
     private val onDecrease: (CartItem) -> Unit,
     private val onCheckedChange: (Int, Boolean) -> Unit,
     private var images: List<String>,
     private var prices: List<Double>,
     private var names: List<String>,
+    private var stockList: List<Int>
 ) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
     inner class CartViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -57,12 +58,26 @@ class CartAdapter(
 
             // Xử lý sự kiện tăng/giảm số lượng
             increaseButton.setOnClickListener {
-                notifyItemChanged(adapterPosition)
-                onIncrease(product)
+                // Kiểm tra xem số lượng sản phẩm đã đạt tối đa chưa
+                if (product.quantity < stockList[pos]) {
+                    // Nếu chưa đạt tối đa, thực hiện tăng
+                    notifyItemChanged(adapterPosition)
+                    onIncrease(product)
+
+                    // Nếu số lượng bằng với stockList, vô hiệu hóa nút tăng
+                    if (product.quantity == stockList[pos]) {
+                        increaseButton.isEnabled = false
+                    }
+                } else {
+                    // Nếu đã đạt tối đa, không làm gì cả
+                    increaseButton.isEnabled = false
+                }
             }
+
 
             decreaseButton.setOnClickListener {
                 notifyItemChanged(adapterPosition)
+                increaseButton.isEnabled = true
                 onDecrease(product)
                 if (product.quantity <= 1) {
                     var mutableList = images.toMutableList() // Chuyển thành MutableList
@@ -71,6 +86,8 @@ class CartAdapter(
                     mutableList.removeAt(pos)
                     val pricesMutableList: MutableList<Double> = prices.toMutableList()
                     pricesMutableList.removeAt(pos)
+                    val stockMutableList: MutableList<Int> = stockList.toMutableList()
+                    stockMutableList.removeAt(pos)
                 }
             }
         }
@@ -91,7 +108,8 @@ class CartAdapter(
         newCartItems: List<CartItem>,
         newImages: List<String> = emptyList(),
         newNames: List<String> = emptyList(),
-        newPrices: List<Double> = emptyList()
+        newPrices: List<Double> = emptyList(),
+        newStock: List<Int> = emptyList()
     ) {
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize() = products.size
@@ -116,7 +134,6 @@ class CartAdapter(
 
         // Cập nhật danh sách sản phẩm
         products = newCartItems.toList()
-        println(products)
 
         // Gán images, names, và prices chỉ khi có giá trị mới
         if (newImages.isNotEmpty()) {
@@ -128,7 +145,9 @@ class CartAdapter(
         if (newPrices.isNotEmpty()) {
             prices = newPrices
         }
-
+        if (newStock.isNotEmpty()) {
+            stockList = newStock
+        }
         // Cập nhật RecyclerView
         diffResult.dispatchUpdatesTo(this)
     }
