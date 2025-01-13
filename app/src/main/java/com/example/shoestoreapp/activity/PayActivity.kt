@@ -63,13 +63,14 @@ class PayActivity : AppCompatActivity() {
 
         // Nhận danh sách các ID sản phẩm và userId
         val selectedProductIds = intent.getStringArrayListExtra("selectedProductIds") ?: emptyList<String>()
+        val selectedSize = intent.getStringArrayListExtra("selectedSize") ?: emptyList<String>()
         val userId = intent.getStringExtra("userId")
 
         if (selectedProductIds.isNotEmpty() && userId != null) {
             val firestore = FirebaseFirestore.getInstance()
             productRepository = ProductRepository(firestore)
             cartRepository = CartRepository(firestore)
-            loadSelectedProducts(selectedProductIds, userId)
+            loadSelectedProducts(selectedProductIds, selectedSize, userId)
         } else {
             finish()
         }
@@ -313,17 +314,15 @@ class PayActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadSelectedProducts(productIds: List<String>, userId: String) {
+    private fun loadSelectedProducts(productIds: List<String>, sizes: List<String>, userId: String) {
         CoroutineScope(Dispatchers.IO).launch {
             // Lấy danh sách sản phẩm trong giỏ hàng của người dùng
             val cartResult = cartRepository.getCartItems(userId)
 
             cartResult.onSuccess { cartItems ->
                 val cartProductIds = cartItems.map { it.productId } // Lấy danh sách productId trong giỏ hàng
-                for (cartItem in cartItems) {
-                    if (productIds.contains(cartItem.productId)) {
-                        validProducts.add(cartItem)
-                    }
+                for ((productId,size) in productIds.zip(sizes)){
+                    validProducts.addAll(cartItems.filter { it.productId == productId && it.size == size })
                 }
 
                 for (productId in productIds) {

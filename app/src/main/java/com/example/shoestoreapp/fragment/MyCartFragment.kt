@@ -125,7 +125,9 @@ class MyCartFragment : Fragment() {
             val selectedProductIds = localCartItems
                 .filter { it.isChecked } // Lọc các sản phẩm đã được check
                 .map { it.productId }    // Lấy danh sách ID sản phẩm
-
+            val selectedSize = localCartItems
+                .filter { it.isChecked } // Lọc các sản phẩm đã được check
+                .map { it.size }    // Lấy danh sách ID sản phẩm
             if (selectedProductIds.isEmpty()) {
                 // Nếu không có sản phẩm nào được chọn, hiển thị thông báo
                 Toast.makeText(requireContext(), "Please select at least one product!", Toast.LENGTH_SHORT).show()
@@ -133,6 +135,7 @@ class MyCartFragment : Fragment() {
                 // Chuyển qua PayActivity và truyền danh sách ID sản phẩm đã chọn
                 val intent = Intent(requireContext(), PayActivity::class.java).apply {
                     putStringArrayListExtra("selectedProductIds", ArrayList(selectedProductIds))
+                    putStringArrayListExtra("selectedSize", ArrayList(selectedSize))
                     putExtra("userId", userId)
                 }
                 startActivity(intent)
