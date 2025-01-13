@@ -13,7 +13,6 @@ data class CartItem(
             "productId" to productId, // Chuyển đối tượng Product thành Map
             "size" to size, // Chuyển đối tượng Variant thành Map
             "quantity" to quantity,
-            "isChecked" to isChecked,
         ).filterValues { it != null }
     }
 }

@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.WishlistAdapter
+import com.example.shoestoreapp.data.model.CartItem
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.repository.CartRepository
 import com.example.shoestoreapp.data.repository.WishListRepository
@@ -54,10 +55,10 @@ class WishlistFragment : Fragment(), WishlistAdapter.ProductCountListener,
         lifecycleScope.launch {
             try {
                 wishlistRepository.removeFromWishlist(
-                    userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2",
+                    userId = "example_user_id",
                     productId = product.id
                 )
-                val result = wishlistRepository.getWishlistByUserId(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2")
+                val result = wishlistRepository.getWishlistByUserId(userId = "example_user_id")
                 if (result.isSuccess) {
                     val updatedProducts = result.getOrNull() ?: emptyList()
                     wishlistAdapter.updateData(updatedProducts)
@@ -71,6 +72,7 @@ class WishlistFragment : Fragment(), WishlistAdapter.ProductCountListener,
     }
 
     override fun onCartClick(product: Product) {
+
         lifecycleScope.launch {
             try {
 //                cartRepository.addProductToCart(
@@ -125,7 +127,7 @@ class WishlistFragment : Fragment(), WishlistAdapter.ProductCountListener,
     private fun fetchProductList() {
         lifecycleScope.launch {
             val result =
-                wishlistRepository.getWishlistByUserId(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2")
+                wishlistRepository.getWishlistByUserId(userId = "example_user_id")
             if (result.isSuccess) {
                 val products = result.getOrNull() ?: emptyList()
                 wishlistAdapter.updateData(products)
