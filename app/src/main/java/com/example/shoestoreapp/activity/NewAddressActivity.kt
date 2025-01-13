@@ -21,11 +21,13 @@ class NewAddressActivity : AppCompatActivity() {
     private lateinit var isDefault: Switch
     private var cityName: String? = ""
     private var addressId: String = ""
-    private val userId = "example_userId"
+    private var userId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_address)
+
+        userId = intent.getStringExtra("userId")
 
         cityTV = findViewById(R.id.cityTV)
         fullNameET = findViewById(R.id.fullNameAddressET)
@@ -45,7 +47,7 @@ class NewAddressActivity : AppCompatActivity() {
         submitBT.setOnClickListener {
             // Tạo ID
             addressId = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-                .collection("address").document(userId).collection("addresses").document().id
+                .collection("address").document(userId!!).collection("addresses").document().id
 
             val address = Address(
                 id = addressId,
@@ -55,7 +57,7 @@ class NewAddressActivity : AppCompatActivity() {
                 houseNo = houseNoET.text.toString(),
                 default = isDefault.isChecked
             )
-            saveAddressToFirestore(userId, address)
+            saveAddressToFirestore(userId!!, address)
 
             val resultsIntent = Intent()
             resultsIntent.putExtra("id", addressId)

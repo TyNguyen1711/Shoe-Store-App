@@ -2,7 +2,6 @@ package com.example.shoestoreapp.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -61,14 +60,6 @@ class EditAddressActivity : AppCompatActivity() {
 
         deleteBT.setOnClickListener {
             deleteAddress(addressId)
-        }
-
-        setDefaultSwitch.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN && !setDefaultSwitch.isEnabled) {
-                showToast("This address is already the default. You cannot change it.")
-                return@setOnTouchListener true
-            }
-            return@setOnTouchListener false
         }
 
         backIB.setOnClickListener { finish() }

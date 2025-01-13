@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
@@ -31,7 +30,7 @@ import java.util.Date
 import java.util.Locale
 
 class PayActivity : AppCompatActivity() {
-    private val userId_tmp = "example_userId"
+    private val userId_tmp = "example_user_id"
     private lateinit var productRepository: ProductRepository
     private lateinit var cartRepository: CartRepository
     private val selectedProducts = mutableListOf<CartItem>()
@@ -103,20 +102,28 @@ class PayActivity : AppCompatActivity() {
             }
         }
 
+        // Click Place Order
         placeOrderBT.setOnClickListener {
+            if (selectedAddressId == null) {
+                Toast.makeText(this, "Please select a shipping address before ordering!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             if (selectedPaymentMethod == null) {
                 Toast.makeText(this, "Please select a payment method before placing the order.", Toast.LENGTH_SHORT).show()
-            } else {
-                saveOrderToFirestore { isSuccess ->
-                    if (isSuccess) {
-                        showOrderSuccessDialog()
-                    } else {
-                        Toast.makeText(this, "Failed to place order. Please try again.", Toast.LENGTH_SHORT).show()
-                    }
+                return@setOnClickListener
+            }
+
+            saveOrderToFirestore { isSuccess ->
+                if (isSuccess) {
+                    showOrderSuccessDialog()
+                } else {
+                    Toast.makeText(this, "Failed to place order. Please try again.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
+        // Click Back Button
         backIB.setOnClickListener { finish() }
     }
 
