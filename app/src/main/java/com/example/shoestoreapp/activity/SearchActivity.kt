@@ -101,8 +101,10 @@ class SearchActivity : AppCompatActivity(), ProductItemAdapter.OnProductClickLis
         Toast.makeText(this, "Clicked Product: $productId", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onMoreButtonClick() {
-        Toast.makeText(this, "Clicked More Button", Toast.LENGTH_SHORT).show()
+    override fun onMoreButtonClick(listName: String) {
+        // Handle the "More" button click event here
+        Toast.makeText(this, "More clicked on list: $listName", Toast.LENGTH_SHORT).show()
+        // Add your logic here
     }
 
     private fun updateHistory(element: String) {

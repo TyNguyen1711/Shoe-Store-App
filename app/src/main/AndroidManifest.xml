@@ -32,10 +32,14 @@
             android:name=".activity.SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.PayActivity"
+            android:name=".activity.DisplayProductListActivity"
             android:exported="false" />
         <activity
             android:name=".activity.PaymentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.PayActivity"
+            android:exported="false" />
             android:exported="false" />
         <activity
             android:name=".activity.NotificationActivity"

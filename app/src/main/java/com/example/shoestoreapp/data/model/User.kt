@@ -11,3 +11,4 @@ data class User (
     val isAdmin: Boolean = false,
     var searchHistory: MutableList<String> = mutableListOf()
 )
+
