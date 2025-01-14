@@ -51,6 +51,7 @@ class ExclusiveOfferRepository(
         // Trả về Product với danh sách variants đã được xử lý
         Product(
             id = document.id,
+            averageRating = (document["averageRating"] as? Number)?.toDouble() ?: 0.0,
             name = documentData["name"] as? String ?: "",
             description = documentData["description"] as? String ?: "",
             price = (documentData["price"] as? Number)?.toDouble() ?: 0.0,
@@ -59,7 +60,8 @@ class ExclusiveOfferRepository(
             variants = variants,
             thumbnail =  documentData["thumbnail"] as? String?: "",
             images = documentData["images"] as? List<String> ?: emptyList(),
-            soldCount = documentData["soldCount"] as? Int ?: 0
+            soldCount = (documentData["soldCount"] as? Number)?.toInt() ?: 0,
+            salePercentage = (document["salePercentage"] as? Number)?.toInt() ?: 0
         )
     }
 
@@ -80,8 +82,10 @@ class ExclusiveOfferRepository(
             } ?: emptyList()
 
             // Trả về Product với danh sách variants đã được xử lý
+            Log.d("Exclusive", "Product: ${documentData["averageRating"]}")
             Product(
                 id = document.id,
+                averageRating = (document["averageRating"] as? Number)?.toDouble() ?: 0.0,
                 name = documentData["name"] as? String ?: "",
                 description = documentData["description"] as? String ?: "",
                 price = (documentData["price"] as? Number)?.toDouble() ?: 0.0,
@@ -90,7 +94,8 @@ class ExclusiveOfferRepository(
                 variants = variants,
                 thumbnail =  documentData["thumbnail"] as? String?: "",
                 images = documentData["images"] as? List<String> ?: emptyList(),
-                soldCount = documentData["soldCount"] as? Int ?: 0
+                soldCount = (documentData["soldCount"] as? Number)?.toInt() ?: 0,
+                salePercentage = (document["salePercentage"] as? Number)?.toInt() ?: 0
             )
         }
     }
@@ -133,6 +138,7 @@ class ExclusiveOfferRepository(
             // Trả về Product với danh sách variants đã được xử lý
             Product(
                 id = document.id,
+                averageRating = (document["averageRating"] as? Number)?.toDouble() ?: 0.0,
                 name = documentData["name"] as? String ?: "",
                 description = documentData["description"] as? String ?: "",
                 price = (documentData["price"] as? Number)?.toDouble() ?: 0.0,
@@ -141,7 +147,8 @@ class ExclusiveOfferRepository(
                 variants = variants,
                 thumbnail =  documentData["thumbnail"] as? String?: "",
                 images = documentData["images"] as? List<String> ?: emptyList(),
-                soldCount = documentData["soldCount"] as? Int ?: 0
+                soldCount = (documentData["soldCount"] as? Number)?.toInt() ?: 0,
+                salePercentage = (document["salePercentage"] as? Number)?.toInt() ?: 0
             )
         }
     }
@@ -169,6 +176,7 @@ class ExclusiveOfferRepository(
             // Trả về Product với danh sách variants đã được xử lý
             Product(
                 id = document.id,
+                averageRating = (document["averageRating"] as? Number)?.toDouble() ?: 0.0,
                 name = documentData["name"] as? String ?: "",
                 description = documentData["description"] as? String ?: "",
                 price = (documentData["price"] as? Number)?.toDouble() ?: 0.0,
@@ -177,7 +185,8 @@ class ExclusiveOfferRepository(
                 variants = variants,
                 thumbnail =  documentData["thumbnail"] as? String?: "",
                 images = documentData["images"] as? List<String> ?: emptyList(),
-                soldCount = documentData["soldCount"] as? Int ?: 0
+                soldCount = (documentData["soldCount"] as? Number)?.toInt() ?: 0,
+                salePercentage = (document["salePercentage"] as? Number)?.toInt() ?: 0
             )
         }
     }

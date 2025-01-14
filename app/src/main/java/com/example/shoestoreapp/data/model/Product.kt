@@ -22,7 +22,8 @@ data class Product(
     val images: List<String> = emptyList(),
     val variants: List<ProductVariant> = emptyList(),
     val averageRating: Double = 0.0,
-    val reviewCount: Int = 0
+    val reviewCount: Int = 0,
+    val salePercentage: Int = 0
 ) {
     // Hàm chuyển đổi đối tượng thành Map (Firestore yêu cầu dữ liệu dạng Map)
     fun toMap(): Map<String, Any?> {
