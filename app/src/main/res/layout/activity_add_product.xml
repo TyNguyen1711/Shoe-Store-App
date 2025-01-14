@@ -206,12 +206,42 @@
                 android:text="Thêm biến thể"/>
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_review"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Xem trước sản phẩm"
-            android:layout_marginTop="16dp"/>
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="Hủy"
+                android:backgroundTint="#FFCDD2"
+                android:textColor="#D32F2F"
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/rounded_button_cancel"/>
+
+            <Button
+                android:id="@+id/btn_add"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="Thêm sản phẩm"
+                android:backgroundTint="#C8E6C9"
+                android:textColor="#388E3C"
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/rounded_button_add"/>
+        </LinearLayout>
+
 
     </LinearLayout>
 </ScrollView>
