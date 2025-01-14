@@ -37,8 +37,11 @@
         private val productList: List<Product>,
         private val listener: OnProductClickListener,
         private val lifecycleOwner: LifecycleOwner,
-        private var isHome: Boolean = true
+        private var isHome: Boolean = true,
+        private val listName: String = ""
     ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+        private var wishlists: Wishlist = Wishlist()
 
         companion object {
             private const val VIEW_TYPE_PRODUCT = 0
@@ -47,7 +50,7 @@
 
         interface OnProductClickListener {
             fun onProductClick(productId: String)
-            fun onMoreButtonClick()
+            fun onMoreButtonClick(listName: String)
         }
 
         override fun getItemViewType(position: Int): Int {
@@ -56,7 +59,7 @@
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             return if (viewType == VIEW_TYPE_PRODUCT) {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.product_details, parent, false)
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.wishlist_product, parent, false)
                 ProductViewHolder(view, lifecycleOwner)
             } else {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.more_button, parent, false)
@@ -67,9 +70,9 @@
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             if (holder is ProductViewHolder) {
                 val product = productList[position]
-                holder.bind(product, listener)
+                holder.bind(product, listener, wishlists) // Truyền wishlists vào
             } else if (holder is MoreButtonViewHolder) {
-                holder.bind(listener)
+                holder.bind(listName, listener)
             }
         }
 
@@ -77,7 +80,15 @@
             return if(isHome) productList.size + 1 else productList.size  // Thêm 1 cho thẻ "More Button"
         }
 
-        class ProductViewHolder(itemView: View, private val lifecycleOwner: LifecycleOwner)
+        fun updateWishlist(newWishlist: Wishlist) {
+            wishlists = newWishlist
+            notifyDataSetChanged() // Cập nhật lại RecyclerView
+        }
+
+        class ProductViewHolder(
+            itemView: View,
+            private val lifecycleOwner: LifecycleOwner
+        )
             : RecyclerView.ViewHolder(itemView) {
             private lateinit var auth: FirebaseAuth
 
@@ -85,58 +96,65 @@
             private val productName: TextView = itemView.findViewById(R.id.fullNameTV)
             private val productPrice: TextView = itemView.findViewById(R.id.costTV)
             private val productRating: TextView = itemView.findViewById(R.id.ratingsTV)
-            private val productFavoriteBtn: ImageButton = itemView.findViewById(R.id.favoriteBtn)
+            private val productFavoriteBtn: ImageButton = itemView.findViewById(R.id.heartBtn)
             private val productSoldCount: TextView = itemView.findViewById(R.id.soldTV)
-
-            private var wishlists: Wishlist? = null
-            private val wishListRepository = WishListRepository()
+            private val productSalePercentage: TextView = itemView.findViewById(R.id.salePercentage)
 
             private val userId = FirebaseAuth.getInstance().currentUser?.uid
 
-            fun bind(product: Product, listener: OnProductClickListener) {
+            fun bind(product: Product, listener: OnProductClickListener, wishlists: Wishlist?) {
                 // Gắn dữ liệu sản phẩm
                 Glide.with(productImage.context).load(product.thumbnail).into(productImage)
 
                 // Định dạng giá
-                val formattedPrice = formatCurrency(product.price.toDouble())
+                var formattedPrice: String
+                if (product.discountPrice != null)
+                    formattedPrice = formatCurrency(product.discountPrice)
+                else
+                    formattedPrice = formatCurrency(product.price)
                 productPrice.text = formattedPrice
 
                 productName.text = product.name
                 productRating.text = "${product.averageRating} stars"
-                productSoldCount.text = product.soldCount.toString()
+                productSoldCount.text = "${product.soldCount} sold"
+                productSalePercentage.text = "-${product.salePercentage}%"
+
+                if (userId != null) {
+                    // Cập nhật trạng thái nút yêu thích
+                    if (wishlists?.products?.contains(product.id) == true) {
+                        productFavoriteBtn.setImageResource(R.drawable.favorite_full)
+                    } else {
+                        productFavoriteBtn.setImageResource(R.drawable.favorite_border)
+                    }
+                }
+
+                if (wishlists!!.products?.contains(product.id) == true) {
+                    productFavoriteBtn.setImageResource(R.drawable.favorite_full)
+                }
+                else {
+                    productFavoriteBtn.setImageResource(R.drawable.favorite_border)
+                }
 
                 productFavoriteBtn.setOnClickListener {
-                    Log.d("UserID", "$userId")
-                    if (userId == null)
-                        showSignUpDialog()
+                    if (userId == null) {
+                        Log.d("Favourite Button UID", "$userId")
+                        showSignUpDialog(wishlists)
+                    }
                     else {
-                        lifecycleOwner.lifecycleScope.launch {
-                            val result = wishListRepository.getUserWishlist(userId)
-                            Log.d("WishList Result", "$result")
-                            result.onSuccess { items ->
-                                wishlists = items
-                            }.onFailure { error ->
-                                // Xử lý lỗi nếu không lấy được danh sách giỏ hàng
-                                wishlists?.userId = userId
-                                wishListRepository.addUserWishlist(wishlists!!)
-                            }
-                        }
-
-                        if (wishlists!!.products?.contains(product.id) == false) {
+                        if (wishlists.products?.contains(product.id) == false) {
+                            wishlists.products?.add(product.id)
                             productFavoriteBtn.setImageResource(R.drawable.favorite_full)
-                            wishlists!!.products!!.add(product.id)
-                            updateUserWishlist(wishlists!!)
-                        }
-                        else {
+                            updateUserWishlist(wishlists)
+                        } else {
+                            wishlists.products?.remove(product.id)
                             productFavoriteBtn.setImageResource(R.drawable.favorite_border)
-                            wishlists!!.products!!.remove(product.id)
-                            updateUserWishlist(wishlists!!)
+                            updateUserWishlist(wishlists)
                         }
                     }
                 }
 
                 itemView.setOnClickListener {
-                    listener.onProductClick(product.id.toString())
+                    listener.onProductClick(product.id)
                 }
             }
 
@@ -147,11 +165,12 @@
 
             private fun updateUserWishlist(wishlist: Wishlist) {
                 lifecycleOwner.lifecycleScope.launch {
+                    val wishListRepository = WishListRepository()
                     wishListRepository.updateUserWishlist(wishlist)
                     }
                 }
 
-            private fun showSignUpDialog() {
+            private fun showSignUpDialog(wishlists: Wishlist?) {
                 // Hiển thị dialog đăng ký
                 val dialog = Dialog(itemView.context, R.style.LoginDialogStyle)
                 dialog.setContentView(R.layout.dialog_signup_popup)
@@ -175,40 +194,51 @@
                     val username = usernameET.text.toString()
                     val email = emailET.text.toString()
                     val password = passwordET.text.toString()
+                    notificationTV.text = ""
 
                     if (TextUtils.isEmpty(username)) {
                         notificationTV.text = itemView.context.getString(R.string.enter_username)
+                        return@setOnClickListener
                     }
 
                     if (TextUtils.isEmpty(email)) {
                         notificationTV.text = itemView.context.getResources().getString(R.string.enter_email)
+                        return@setOnClickListener
                     }
 
                     if (TextUtils.isEmpty(password)) {
                         notificationTV.text = itemView.context.getResources().getString(R.string.enter_password)
+                        return@setOnClickListener
                     }
 
                     auth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                // Set username through update user profile
-
                                 val user = Firebase.auth.currentUser
                                 val profileUpdates = userProfileChangeRequest {
                                     displayName = username
                                 }
                                 user!!.updateProfile(profileUpdates)
 
+                                wishlists!!.userId = user.uid
+
+                                lifecycleOwner.lifecycleScope.launch {
+                                    val wishListRepository = WishListRepository()
+                                    wishListRepository.addUserWishlist(wishlists)
+                                }
+
                                 // Return to login activity after finish sign up
                                 dialog.dismiss()
                                 showSuccessDialog("Sign Up Successfully")
                             } else {
                                 // If sign in fails, display a message to the user.
-                                Toast.makeText(
+                                Log.w("TAG", "createUserWithEmail:failure", task.exception)
+                                notificationTV.text = task.exception?.message.toString()
+                                /*Toast.makeText(
                                     itemView.context,
                                     "Authentication failed.",
                                     Toast.LENGTH_SHORT,
-                                ).show()
+                                ).show()*/
                             }
                         }
                 }
@@ -216,13 +246,13 @@
                 loginTV.setOnClickListener {
                     loginTV.setPaintFlags(loginTV.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
                     dialog.dismiss()
-                    showLoginDialog()
+                    showLoginDialog(wishlists)
                 }
 
                 dialog.show()
             }
 
-            private fun showLoginDialog() {
+            private fun showLoginDialog(wishlists: Wishlist?) {
                 // Hiển thị dialog đăng nhập
                 val dialog = Dialog(itemView.context, R.style.LoginDialogStyle)
                 dialog.setContentView(R.layout.dialog_login_popup)
@@ -251,13 +281,16 @@
                 loginBtn.setOnClickListener() {
                     val email = emailET.text.toString()
                     val password = passwordET.text.toString()
+                    notificationTV.text = ""
 
                     if (TextUtils.isEmpty(email)) {
                         notificationTV.text = itemView.context.getString(R.string.enter_email)
+                        return@setOnClickListener
                     }
 
                     if (TextUtils.isEmpty(password)) {
                         notificationTV.text = itemView.context.getResources().getString(R.string.enter_password)
+                        return@setOnClickListener
                     }
 
                     auth.signInWithEmailAndPassword(email, password)
@@ -268,11 +301,12 @@
                                 showSuccessDialog("Login Successfully")
                             } else {
                                 // If sign in fails, display a message to the user.
-                                Toast.makeText(
+                                notificationTV.text = task.exception?.message.toString()
+                                /*Toast.makeText(
                                     itemView.context,
                                     "Authentication failed.",
                                     Toast.LENGTH_SHORT,
-                                ).show()
+                                ).show()*/
                             }
                         }
                 }
@@ -280,7 +314,7 @@
                 signupTV.setOnClickListener() {
                     signupTV.setPaintFlags(signupTV.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
                     dialog.dismiss()
-                    showSignUpDialog()
+                    showSignUpDialog(wishlists)
                 }
 
                 dialog.show()
@@ -305,9 +339,9 @@
         class MoreButtonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             private val moreButton: ImageButton = itemView.findViewById(R.id.moreBtn)
 
-            fun bind(listener: OnProductClickListener) {
+            fun bind(listName: String, listener: OnProductClickListener) {
                 moreButton.setOnClickListener {
-                    listener.onMoreButtonClick()
+                    listener.onMoreButtonClick(listName)
                 }
             }
         }

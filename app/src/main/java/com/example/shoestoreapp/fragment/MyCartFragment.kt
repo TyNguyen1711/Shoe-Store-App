@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.fragment
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.adapter.CartAdapter
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.activity.CouponCartActivity
 import com.example.shoestoreapp.activity.PayActivity
 import com.example.shoestoreapp.data.model.CartItem
 import com.example.shoestoreapp.data.repository.CartRepository
@@ -40,6 +42,10 @@ class MyCartFragment : Fragment() {
     private lateinit var topLayout: LinearLayout
     private lateinit var bottomLayout: LinearLayout
     private lateinit var couponLayout: LinearLayout
+
+    private var usedCoupon: Boolean = false
+    private var totalPrice: Double = 0.0
+    private var saving: Double = 0.0
 
     private val firestore = FirebaseFirestore.getInstance()
     private val localCartItems = mutableListOf<CartItem>()
@@ -141,6 +147,38 @@ class MyCartFragment : Fragment() {
                 startActivity(intent)
             }
         }
+
+        couponLayout.setOnClickListener {
+            // Lấy danh sách các sản phẩm đã chọn
+            val checkedProductIds = cartAdapter.getCheckedProductIds()
+            println("Checked Product IDs: $checkedProductIds")
+
+            // Chuyển qua CouponCartActivity và truyền danh sách ID sản phẩm đã chọn
+            val intent = Intent(requireContext(), CouponCartActivity::class.java).apply {
+                putStringArrayListExtra("selectedProductIds", ArrayList(checkedProductIds))
+            }
+            startActivity(intent)
+        }
+
+        val code = arguments?.getString("selectedCoupon")
+        val discount = arguments?.getString("discountCoupon")
+
+
+        val nameCoupon = view.findViewById<TextView>(R.id.textViewVoucher)
+        if (!code.isNullOrEmpty() && !discount.isNullOrEmpty()) {
+            nameCoupon.text = code + ": " + "SALE OFF " + discount + "%"
+        }
+    }
+
+    private fun updateCartWithSelectedProducts(selectedProductIds: ArrayList<String>?) {
+        println("Checked Product IDs_Func: $selectedProductIds")
+        selectedProductIds?.forEach { productId ->
+            val product = localCartItems.find { it.productId == productId}
+            product?.isChecked = true
+        }
+        cartAdapter.updateData(localCartItems) // Cập nhật lại dữ liệu cho Adapter
+        updateCheckedTotalPrice(requireView()) // Cập nhật lại tổng giá
+        Log.d("List Product: ", localCartItems.toString())
     }
 
     private fun handleCheckedChange(position: Int, isChecked: Boolean) {
@@ -162,14 +200,25 @@ class MyCartFragment : Fragment() {
     private fun loadCartData(view: View) {
         val productRepository =
             ProductRepository(firestore) // Tạo một instance của ProductRepository
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
 
         val updatedCartItems = mutableListOf<CartItem>()
+        val selectedProductIds = arguments?.getStringArrayList("selectedProductIds")
 
         CoroutineScope(Dispatchers.IO).launch {
             val result = cartRepository.getCartItems(userId)
             // Sử dụng CoroutineScope để xử lý các hàm suspend
 
             result.onSuccess { cartItems ->
+                if (!selectedProductIds.isNullOrEmpty()) {
+                    selectedProductIds.forEach { productId ->
+                        val product = cartItems.find { it.productId == productId}
+                        product?.isChecked = true
+                    }
+                    cartAdapter.updateData(localCartItems) // Cập nhật lại dữ liệu cho Adapter
+//                    updateCheckedTotalPrice(requireView()) // Cập nhật lại tổng giá
+                }
+                println("cart: ${cartItems}")
                 for (cartItem in cartItems) {
                     val productId = cartItem.productId
                     updatedCartItems.add(cartItem)
@@ -251,9 +300,15 @@ class MyCartFragment : Fragment() {
                 cartItem.quantity * price
             }
         val numsProduct = localCartItems.count { it.isChecked }
-        view.findViewById<TextView>(R.id.textViewTotal).text =
-            "Total: ${String.format("%,.0f", totalPrice)}đ"
 
+        val discount = arguments?.getString("discountCoupon")
+        if (!discount.isNullOrEmpty()) {
+            val savingMoney = view.findViewById<TextView>(R.id.textViewCode)
+            saving = totalPrice * discount.toInt() / 100
+            savingMoney.text = "Saving: ${String.format("%,.0f", saving)}đ"
+        }
+        view.findViewById<TextView>(R.id.textViewTotal).text =
+            "Total: ${String.format("%,.0f", totalPrice - saving)}đ"
         checkOutTV.text = "Check Out\n(${numsProduct})"
     }
 

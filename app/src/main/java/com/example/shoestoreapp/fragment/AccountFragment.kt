@@ -49,6 +49,22 @@ class AccountFragment : Fragment() {
         aboutSection.setOnClickListener {
             startActivity(Intent(requireContext(), AboutActivity::class.java))
         }
+
+        ordersSection.setOnClickListener {
+            startActivity(Intent(requireContext(), OrderActivity::class.java))
+        }
+
+        myDetailsSection.setOnClickListener {
+            startActivity(Intent(requireContext(), DetailsActivity::class.java))
+        }
+
+        deliveryAddressSection.setOnClickListener {
+            startActivity(Intent(requireContext(), AddressActivity::class.java))
+        }
+
+        paymentMethodsSection.setOnClickListener {
+            startActivity(Intent(requireContext(), PaymentActivity::class.java))
+        }
     }
 }
 

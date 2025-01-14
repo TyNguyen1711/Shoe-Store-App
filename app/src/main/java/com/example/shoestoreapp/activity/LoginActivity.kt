@@ -53,12 +53,13 @@ class LoginActivity : AppCompatActivity() {
         forgotPasswordTV.setOnClickListener() {
             forgotPasswordTV.setPaintFlags(forgotPasswordTV.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
             // val intent = Intent(this)
-            startActivity(intent)
+            // startActivity(intent)
         }
 
         loginBtn.setOnClickListener() {
             val email = emailET.text.toString()
             val password = passwordET.text.toString()
+            notificationTV.text = ""
 
             if (TextUtils.isEmpty(email)) {
                 notificationTV.text = getResources().getString(R.string.enter_email)
@@ -75,14 +76,14 @@ class LoginActivity : AppCompatActivity() {
                         val intent = Intent(this, HomeActivity::class.java)
                         startActivity(intent)
                         finish()
-
                     } else {
                         // If sign in fails, display a message to the user.
-                        Toast.makeText(
+                        notificationTV.text = task.exception?.message.toString()
+/*                        Toast.makeText(
                             baseContext,
                             "Authentication failed.",
                             Toast.LENGTH_SHORT,
-                        ).show()
+                        ).show()*/
                     }
                 }
         }
