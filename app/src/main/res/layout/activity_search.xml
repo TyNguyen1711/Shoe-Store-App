@@ -52,15 +52,14 @@
             android:layout_gravity="center_vertical" />
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/resultFilters"
+        android:id="@+id/resultFilters1"
         android:layout_width="match_parent"
         android:layout_height="36dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
         app:layout_constraintTop_toBottomOf="@id/searchBar"
-        app:layout_constraintBottom_toTopOf="@id/resultRecyclerView">
+        app:layout_constraintBottom_toTopOf="@id/resultFilters2">
 
         <!-- Price Filter -->
         <LinearLayout
@@ -76,10 +75,14 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Price"
+                android:text="Price ⇅"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
                 android:textSize="14sp" />
 
             <View
+                android:id="@+id/underlinePrice"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#CCCCCC" /> <!-- Gạch dưới -->
@@ -92,35 +95,7 @@
             android:layout_height="18dp"
             android:background="#CCCCCC" />
 
-        <!-- Rating Filter -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
 
-            <TextView
-                android:id="@+id/filterRating"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Rating"
-                android:textSize="14sp" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#CCCCCC" /> <!-- Gạch dưới -->
-
-        </LinearLayout>
-
-        <!-- Divider -->
-        <View
-            android:layout_width="1dp"
-            android:layout_height="18dp"
-            android:background="#CCCCCC" />
 
         <!-- Best Seller Filter -->
         <LinearLayout
@@ -137,9 +112,13 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Best Seller"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
                 android:textSize="14sp" />
 
             <View
+                android:id="@+id/underlineBestSeller"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#CCCCCC" /> <!-- Gạch dưới -->
@@ -152,6 +131,76 @@
             android:layout_height="18dp"
             android:background="#CCCCCC" />
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/filterSale"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Sale ⇅"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
+                android:textSize="14sp" />
+
+            <View
+                android:id="@+id/underlineSale"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#CCCCCC" /> <!-- Gạch dưới -->
+
+        </LinearLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/resultFilters2"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintTop_toBottomOf="@id/resultFilters1"
+        app:layout_constraintBottom_toTopOf="@id/resultRecyclerView">
+        <!-- Rating Filter -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/filterRating"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Rating"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
+                android:textSize="14sp" />
+
+            <View
+                android:id="@+id/underlineRating"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#CCCCCC" /> <!-- Gạch dưới -->
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="1dp"
+            android:layout_height="18dp"
+            android:background="#CCCCCC" />
         <!-- Brand Filter -->
         <LinearLayout
             android:layout_width="0dp"
@@ -167,14 +216,25 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Brand"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
                 android:textSize="14sp" />
 
             <View
+                android:id="@+id/underlineBrand"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#CCCCCC" /> <!-- Gạch dưới -->
 
         </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="1dp"
+            android:layout_height="18dp"
+            android:background="#CCCCCC" />
+
 
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
@@ -184,7 +244,7 @@
         android:clickable="true"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        app:layout_constraintTop_toBottomOf="@id/resultFilters"/>
+        app:layout_constraintTop_toBottomOf="@id/resultFilters2"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/resultRecyclerView"
@@ -195,6 +255,6 @@
         android:clickable="true"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        app:layout_constraintTop_toBottomOf="@id/resultFilters"
+        app:layout_constraintTop_toBottomOf="@id/resultFilters2"
         app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -36,4 +36,33 @@ class UserRepository (private val firestore: FirebaseFirestore = FirebaseFiresto
         task.await() // Chờ kết quả của Firestore task
         println("Search history updated successfully!")
     }
+
+    // Hàm suspend để lấy từ khóa xuất hiện nhiều nhất
+    suspend fun getMostFrequentSearchTerm(): String? {
+        val searchHistoryCounts = mutableMapOf<String, Int>()
+
+        try {
+            // Truy xuất tất cả các document từ Firestore
+            val result = usersCollection.get().await()
+
+            for (document in result) {
+                // Lấy danh sách searchHistory từ từng user
+                val searchHistory = document.get("searchHistory") as? List<String> ?: continue
+                println("Ming3993: $searchHistory")
+
+                // Đếm tần suất xuất hiện của mỗi từ khóa
+                for (term in searchHistory) {
+                    val normalizedTerm = term.lowercase() // Chuyển chuỗi về chữ thường
+                    searchHistoryCounts[normalizedTerm] = searchHistoryCounts.getOrDefault(normalizedTerm, 0) + 1
+                }
+            }
+
+            // Tìm từ khóa xuất hiện nhiều nhất
+            return searchHistoryCounts.maxByOrNull { it.value }?.key
+        } catch (e: Exception) {
+            println("Lỗi khi truy vấn Firestore: ${e.message}")
+            return null
+        }
+    }
+
 }

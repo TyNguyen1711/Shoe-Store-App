@@ -116,7 +116,7 @@
 
                 productName.text = product.name
                 productRating.text = "${product.averageRating} stars"
-                productSoldCount.text = product.soldCount.toString()
+                productSoldCount.text = "${product.soldCount} sold"
                 productSalePercentage.text = "-${product.salePercentage}%"
 
                 if (userId != null) {

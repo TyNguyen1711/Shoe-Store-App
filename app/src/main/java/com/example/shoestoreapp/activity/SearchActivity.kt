@@ -1,8 +1,11 @@
 package com.example.shoestoreapp.activity
 
+import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageButton
@@ -50,19 +53,60 @@ class SearchActivity : AppCompatActivity(), ProductItemAdapter.OnProductClickLis
         val searchText: AutoCompleteTextView = findViewById(R.id.autoCompleteSearch)
         val searchBtn: ImageButton = findViewById(R.id.searchBtn)
 
+        val priceFilter: TextView = findViewById(R.id.filterPrice)
+        val bestSellerFilter: TextView = findViewById(R.id.filterBestSeller)
+        val saleFilter: TextView = findViewById(R.id.filterSale)
+
+        val underlinePrice: View = findViewById(R.id.underlinePrice)
+        val underlineBestSeller: View = findViewById(R.id.underlineBestSeller)
+        val underlineSale: View = findViewById(R.id.underlineSale)
+        var topPrice = true
+
+        priceFilter.setOnClickListener{
+            bestSellerFilter.setTextColor(Color.parseColor("#CCCCCC"))
+            underlineBestSeller.setBackgroundColor(Color.parseColor("#CCCCCC"))
+
+            underlinePrice.setBackgroundColor(Color.parseColor("#FF0000"))  // Màu đỏ
+            if(topPrice){
+                topPrice = false
+                priceFilter.text="Price ↓"
+                priceFilter.setTextColor(Color.parseColor("#FF0000")) // Màu đỏ
+                resultProducts.sortByDescending { it.discountPrice }
+            }
+            else
+            {
+                topPrice = true
+                priceFilter.text="Price ↑"
+                priceFilter.setTextColor(Color.parseColor("#FF0000")) // Màu đỏ
+                resultProducts.sortBy { it.discountPrice }
+            }
+            resultAdapter.notifyDataSetChanged()
+        }
+
+        bestSellerFilter.setOnClickListener{
+            topPrice = true
+            priceFilter.text="Price ⇅"
+            priceFilter.setTextColor(Color.parseColor("#CCCCCC"))
+            underlinePrice.setBackgroundColor(Color.parseColor("#CCCCCC"))
+
+            underlineBestSeller.setBackgroundColor(Color.parseColor("#FF0000"))  // Màu đỏ
+            bestSellerFilter.setTextColor(Color.parseColor("#FF0000")) // Màu đỏ
+            resultProducts.sortByDescending { it.soldCount }
+            resultAdapter.notifyDataSetChanged()
+        }
+
 
         // Quay trở về màn hình trước đó
         backBtn.setOnClickListener {
-            finish()
+            setResult(Activity.RESULT_OK)
+            finish() // Hoặc thực hiện logic kết thúc Activity
         }
 
         searchBtn.setOnClickListener {
             val query = searchText.text.toString().trim()
             if (query.isNotEmpty()) {
-                val intent = Intent(this, SearchActivity::class.java)
-                intent.putExtra("SEARCH_QUERY", query) // Truyền từ khóa tìm kiếm qua Intent
                 updateHistory(query)
-                startActivity(intent) // Gọi lại chính Activity
+                startActivityForResultWithRecursion(query) // Gọi lại chính Activity
                 finish() // Kết thúc Activity hiện tại để tránh chồng chất
             } else {
                 Toast.makeText(this, "Please enter a search term.", Toast.LENGTH_SHORT).show()
@@ -90,7 +134,6 @@ class SearchActivity : AppCompatActivity(), ProductItemAdapter.OnProductClickLis
                 resultProducts.addAll(items)
                 resultAdapter.notifyDataSetChanged()
 
-
             }.onFailure { error ->
                 println("Failed to fetch search items: ${error.message}")
             }
@@ -106,6 +149,13 @@ class SearchActivity : AppCompatActivity(), ProductItemAdapter.OnProductClickLis
         Toast.makeText(this, "More clicked on list: $listName", Toast.LENGTH_SHORT).show()
         // Add your logic here
     }
+
+    private fun startActivityForResultWithRecursion(query: String) {
+        val intent = Intent(this, SearchActivity::class.java)
+        intent.putExtra("SEARCH_QUERY", query) // Truyền từ khóa tìm kiếm qua Intent
+        startActivityForResult(intent, 1)  // Sử dụng một request code bất kỳ
+    }
+
 
     private fun updateHistory(element: String) {
         val index = searchHistory.indexOf(element)
