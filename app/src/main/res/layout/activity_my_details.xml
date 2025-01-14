@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#E9E4E4"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/block_1"
+        android:layout_width="407dp"
+        android:layout_height="184dp"
+        android:layout_marginTop="44dp"
+        android:background="@drawable/corner_shape_orders"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints">
+
+        <Button
+            android:id="@+id/backBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="22dp"
+            android:background="@drawable/rounded_button"
+            android:drawableStart="@drawable/arrow_left"
+            android:paddingStart="10dp"
+            android:paddingEnd="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/titlePage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="120dp"
+            android:text="My Details"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/backBtn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="75dp"
+            android:layout_height="69dp"
+            android:layout_marginStart="166dp"
+            android:layout_marginTop="22dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titlePage"
+            app:srcCompat="@drawable/avatar_icon" />
+
+        <TextView
+            android:id="@+id/changeAvatarBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="180dp"
+            android:layout_marginTop="1dp"
+            android:text="Change"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/avatar" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/block_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/block_2"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="41dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/sexBlock"
+            android:layout_width="match_parent"
+            android:background="#FFFFFF"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/sexText"
+                android:layout_width="137dp"
+                android:layout_height="38dp"
+                android:background="#FFFFFF"
+                android:gravity="center_vertical"
+                android:hint="   Sex"
+                android:paddingStart="10dp"
+                android:textSize="13sp"
+                tools:ignore="RtlSymmetry"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="2dp" />
+
+            <TextView
+                android:id="@+id/sexEdit"
+                android:layout_width="277dp"
+                android:layout_height="39dp"
+                android:layout_marginStart="-380dp"
+                android:background="#FFFFFF"
+                android:gravity="end|center_vertical"
+                android:hint="Male"
+                android:inputType="text"
+                android:layoutDirection="rtl"
+                android:paddingStart="10dp"
+                android:paddingLeft="10dp"
+                android:textSize="13sp"
+                app:layout_constraintStart_toEndOf="@+id/sexText"
+                tools:layout_editor_absoluteY="1dp" />
+
+            <ImageView
+                android:id="@+id/sexBtn"
+                android:layout_width="8dp"
+                android:layout_height="23dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="9dp"
+                app:layout_constraintStart_toEndOf="@+id/sexEdit"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/back_btn_icon" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/view_1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="1dp"
+            android:background="#E0E0E0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sexBlock"
+            tools:layout_editor_absoluteX="50dp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/birthdayBlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:layout_marginTop="2dp"
+            app:layout_constraintTop_toBottomOf="@+id/sexBlock"
+            tools:layout_editor_absoluteX="1dp">
+
+            <TextView
+                android:id="@+id/birthdayText"
+                android:layout_width="137dp"
+                android:layout_height="38dp"
+                android:background="#FFFFFF"
+                android:gravity="center_vertical"
+                android:hint="   Birthday"
+                android:paddingStart="10dp"
+                android:textSize="13sp"
+                tools:ignore="RtlSymmetry"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="2dp" />
+
+            <TextView
+                android:id="@+id/birthdayEdit"
+                android:layout_width="277dp"
+                android:layout_height="39dp"
+                android:layout_marginStart="-380dp"
+                android:background="#FFFFFF"
+                android:gravity="center_vertical"
+                android:hint="24/12/2003"
+                android:inputType="text"
+                android:layoutDirection="rtl"
+                android:paddingStart="10dp"
+                android:paddingLeft="10dp"
+                android:textSize="13sp"
+                app:layout_constraintStart_toEndOf="@+id/birthdayText"
+                tools:layout_editor_absoluteY="1dp" />
+
+            <ImageView
+                android:id="@+id/birthdayBtn"
+                android:layout_width="8dp"
+                android:layout_height="23dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="9dp"
+                app:layout_constraintStart_toEndOf="@+id/birthdayEdit"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/back_btn_icon" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/block_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/block_1"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="3dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/nameBlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/nameText"
+                android:layout_width="137dp"
+                android:layout_height="38dp"
+                android:background="#FFFFFF"
+                android:gravity="center_vertical"
+                android:hint="   Full name"
+                android:paddingStart="10dp"
+                android:textSize="13sp"
+                tools:ignore="RtlSymmetry"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="2dp" />
+
+            <EditText
+                android:id="@+id/nameEdit"
+                android:layout_width="277dp"
+                android:layout_height="39dp"
+                android:layout_marginStart="-411dp"
+                android:background="#FFFFFF"
+                android:gravity="end|center_vertical"
+                android:hint="mintr124"
+                android:inputType="text"
+                android:layoutDirection="rtl"
+                android:paddingStart="24dp"
+                android:paddingLeft="24dp"
+                android:textSize="13sp"
+                app:layout_constraintStart_toEndOf="@+id/nameText"
+                tools:layout_editor_absoluteY="1dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="1dp"
+            android:background="#E0E0E0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nameBlock"
+            tools:layout_editor_absoluteX="50dp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bioBlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            app:layout_constraintTop_toBottomOf="@+id/nameBlock"
+            tools:layout_editor_absoluteX="1dp">
+
+            <TextView
+                android:id="@+id/bioText"
+                android:layout_width="137dp"
+                android:layout_height="38dp"
+                android:background="#FFFFFF"
+                android:gravity="center_vertical"
+                android:hint="   Bio"
+                android:paddingStart="10dp"
+                android:textSize="13sp"
+                tools:ignore="RtlSymmetry"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="2dp" />
+
+            <EditText
+                android:id="@+id/bioEdit"
+                android:layout_width="277dp"
+                android:layout_height="39dp"
+                android:layout_marginStart="-411dp"
+                android:background="#FFFFFF"
+                android:gravity="end|center_vertical"
+                android:hint="vjppro"
+                android:inputType="text"
+                android:layoutDirection="rtl"
+                android:paddingStart="24dp"
+                android:paddingLeft="24dp"
+                android:textSize="13sp"
+                app:layout_constraintStart_toEndOf="@+id/bioText"
+                tools:layout_editor_absoluteY="1dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/block_4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        app:layout_constraintTop_toBottomOf="@+id/block_2"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="-90dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/phoneBlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF">
+
+            <TextView
+                android:id="@+id/phoneText"
+                android:layout_width="137dp"
+                android:layout_height="38dp"
+                android:background="#FFFFFF"
+                android:gravity="center_vertical"
+                android:hint="   Phone number"
+                android:paddingStart="10dp"
+                android:textSize="13sp"
+                tools:ignore="RtlSymmetry"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="2dp" />
+
+            <EditText
+                android:id="@+id/phoneEdit"
+                android:layout_width="277dp"
+                android:layout_height="39dp"
+                android:layout_marginStart="-397dp"
+                android:background="#FFFFFF"
+                android:gravity="center_vertical"
+                android:hint="0344448590"
+                android:inputType="text"
+                android:layoutDirection="rtl"
+                android:paddingStart="10dp"
+                android:paddingLeft="24dp"
+                android:textSize="13sp"
+                app:layout_constraintStart_toEndOf="@+id/phoneText"
+                tools:layout_editor_absoluteY="1dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/view_2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="1dp"
+            android:background="#E0E0E0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/phoneBlock"
+            tools:layout_editor_absoluteX="50dp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/emailBlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:background="#FFFFFF"
+            app:layout_constraintTop_toBottomOf="@+id/phoneBlock"
+            tools:layout_editor_absoluteX="1dp">
+
+            <TextView
+                android:id="@+id/emailText"
+                android:layout_width="137dp"
+                android:layout_height="38dp"
+                android:background="#FFFFFF"
+                android:gravity="center_vertical"
+                android:hint="   Email"
+                android:paddingStart="10dp"
+                android:textSize="13sp"
+                tools:ignore="RtlSymmetry"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="2dp" />
+
+            <EditText
+                android:id="@+id/emailEdit"
+                android:layout_width="277dp"
+                android:layout_height="39dp"
+                android:layout_marginStart="-397dp"
+                android:background="#FFFFFF"
+                android:gravity="center_vertical|end"
+                android:hint="tranducminh2412z@gmail.com"
+                android:inputType="text"
+                android:layoutDirection="rtl"
+                android:paddingStart="10dp"
+                android:paddingLeft="10dp"
+                android:textSize="13sp"
+                app:layout_constraintStart_toEndOf="@+id/emailText"
+                tools:layout_editor_absoluteY="1dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
