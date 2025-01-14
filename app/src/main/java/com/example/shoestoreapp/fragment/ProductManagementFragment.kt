@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,13 +13,16 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.activity.AddProductActivity
-import com.example.shoestoreapp.activity.ProductAdapter
+import com.example.shoestoreapp.adapter.ProductAdapter
 import com.example.shoestoreapp.data.model.Product
+import com.example.shoestoreapp.data.repository.ProductRepository
+import kotlinx.coroutines.launch
 
 class ProductManagementFragment : Fragment() {
 
@@ -26,38 +30,11 @@ class ProductManagementFragment : Fragment() {
     private lateinit var searchBar: EditText
     private lateinit var btnAddProduct: Button
     private lateinit var productAdapter: ProductAdapter
+    private lateinit var products: MutableList<Product>
 
+    private val productRepository = ProductRepository()
     // Sample product list
-    private val products = mutableListOf(
-        Product(
-            id = "1",
-            name = "iPhone 15 Pro",
-            thumbnail = "https://example.com/iphone.jpg",
-            description = "Latest iPhone with amazing features",
-            categoryId = "smartphones",
-            brand = "Apple",
-            price = 999.99,
-            discountPrice = 949.99,
-            salePercentage = 5,
-            images = listOf("image1.jpg", "image2.jpg"),
-            averageRating = 4.5,
-            soldCount = 100,
-            reviewCount = 50
-        ),
-        Product(
-            id = "2",
-            name = "Samsung Galaxy S24",
-            thumbnail = "https://example.com/samsung.jpg",
-            description = "Premium Android smartphone",
-            categoryId = "smartphones",
-            brand = "Samsung",
-            price = 899.99,
-            images = listOf("image1.jpg", "image2.jpg"),
-            averageRating = 4.3,
-            soldCount = 80,
-            reviewCount = 40
-        )
-    )
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -82,23 +59,34 @@ class ProductManagementFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        productAdapter = ProductAdapter(
-            products = products.toMutableList(),
-            onEditClick = { product -> handleEditProduct(product) },
-            onDeleteClick = { product -> handleDeleteProduct(product) }
-        )
-
-        recyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = productAdapter
-            addItemDecoration(
-                DividerItemDecoration(
-                    requireContext(),
-                    DividerItemDecoration.VERTICAL
+        lifecycleScope.launch {
+            val result = productRepository.getAllProducts()
+            if (result.isSuccess) {
+                val products1 = result.getOrNull() ?: emptyList()
+                products = products1.toMutableList()
+                productAdapter = ProductAdapter(
+                    products = products1.toMutableList(),
+                    onEditClick = { product -> handleEditProduct(product) },
+                    onDeleteClick = { product -> handleDeleteProduct(product) }
                 )
-            )
+
+                recyclerView.apply {
+                    layoutManager = LinearLayoutManager(requireContext())
+                    adapter = productAdapter
+                    addItemDecoration(
+                        DividerItemDecoration(
+                            requireContext(),
+                            DividerItemDecoration.VERTICAL
+                        )
+                    )
+                }
+            } else {
+                val error = result.exceptionOrNull()
+                Log.e("WishlistFragment", "Error fetching products: $error")
+            }
         }
     }
+
 
     private fun setupSearchBar() {
         searchBar.addTextChangedListener(object : TextWatcher {

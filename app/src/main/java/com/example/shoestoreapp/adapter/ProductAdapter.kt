@@ -1,4 +1,4 @@
-package com.example.shoestoreapp.activity
+package com.example.shoestoreapp.adapter
 
 import com.example.shoestoreapp.R
 import android.graphics.Paint
@@ -30,20 +30,18 @@ class ProductAdapter(
 
         fun bind(product: Product) {
             tvProductName.text = product.name
-            tvPrice.text = "$ ${String.format("%.2f", product.price)}"
-            tvBrand.text = "Brand: ${product.brand}"
+            tvPrice.text = "${String.format("%,.0f", product.price)}đ"
+            tvBrand.text = "${product.brand}"
 
-            // Load image using Glide
             Glide.with(itemView.context)
                 .load(product.thumbnail)
                 .placeholder(R.drawable.placeholder_image)
                 .error(R.drawable.error_image)
                 .into(ivProductImage)
 
-            // Handle discount price if available
             product.discountPrice?.let { discountPrice ->
                 tvDiscountPrice.visibility = View.VISIBLE
-                tvDiscountPrice.text = "$ ${String.format("%.2f", discountPrice)}"
+                tvDiscountPrice.text = "${String.format("%,.0f", discountPrice)}đ"
                 tvPrice.paintFlags = tvPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             } ?: run {
                 tvDiscountPrice.visibility = View.GONE
