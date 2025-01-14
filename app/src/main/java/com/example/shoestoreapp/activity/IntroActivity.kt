@@ -26,8 +26,11 @@ class IntroActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         findViewById<View>(R.id.btnIntro).setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
+//            val intent = Intent(this, HomeActivity::class.java)
+            val intent = Intent(this, ProductManagementActivity::class.java)
+
             startActivity(intent)
             finish()
 

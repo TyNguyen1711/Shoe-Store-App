@@ -37,6 +37,7 @@ android {
 }
 
 dependencies {
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation(libs.play.services.analytics.impl)
     implementation(libs.firebase.firestore.ktx)
