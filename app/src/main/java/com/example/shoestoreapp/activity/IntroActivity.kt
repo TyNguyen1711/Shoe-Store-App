@@ -29,7 +29,7 @@ class IntroActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.btnIntro).setOnClickListener {
 //            val intent = Intent(this, HomeActivity::class.java)
-            val intent = Intent(this, ProductManagementActivity::class.java)
+            val intent = Intent(this, DashboardAdmin::class.java)
 
             startActivity(intent)
             finish()

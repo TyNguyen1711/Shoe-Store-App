@@ -1,11 +1,15 @@
 package com.example.shoestoreapp.activity
 
 import android.os.Bundle
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.fragment.ProductManagementFragment
+import com.example.shoestoreapp.fragment.ReportFragment
 
 class DashboardAdmin : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,5 +21,22 @@ class DashboardAdmin : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, ReportFragment())
+            .commit()
+        // Gán sự kiện cho các button
+        findViewById<Button>(R.id.btnDashboard).setOnClickListener {
+            switchFragment(ReportFragment())
+        }
+        // Gán sự kiện cho các button
+        findViewById<Button>(R.id.btnProducts).setOnClickListener {
+            switchFragment(ProductManagementFragment())
+        }
+    }
+
+    private fun switchFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
     }
 }

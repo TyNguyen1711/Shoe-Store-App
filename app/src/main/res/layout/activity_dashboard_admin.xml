@@ -28,49 +28,58 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btnDashboard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#00FFFFFF"
-            android:drawableTop="@drawable/shop"
-            android:text="Store"
+            android:drawableTop="@drawable/home_24px"
+            android:text="Dashboard"
             android:textAllCaps="false"
-            android:textSize="8sp" />
+            android:textSize="10sp" />
 
 
         <Button
-            android:id="@+id/button4"
+            android:id="@+id/btnOrders"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#00FFFFFF"
-            android:drawableTop="@drawable/shopping_cart"
-            android:text="Cart"
+            android:drawableTop="@drawable/inventory_24px"
+            android:text="Orders"
             android:textAllCaps="false"
-            android:textSize="8sp" />
+            android:textSize="10sp" />
 
         <Button
-            android:id="@+id/button5"
+            android:id="@+id/btnProducts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#00FFFFFF"
-            android:drawableTop="@drawable/favourite"
-            android:text="Favourite"
+            android:drawableTop="@drawable/package_24px"
+            android:text="Products"
+            android:textAllCaps="false"
+            android:textSize="10sp" />
+        <Button
+            android:id="@+id/btnUsers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:drawableTop="@drawable/manage_accounts"
+            android:text="Users"
             android:textAllCaps="false"
             android:textSize="8sp" />
-
         <Button
-            android:id="@+id/button6"
+            android:id="@+id/btnAccount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#00FFFFFF"
-            android:drawableTop="@drawable/account"
+            android:drawableTop="@drawable/person_24px"
             android:text="Account"
             android:textAllCaps="false"
-            android:textSize="8sp" />
+            android:textSize="10sp" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

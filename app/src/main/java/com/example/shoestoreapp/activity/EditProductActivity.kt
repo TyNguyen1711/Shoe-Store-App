@@ -3,6 +3,7 @@
 //import android.app.Activity
 //import android.content.Intent
 //import android.net.Uri
+//import android.os.Build
 //import android.os.Bundle
 //import android.provider.MediaStore
 //import android.widget.Toast
@@ -14,6 +15,7 @@
 //import com.bumptech.glide.Glide
 //import androidx.recyclerview.widget.RecyclerView
 //import android.widget.*
+//import com.example.shoestoreapp.adapter.ProductImageAdapter
 //import com.google.android.material.textfield.TextInputEditText
 //
 //class EditProductActivity : AppCompatActivity() {
@@ -31,6 +33,7 @@
 //    private lateinit var btnSave: Button
 //    private lateinit var tvTitle: TextView
 //
+//    private lateinit var imageAdapter: ProductImageAdapter
 //    private var thumbnailUri: Uri? = null
 //    private val productImages = mutableListOf<Uri>()
 //    private var editingProduct: Product? = null
@@ -48,14 +51,10 @@
 //
 //    private val imagesPicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 //        if (result.resultCode == Activity.RESULT_OK) {
-//            result.data?.clipData?.let { clipData ->
-//                for (i in 0 until clipData.itemCount) {
-//                    productImages.add(clipData.getItemAt(i).uri)
-//                }
-//            } ?: result.data?.data?.let { uri ->
+//            result.data?.data?.let { uri ->
 //                productImages.add(uri)
+//                imageAdapter.notifyItemInserted(productImages.size - 1)
 //            }
-//            // TODO: Update RecyclerView with selected images
 //        }
 //    }
 //
@@ -64,21 +63,26 @@
 //        setContentView(R.layout.activity_edit_product)
 //
 //        initViews()
+//        setupRecyclerView()
 //        setupListeners()
 //
-//        // Check if we're editing an existing product
-//        editingProduct = intent.getParcelableExtra("product")
+//        // Updated Parcelable handling for different Android versions
+//        editingProduct = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            intent.getParcelableExtra("product", Product::class.java)
+//        } else {
+//            @Suppress("DEPRECATION")
+//            intent.getParcelableExtra("product")
+//        }
+//
 //        editingProduct?.let { product ->
 //            tvTitle.text = "Edit Product"
 //            populateProductData(product)
 //        }
 //    }
-//
 //    private fun initViews() {
 //        ivThumbnail = findViewById(R.id.ivThumbnail)
 //        btnAddThumbnail = findViewById(R.id.btnAddThumbnail)
 //        rvProductImages = findViewById(R.id.rvProductImages)
-//        rvProductImages.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 //        btnAddImages = findViewById(R.id.btnAddImages)
 //        etName = findViewById(R.id.etName)
 //        etBrand = findViewById(R.id.etBrand)
@@ -89,6 +93,22 @@
 //        etSalePercentage = findViewById(R.id.etSalePercentage)
 //        btnSave = findViewById(R.id.btnSave)
 //        tvTitle = findViewById(R.id.tvTitle)
+//    }
+//
+//    private fun setupRecyclerView() {
+//        imageAdapter = ProductImageAdapter(
+//            context = this,
+//            images = productImages,
+//            onDeleteClick = { position ->
+//                productImages.removeAt(position)
+//                imageAdapter.notifyItemRemoved(position)
+//            }
+//        )
+//
+//        rvProductImages.apply {
+//            layoutManager = LinearLayoutManager(this@EditProductActivity, LinearLayoutManager.HORIZONTAL, false)
+//            adapter = imageAdapter
+//        }
 //    }
 //
 //    private fun setupListeners() {
@@ -108,10 +128,7 @@
 //    }
 //
 //    private fun openImagePicker(launcher: androidx.activity.result.ActivityResultLauncher<Intent>) {
-//        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
-//            type = "image/*"
-//            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-//        }
+//        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
 //        launcher.launch(intent)
 //    }
 //
@@ -122,14 +139,20 @@
 //        etCategoryId.setText(product.categoryId)
 //        etPrice.setText(product.price.toString())
 //        etDiscountPrice.setText(product.discountPrice?.toString() ?: "")
-//        etSalePercentage.setText(product.salePercentage.toString())
+//        etSalePercentage.setText(product.salePercentage?.toString() ?: "")
 //
 //        // Load thumbnail
 //        Glide.with(this)
 //            .load(product.thumbnail)
 //            .into(ivThumbnail)
 //
-//        // TODO: Implement loading of product images into RecyclerView
+//        // Load product images
+//        product.images.forEach { imageUrl ->
+//            Uri.parse(imageUrl)?.let { uri ->
+//                productImages.add(uri)
+//            }
+//        }
+//        imageAdapter.notifyDataSetChanged()
 //    }
 //
 //    private fun validateInputs(): Boolean {
@@ -147,13 +170,17 @@
 //            etBrand.error = "Brand is required"
 //            isValid = false
 //        }
+//        if (thumbnailUri == null && editingProduct?.thumbnail.isNullOrEmpty()) {
+//            Toast.makeText(this, "Please add a thumbnail image", Toast.LENGTH_SHORT).show()
+//            isValid = false
+//        }
 //
 //        return isValid
 //    }
 //
 //    private fun saveProduct() {
-//        val product = Product(
-//            id = editingProduct?.id ?: "",
+//        val newProduct = Product(
+//            id = editingProduct?.id ?: System.currentTimeMillis().toString(),
 //            name = etName.text.toString(),
 //            thumbnail = thumbnailUri?.toString() ?: editingProduct?.thumbnail ?: "",
 //            description = etDescription.text.toString(),
@@ -161,12 +188,17 @@
 //            brand = etBrand.text.toString(),
 //            price = etPrice.text.toString().toDoubleOrNull() ?: 0.0,
 //            discountPrice = etDiscountPrice.text.toString().toDoubleOrNull(),
-//            salePercentage = etSalePercentage.text.toString().toIntOrNull() ?: 0,
-//            images = productImages.map { it.toString() }
+//            salePercentage = etSalePercentage.text.toString().toIntOrNull(),
+//            images = productImages.map { it.toString() },
+//            averageRating = editingProduct?.averageRating ?: 0.0,
+//            soldCount = editingProduct?.soldCount ?: 0,
+//            reviewCount = editingProduct?.reviewCount ?: 0
 //        )
 //
-//        // TODO: Save the product (e.g., send to database or API)
-//        Toast.makeText(this, "Product saved successfully!", Toast.LENGTH_SHORT).show()
+//        // Return the new/updated product to the calling activity
+//        setResult(Activity.RESULT_OK, Intent().apply {
+//            putExtra("product", newProduct)
+//        })
 //        finish()
 //    }
 //}
