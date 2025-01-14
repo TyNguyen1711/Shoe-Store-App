@@ -38,10 +38,7 @@ class ProductRepository(
 
     suspend fun getProduct(id: String): Result<Product> = runCatching {
         val document = productsCollection.document(id).get().await()
-
-        // Ánh xạ tài liệu thành danh sách Product và xử lý variants riêng
         val documentData = document.data ?: throw Exception("Product not found")
-
         // Lấy danh sách variants và ánh xạ từng phần tử
         val variants = (documentData["variants"] as? List<Map<String, Any>>)?.map { variantMap ->
             ProductVariant(
@@ -117,7 +114,31 @@ class ProductRepository(
             .whereEqualTo("category_id", categoryId)
             .get()
             .await()
-        snapshot.toObjects(Product::class.java)
+        snapshot.documents.map { document ->
+            val documentData = document.data ?: throw Exception("Product not found")
+
+            // Lấy danh sách variants và ánh xạ từng phần tử
+            val variants = (documentData["variants"] as? List<Map<String, Any>>)?.map { variantMap ->
+                ProductVariant(
+                    id = variantMap["id"] as? String ?: "",
+                    size = variantMap["size"] as? String ?: "",
+                    stock = (variantMap["stock"] as? Number)?.toInt() ?: 0
+                )
+            } ?: emptyList()
+
+            // Trả về Product với danh sách variants đã được xử lý
+            Product(
+                id = document.id,
+                name = documentData["name"] as? String ?: "",
+                description = documentData["description"] as? String ?: "",
+                price = (documentData["price"] as? Number)?.toDouble() ?: 0.0,
+                categoryId = documentData["categoryId"] as? String ?: "",
+                brand = documentData["brand"] as? String ?: "",
+                variants = variants,
+                thumbnail =  documentData["thumbnail"] as? String?: "",
+                images = documentData["images"] as? List<String> ?: emptyList()
+            )
+        }
     }
 
     suspend fun getProductsByBrand(brand: String): Result<List<Product>> = runCatching {
@@ -125,8 +146,6 @@ class ProductRepository(
             .whereEqualTo("brand", brand) // Lọc sản phẩm có brand khớp với brandId
             .get()
             .await()
-
-        // Ánh xạ tài liệu thành danh sách Product và xử lý variants riêng
         snapshot.documents.map { document ->
             val documentData = document.data ?: throw Exception("Product not found")
 
@@ -158,12 +177,48 @@ class ProductRepository(
     }
 
     suspend fun searchProducts(query: String): Result<List<Product>> = runCatching {
-        val snapshot = productsCollection
-            .orderBy("name")
-            .startAt(query)
-            .endAt(query + '\uf8ff')
-            .get()
-            .await()
-        snapshot.toObjects(Product::class.java)
+        val snapshot = productsCollection.get().await()
+
+        // Chia query thành danh sách từ khóa
+        val keywords = query.split(" ").filter { it.isNotBlank() }
+
+        // Lọc kết quả tại client dần dần theo từng từ khóa
+        val filteredProducts = keywords.fold(snapshot.documents) { currentList, keyword ->
+            currentList.filter { document ->
+                val name = document.getString("name") ?: ""
+                name.contains(keyword, ignoreCase = true) // Kiểm tra nếu tên chứa từ khóa
+            }
+        }
+
+        // Ánh xạ kết quả vào danh sách sản phẩm
+        filteredProducts.map { document ->
+            val documentData = document.data ?: throw Exception("Product not found")
+            Log.d("SNAPSHOT RESULT:", document.id)
+
+            // Lấy danh sách variants và ánh xạ từng phần tử
+            val variants = (documentData["variants"] as? List<Map<String, Any>>)?.map { variantMap ->
+                ProductVariant(
+                    id = variantMap["id"] as? String ?: "",
+                    size = variantMap["size"] as? String ?: "",
+                    stock = (variantMap["stock"] as? Number)?.toInt() ?: 0
+                )
+            } ?: emptyList()
+
+            // Trả về Product với danh sách variants đã được xử lý
+            Product(
+                id = document.id,
+                averageRating = (document["averageRating"] as? Number)?.toDouble() ?: 0.0,
+                name = documentData["name"] as? String ?: "",
+                description = documentData["description"] as? String ?: "",
+                price = (documentData["price"] as? Number)?.toDouble() ?: 0.0,
+                categoryId = documentData["categoryId"] as? String ?: "",
+                brand = documentData["brand"] as? String ?: "",
+                variants = variants,
+                thumbnail =  documentData["thumbnail"] as? String?: "",
+                images = documentData["images"] as? List<String> ?: emptyList(),
+                soldCount = (documentData["soldCount"] as? Number)?.toInt() ?: 0,
+                salePercentage = (document["salePercentage"] as? Number)?.toInt() ?: 0
+            )
+        }
     }
 }

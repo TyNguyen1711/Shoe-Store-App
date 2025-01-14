@@ -37,6 +37,7 @@
         private val productList: List<Product>,
         private val listener: OnProductClickListener,
         private val lifecycleOwner: LifecycleOwner,
+        private var isHome: Boolean = true,
         private val listName: String = ""
     ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -53,7 +54,7 @@
         }
 
         override fun getItemViewType(position: Int): Int {
-            return if (position == productList.size) VIEW_TYPE_MORE_BUTTON else VIEW_TYPE_PRODUCT
+            return if ((position == productList.size) and isHome) VIEW_TYPE_MORE_BUTTON else VIEW_TYPE_PRODUCT
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -76,7 +77,7 @@
         }
 
         override fun getItemCount(): Int {
-            return productList.size + 1 // Thêm 1 cho thẻ "More Button"
+            return if(isHome) productList.size + 1 else productList.size  // Thêm 1 cho thẻ "More Button"
         }
 
         fun updateWishlist(newWishlist: Wishlist) {

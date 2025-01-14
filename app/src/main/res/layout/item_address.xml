@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="10dp"
+    android:background="@color/white"
+    android:layout_marginBottom="2dp">
+
+    <RadioButton
+        android:id="@+id/isDefaultRB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="5dp"
+        android:paddingTop="30dp"
+        android:buttonTint="@color/login_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/fullNameTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nguyen Huu Nghia"
+        android:textSize="16dp"
+        android:textColor="@color/black"
+        android:paddingTop="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/isDefaultRB"/>
+
+    <TextView
+        android:id="@+id/houseNoTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="47292352352351"
+        android:textSize="15dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:textColor="@color/login_activity_text"
+        app:layout_constraintTop_toBottomOf="@id/fullNameTV"
+        app:layout_constraintStart_toEndOf="@id/isDefaultRB"/>
+
+    <TextView
+        android:id="@+id/cityTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tien Giang"
+        android:textSize="15dp"
+        android:paddingBottom="5dp"
+        android:textColor="@color/login_activity_text"
+        app:layout_constraintTop_toBottomOf="@id/houseNoTV"
+        app:layout_constraintStart_toEndOf="@id/isDefaultRB"/>
+
+    <TextView
+        android:id="@+id/iconTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="|"
+        android:textColor="@color/login_activity_text"
+        android:textSize="25dp"
+        android:paddingEnd="10dp"
+        android:paddingStart="10dp"
+        app:layout_constraintStart_toEndOf="@id/fullNameTV"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/phoneNummberTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:text="(+84) 387655821"
+        android:textColor="@color/login_activity_text"
+        android:textSize="16dp"
+        app:layout_constraintStart_toEndOf="@id/iconTV"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/isDefaultTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:textColor="@color/login_button"
+        android:text=""
+        android:background="@drawable/rounded_corner"
+        android:backgroundTint="@color/gray_300"
+        app:layout_constraintTop_toBottomOf="@id/cityTV"
+        app:layout_constraintStart_toEndOf="@id/isDefaultRB"/>
+
+    <TextView
+        android:id="@+id/editAddressTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit"
+        android:textSize="16dp"
+        android:textColor="@color/login_button"
+        android:paddingTop="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,10 +7,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.shoestoreapp.MainActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.data.repository.ProductRepository
+import com.example.shoestoreapp.data.repository.WishListRepository
+import kotlinx.coroutines.launch
 
 class IntroActivity : AppCompatActivity() {
+    private val wishlistRepository = WishListRepository()
+    private val productRepository = ProductRepository()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -21,7 +26,6 @@ class IntroActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         findViewById<View>(R.id.btnIntro).setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
@@ -33,7 +37,27 @@ class IntroActivity : AppCompatActivity() {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
+
+
+//        lifecycleScope.launch {
+//            wishlistRepository.addToWishlist(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2", productId = "bM5LHhwLjMNQCn0qYLr0")
+//            wishlistRepository.addToWishlist(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2", productId = "o1KsR8EP2uwENbyznXsj")
+//            wishlistRepository.addToWishlist(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2", productId = "qRS7DStXHlCTaHZ8fn9u")
+//            wishlistRepository.addToWishlist(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2", productId = "sv3hMZC8EcOVkurNOaXY")
+//            wishlistRepository.addToWishlist(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2", productId = "vVTmaVW8dO8miDuaHZ09")
+//            wishlistRepository.addToWishlist(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2", productId = "vadTty3tZMBMBZjVirqo")
+//            wishlistRepository.addToWishlist(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2", productId = "xRpohv4fn1P6oeSmxiSk")
+//            wishlistRepository.addToWishlist(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2", productId = "yFputh8Dn4dsYrPuq66I")
+//            wishlistRepository.addToWishlist(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2", productId = "z7dSFUDqx2RMdp744vPc")
+//
+//        }
+        lifecycleScope.launch {
+
+        }
+
+
     }
+
 }
 
 
@@ -42,8 +66,94 @@ class IntroActivity : AppCompatActivity() {
 
 
 
+
+
+
 //
 //
+//package com.example.shoestoreapp.activity
+//
+//import android.content.Intent
+//import android.os.Bundle
+//import android.util.Log
+//import android.view.View
+//import androidx.activity.enableEdgeToEdge
+//import androidx.appcompat.app.AppCompatActivity
+//import androidx.core.view.ViewCompat
+//import androidx.core.view.WindowInsetsCompat
+//import androidx.lifecycle.lifecycleScope
+//import com.example.shoestoreapp.MainActivity
+//import com.example.shoestoreapp.R
+//import com.example.shoestoreapp.data.repository.ProductRepository
+//import com.example.shoestoreapp.data.repository.WishlistRepository
+//import kotlinx.coroutines.launch
+//
+//class IntroActivity : AppCompatActivity() {
+//        private val wishlistRepository = WishlistRepository()
+//        private val productRepository = ProductRepository()
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        enableEdgeToEdge()
+//        setContentView(R.layout.activity_intro)
+//
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+//            insets
+//        }
+//        lifecycleScope.launch {
+//            val result = wishlistRepository.getWishlistByUserId(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2")
+//            if (result.isSuccess) {
+//                val products = result.getOrNull() ?: emptyList()
+//
+//                Log.d("test10", "${products.size} products.")
+//            } else {
+//                val error = result.exceptionOrNull()
+//                Log.e("test10", "Error: $error")
+//            }
+//        }
+//        lifecycleScope.launch {
+//            val result = productRepository.getAllProducts()
+//            if (result.isSuccess) {
+//                val products = result.getOrNull() ?: emptyList()
+//
+//                Log.d("ProductRepository", "${products.size} products.")
+//            } else {
+//                val error = result.exceptionOrNull()
+//                Log.e("ProductRepository", "Error: $error")
+//            }
+//        }
+//
+//        lifecycleScope.launch {
+//            wishlistRepository.addToWishlist(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2", productId = "7Y7yCSSZ50oIGMwqcMXV")
+//        }
+//        lifecycleScope.launch {
+//            wishlistRepository.getWishlistByUserId(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2")
+//        }
+//
+//        findViewById<View>(R.id.btnIntro).setOnClickListener {
+//            val intent = Intent(this, HomeActivity::class.java)
+//            startActivity(intent)
+//            finish()
+//
+//        }
+//
+//        findViewById<View>(R.id.txtLogin).setOnClickListener {
+//            val intent = Intent(this, LoginActivity::class.java)
+//            startActivity(intent)
+//        }
+//    }
+//}
+
+
+
+//
+//
+//
+//
+//
+//
+
 //package com.example.shoestoreapp.activity
 //
 //import android.content.Intent
@@ -100,7 +210,7 @@ class IntroActivity : AppCompatActivity() {
 //        Brand(id = UUID.randomUUID().toString(), name = "Rebook"),
 //        Brand(id = UUID.randomUUID().toString(), name = "Lacoste"),
 //
-//    )
+//        )
 //
 //    private val initialProducts = listOf(
 //        Product(
@@ -114,8 +224,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2024/adidas/ad5/giay-adidas-eq21-nu-trang-tim-05-800x800.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2024/adidas/ad5/giay-adidas-eq21-nu-trang-tim-06-800x800.jpg"
 //            ),
+//            brand = "Adidas",
 //            price = 2400000.0,
 //            discountPrice = 1990000.0,
+//            salePercentage = 20,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "35", stock = 25),
 //                ProductVariant(id = "2", size = "36", stock = 25),
@@ -137,8 +249,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2024/adidas/ad5/giay-adidas-grand-court-base-2-nam-xam-04-800x800.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2024/adidas/ad5/giay-adidas-grand-court-base-2-nam-xam-05-800x800.jpg"
 //            ),
+//            brand = "Adidas",
 //            price = 2400000.0,
 //            discountPrice = 1990000.0,
+//            salePercentage = 25,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "35", stock = 25),
 //                ProductVariant(id = "2", size = "36", stock = 25),
@@ -160,8 +274,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2024_11/puma/giay-puma-shuffle-perforated-nam-trang-xanh-03-800x800.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2024_11/puma/giay-puma-shuffle-perforated-nam-trang-xanh-05-800x800.jpg"
 //            ),
+//            brand = "Puma",
 //            price = 2600000.0,
 //            discountPrice = 1690000.0,
+//            salePercentage = 20,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "39", stock = 25),
 //                ProductVariant(id = "2", size = "40", stock = 25),
@@ -182,8 +298,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://cdn.vuahanghieu.com/unsafe/0x500/left/top/smart/filters:quality(90)/https://admin.vuahanghieu.com/upload/product/2021/08/gia-y-the-thao-reebok-sole-fury-se-dv6923-ma-u-tra-ng-size-36-6110e01405630-09082021145812.jpg",
 //                "https://cdn.vuahanghieu.com/unsafe/0x500/left/top/smart/filters:quality(90)/https://admin.vuahanghieu.com/upload/product/2021/08/gia-y-the-thao-reebok-sole-fury-se-dv6923-ma-u-tra-ng-size-36-6110e013ed545-09082021145811.jpg"
 //            ),
+//            brand = "Rebook",
 //            price = 2100000.0,
 //            discountPrice = 1890000.0,
+//            salePercentage = 15,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "36", stock = 25),
 //                ProductVariant(id = "2", size = "37", stock = 24),
@@ -204,8 +322,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2024/nike/nk8/giay-nike-air-max-sc-nu-trang-tim-05-800x800.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2024/nike/nk8/giay-nike-air-max-sc-nu-trang-tim-03-800x800.jpg"
 //            ),
+//            brand = "Nike",
 //            price = 2500000.0,
 //            discountPrice = 1990000.0,
+//            salePercentage = 25,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "36.5", stock = 25),
 //                ProductVariant(id = "2", size = "37.5", stock = 24),
@@ -227,7 +347,9 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2024/puma/pm1/giay-puma-rebound-v6-low-nam-den-trang-04-800x800.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2024/puma/pm1/giay-puma-rebound-v6-low-nam-den-trang-06-800x800.jpg"
 //            ),
+//            brand = "Puma",
 //            price = 2550000.0,
+//            salePercentage = 30,
 //            discountPrice = 1790000.0,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "40", stock = 25),
@@ -250,8 +372,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://supersports.com.vn/cdn/shop/files/UXC72DG-4.jpg?v=1695896970&width=1000",
 //                "https://supersports.com.vn/cdn/shop/files/UXC72DG-5.jpg?v=1695896969&width=1000"
 //            ),
+//            brand = "New Balance",
 //            price = 2859000.0,
 //            discountPrice = 1588000.0,
+//            salePercentage = 45,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "40", stock = 25),
 //                ProductVariant(id = "2", size = "40.5", stock = 24),
@@ -273,8 +397,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2024_11/nike/giay-nike-pegasus-41-nam-den-xanh-04-800x800.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2024_11/nike/giay-nike-pegasus-41-nam-den-xanh-06-800x800.jpg"
 //            ),
+//            brand = "Nike",
 //            price = 4110000.0,
 //            discountPrice = 3790000.0,
+//            salePercentage = 10,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "40", stock = 25),
 //                ProductVariant(id = "2", size = "40.5", stock = 24),
@@ -297,8 +423,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://cdn.vuahanghieu.com/unsafe/0x500/left/top/smart/filters:quality(90)/https://admin.vuahanghieu.com/upload/product/2024/03/giay-the-thao-adidas-nmd-nmd_r1-shoes-gx9525-mau-trang-65eeca677647c-11032024160959.jpg",
 //                "https://cdn.vuahanghieu.com/unsafe/0x500/left/top/smart/filters:quality(90)/https://admin.vuahanghieu.com/upload/product/2024/03/giay-the-thao-adidas-nmd-nmd_r1-shoes-gx9525-mau-trang-65eeca6775fb0-11032024160959.jpg"
 //            ),
+//            brand = "Adidas",
 //            price = 3800000.0,
 //            discountPrice = 2350000.0,
+//            salePercentage = 40,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "40", stock = 25),
 //                ProductVariant(id = "2", size = "40.5", stock = 24),
@@ -320,8 +448,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2023/puma/pu01/giay-puma-slipstream-everywhere-nam-nu-trang-04-800x800.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2023/puma/pu01/giay-puma-slipstream-everywhere-nam-nu-trang-06-800x800.jpg"
 //            ),
+//            brand = "Puma",
 //            price = 3200000.0,
 //            discountPrice = 1990000.0,
+//            salePercentage = 40,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "40", stock = 25),
 //                ProductVariant(id = "2", size = "40.5", stock = 24),
@@ -345,8 +475,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2024/adidas/ad4/giay-adidas-grand-court-base-2-nam-trang-05-1000x1000.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2024/adidas/ad4/giay-adidas-grand-court-base-2-nam-trang-06-1000x1000.jpg"
 //            ),
-//            price = 1590000.0,
+//            brand = "Adidas",
+//            price = 2590000.0,
 //            discountPrice = 2000000.0,
+//            salePercentage = 15,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "36.5", stock = 26),
 //                ProductVariant(id = "2", size = "37.0", stock = 22),
@@ -371,8 +503,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2024/adidas/ad2/giay-adidas-advancourt-base-nam-trang-xanh-05-1000x1000.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2024/adidas/ad2/giay-adidas-advancourt-base-nam-trang-xanh-06-1000x1000.jpg"
 //            ),
-//            price = 1590000.0,
+//            brand = "Adidas",
+//            price = 2890000.0,
 //            discountPrice = 2000000.0,
+//            salePercentage = 20,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "41", stock = 3),
 //                ProductVariant(id = "2", size = "42", stock = 28),
@@ -394,8 +528,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2024_11/puma/giay-puma-scend-pro-engineered-nam-xanh-reu-05-1000x1000.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2024_11/puma/giay-puma-scend-pro-engineered-nam-xanh-reu-06-1000x1000.jpg"
 //            ),
-//            price = 1890000.0,
-//            discountPrice = 2850000.0,
+//            brand = "Puma",
+//            price = 2850000.0,
+//            discountPrice = 1890000.0,
+//            salePercentage = 25,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "39", stock = 21),
 //                ProductVariant(id = "2", size = "40", stock = 22),
@@ -420,8 +556,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2024_11/puma/giay-puma-scend-pro-engineered-nam-den-05-1000x1000.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2024_11/puma/giay-puma-scend-pro-engineered-nam-den-06-1000x1000.jpg"
 //            ),
-//            price = 1890000.0,
-//            discountPrice = 2850000.0,
+//            brand = "Adidas",
+//            price = 2850000.0,
+//            discountPrice = 1890000.0,
+//            salePercentage = 35,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "39", stock = 22),
 //                ProductVariant(id = "2", size = "40", stock = 22),
@@ -447,8 +585,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2022/asics/22.7/giay-asics-glideride-2-nam-xanh-06-1000x1000.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2022/asics/22.7/giay-asics-glideride-2-nam-xanh-07-1000x1000.jpg"
 //            ),
-//            price = 2390000.0,
-//            discountPrice = 4050000.0,
+//            brand = "Lacoste",
+//            price = 4050000.0,
+//            discountPrice = 2390000.0,
+//            salePercentage = 45,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "40", stock = 24),
 //                ProductVariant(id = "2", size = "41", stock = 24),
@@ -471,8 +611,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2023/adidas/ad6/giay-adidas-advancourt-base-nam-trang-05-1000x1000.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2023/adidas/ad6/giay-adidas-advancourt-base-nam-trang-06-1000x1000.jpg"
 //            ),
-//            price = 1490000.0,
-//            discountPrice = 2000000.0,
+//            brand = "Adidas",
+//            price = 2000000.0,
+//            discountPrice = 1490000.0,
+//            salePercentage = 25,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "40", stock = 24),
 //                ProductVariant(id = "2", size = "41", stock = 24),
@@ -495,8 +637,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2024/lacoste/lc02/giay-lacoste-t-clip-velcro-223-nam-den-05-1000x1000.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2024/lacoste/lc02/giay-lacoste-t-clip-velcro-223-nam-den-06-1000x1000.jpg"
 //            ),
-//            price = 2590000.0,
-//            discountPrice = 3850000.0,
+//            brand = "Lacoste",
+//            price = 3850000.0,
+//            discountPrice = 2590000.0,
+//            salePercentage = 40,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "39", stock = 18),
 //                ProductVariant(id = "2", size = "40", stock = 14),
@@ -520,8 +664,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2023/nike/pegasus-40/giay-nike-air-zoom-pegasus-40-nam-trang-05-1000x1000.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2023/nike/pegasus-40/giay-nike-air-zoom-pegasus-40-nam-trang-06-1000x1000.jpg"
 //            ),
-//            price = 2490000.0,
-//            discountPrice = 3800000.0,
+//            brand = "Nike",
+//            price = 3800000.0,
+//            discountPrice = 2490000.0,
+//            salePercentage = 50,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "39", stock = 4),
 //                ProductVariant(id = "2", size = "40", stock = 16),
@@ -545,8 +691,10 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2024_11/nike/giay-nike-air-winflo-11-nam-xam-xanh-05-1000x1000.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2024_11/nike/giay-nike-air-winflo-11-nam-xam-xanh-06-1000x1000.jpg"
 //            ),
-//            price = 2890000.0,
-//            discountPrice = 3220000.0,
+//            brand = "Nike",
+//            price = 3220000.0,
+//            discountPrice = 2890000.0,
+//            salePercentage = 10,
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "39", stock = 26),
 //                ProductVariant(id = "2", size = "40", stock = 13),
@@ -572,8 +720,11 @@ class IntroActivity : AppCompatActivity() {
 //                "https://myshoes.vn/image/cache/catalog/2024_11/nike/giay-nike-pegasus-41-nam-den-xanh-05-1000x1000.jpg",
 //                "https://myshoes.vn/image/cache/catalog/2024_11/nike/giay-nike-pegasus-41-nam-den-xanh-06-1000x1000.jpg"
 //            ),
-//            price = 3790000.0,
-//            discountPrice = 4110000.0,
+//            brand = "Nike",
+//            price = 4110000.0,
+//            discountPrice = 3790000.0,
+//            salePercentage = 10,
+//
 //            variants = listOf(
 //                ProductVariant(id = "1", size = "39", stock = 17),
 //                ProductVariant(id = "2", size = "40", stock = 12),
@@ -588,31 +739,29 @@ class IntroActivity : AppCompatActivity() {
 //        )
 //
 //
-//
-//
 //    )
 //
 //    private val productMappings = mapOf(
-//        "1" to Pair("WOMEN", "Adidas"),
-//        "2" to Pair("MEN", "Adidas"),
-//        "3" to Pair("MEN", "Puma"),
-//        "4" to Pair("WOMEN", "Rebook"),
-//        "5" to Pair("WOMEN", "Nike"),
-//        "6" to Pair("MEN", "Puma"),
-//        "7" to Pair("MEN", "New Balance"),
-//        "8" to Pair("MEN", "Nike"),
-//        "9" to Pair("UNISEX", "Adidas"),
-//        "10" to Pair("WOMEN", "Puma"),
-//        "11" to Pair("UNISEX", "Adidas"),
-//        "12" to Pair("MEN", "Adidas"),
-//        "13" to Pair("MEN", "Puma"),
-//        "14" to Pair("MEN", "Puma"),
-//        "15" to Pair("MEN", "Lacoste"),
-//        "16" to Pair("MEN", "Adidas"),
-//        "17" to Pair("MEN", "Lacoste"),
-//        "18" to Pair("MEN", "Lacoste"),
-//        "19" to Pair("MEN", "Nike"),
-//        "20" to Pair("MEN", "Nike")
+//        "1" to "WOMEN",
+//        "2" to "MEN",
+//        "3" to "MEN",
+//        "4" to "WOMEN",
+//        "5" to "WOMEN",
+//        "6" to "MEN",
+//        "7" to "MEN",
+//        "8" to "MEN",
+//        "9" to "UNISEX",
+//        "10" to "WOMEN",
+//        "11" to "UNISEX",
+//        "12" to "MEN",
+//        "13" to "MEN",
+//        "14" to "MEN",
+//        "15" to "MEN",
+//        "16" to "MEN",
+//        "17" to "MEN",
+//        "18" to "MEN",
+//        "19" to "MEN",
+//        "20" to "MEN",
 //    )
 //
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -646,7 +795,7 @@ class IntroActivity : AppCompatActivity() {
 //                    }
 //                }.awaitAll()
 //
-//                // Initialize brands
+//                                // Initialize brands
 //                val brandResults = initialBrands.map { brand ->
 //                    async {
 //                        brandRepository.updateBrand(brand)
@@ -663,13 +812,13 @@ class IntroActivity : AppCompatActivity() {
 //                // Initialize products
 //                val productResults = initialProducts.map { product ->
 //                    async {
-//                        val mapping = productMappings[product.id] ?: return@async
-//                        val (categoryName, brandName) = mapping
+//                        // Lấy danh mục sản phẩm từ productMappings dựa trên product.id
+//                        val categoryName = productMappings[product.id]
+//                            ?: return@async // Nếu không có categoryName, thì bỏ qua
 //
 //                        productRepository.createProductWithNames(
 //                            product = product,
 //                            categoryName = categoryName,
-//                            brandName = brandName
 //                        ).onSuccess { createdProduct ->
 //                            Log.d(
 //                                "IntroActivity",
@@ -696,11 +845,13 @@ class IntroActivity : AppCompatActivity() {
 //            }
 //        }
 //    }
+
+
 //}
 
 
-
-
-
-
-
+//
+//
+//
+//
+//

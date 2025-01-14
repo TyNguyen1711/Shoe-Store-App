@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.fragment
 
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -20,8 +21,6 @@ import com.example.shoestoreapp.activity.DisplayProductListActivity
 import com.example.shoestoreapp.activity.ProductDetailActivity
 import com.example.shoestoreapp.adapter.ProductItemAdapter
 import com.example.shoestoreapp.adapter.SliderAdapter
-import com.example.shoestoreapp.adapter.WishlistAdapter
-import com.example.shoestoreapp.classes.ProductTemp
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.repository.BestSellingRepository
 import com.example.shoestoreapp.data.repository.ExclusiveOfferRepository
@@ -126,7 +125,7 @@ class HomeFragment :
                         } else {
                             brandProductList.addAll(items)
                         }
-                        brandProductAdapter = ProductItemAdapter(brandProductList, this@HomeFragment, viewLifecycleOwner, brand)
+                        brandProductAdapter = ProductItemAdapter(brandProductList, this@HomeFragment, viewLifecycleOwner,true, brand)
                     }.onFailure { error ->
                         Log.e("HomeFragment", "Failed to fetch brand products: ${error.message}")
                     }
@@ -159,19 +158,19 @@ class HomeFragment :
 
         // Setup RecyclerView for Brand
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
-        brandProductAdapter = ProductItemAdapter(brandProductList, this, viewLifecycleOwner, "All")
+        brandProductAdapter = ProductItemAdapter(brandProductList, this, viewLifecycleOwner,true, "All")
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         recyclerView.adapter = brandProductAdapter
 
         // Setup RecyclerView for Exclusive Offers
         val exclusiveRecyclerView: RecyclerView = view.findViewById(R.id.exclusiveOfferRV)
-        exclusiveAdapter = ProductItemAdapter(exclusiveProducts, this, viewLifecycleOwner, "ExclusiveOffer")
+        exclusiveAdapter = ProductItemAdapter(exclusiveProducts, this, viewLifecycleOwner,true, "ExclusiveOffer")
         exclusiveRecyclerView.adapter = exclusiveAdapter
         exclusiveRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         // Setup RecyclerView for Best Selling
         val bestSellingRecyclerView: RecyclerView = view.findViewById(R.id.bestSellingRV)
-        bestSellingAdapter = ProductItemAdapter(bestSellingProducts, this, viewLifecycleOwner, "BestSelling")
+        bestSellingAdapter = ProductItemAdapter(bestSellingProducts, this, viewLifecycleOwner,true, "BestSelling")
         bestSellingRecyclerView.adapter = bestSellingAdapter
         bestSellingRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
@@ -208,7 +207,8 @@ class HomeFragment :
                 Log.e("HomeFragment", "Failed to fetch best selling products: ${error.message}")
             }
 
-            brandProductRepo.onSuccess { items ->
+
+        brandProductRepo.onSuccess { items ->
                 brandProductList.clear()
                 if (items.size > 7) {
                     brandProductList.addAll(items.subList(0, 5))
