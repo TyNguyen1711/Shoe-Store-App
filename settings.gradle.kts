@@ -17,6 +17,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven (url =  "https://jitpack.io")
+        maven (url = "https://repo.cloudinary.com/maven2/")
     }
 }
 

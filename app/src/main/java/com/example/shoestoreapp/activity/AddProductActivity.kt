@@ -10,13 +10,20 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.cloudinary.utils.ObjectUtils
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.VariantsAdapter
+import com.example.shoestoreapp.classes.ConfigCloudinary
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.model.ProductVariant
+import com.example.shoestoreapp.data.repository.ProductRepository
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AddProductActivity : AppCompatActivity() {
     private lateinit var thumbnailImageView: ImageView
@@ -31,7 +38,7 @@ class AddProductActivity : AppCompatActivity() {
     private lateinit var salePercentageEditText: EditText
     private lateinit var variantsRecyclerView: RecyclerView
     private lateinit var btnAddVariant: Button
-
+    private val productRepository = ProductRepository()
     private val imagesList = mutableListOf<Uri>()
     private var thumbnailUri: Uri? = null
     private val variants = mutableListOf<ProductVariant>()
@@ -88,7 +95,90 @@ class AddProductActivity : AppCompatActivity() {
         btnAddVariant.setOnClickListener {
             showAddVariantDialog()
         }
+        findViewById<Button>(R.id.btn_cancel).setOnClickListener {
+            finish()
+        }
+        findViewById<Button>(R.id.btn_add).setOnClickListener {
+            addProduct()
+        }
 
+
+    }
+    private suspend fun uploadImageToCloudinary(uri: Uri): String {
+        val inputStream = contentResolver.openInputStream(uri)
+        val bytes = inputStream?.readBytes()
+
+        return withContext(Dispatchers.IO) {
+            val result = (application as ConfigCloudinary).cloudinary.uploader()
+                .upload(bytes, ObjectUtils.emptyMap())
+            result["url"] as String
+        }
+    }
+    private fun addProduct() {
+        if (!validateInputs()) {
+            return
+        }
+
+        // Show loading dialog
+        val loadingDialog = AlertDialog.Builder(this)
+            .setMessage("Adding product...")
+            .setCancelable(false)
+            .create()
+        loadingDialog.show()
+
+        // Launch coroutine for async operations
+        lifecycleScope.launch {
+            try {
+                // Upload thumbnail
+                val thumbnailUrl = uploadImageToCloudinary(thumbnailUri!!)
+
+                // Upload product images
+                val imageUrls = imagesList.map { uri ->
+                    uploadImageToCloudinary(uri)
+                }
+
+                // Create product object
+                val product = Product(
+                    name = nameEditText.text.toString(),
+                    thumbnail = thumbnailUrl,
+                    description = descriptionEditText.text.toString(),
+                    brand = brandSpinner.selectedItem.toString(),
+                    price = priceEditText.text.toString().toDoubleOrNull() ?: 0.0,
+                    discountPrice = discountPriceEditText.text.toString().toDoubleOrNull(),
+                    salePercentage = salePercentageEditText.text.toString().toIntOrNull() ?: 0,
+                    images = imageUrls,
+                    variants = variants
+                )
+
+                // Save to Firebase using repository
+                val result = productRepository.createProductWithNames(
+                    product = product,
+                    categoryName = categorySpinner.selectedItem.toString(),
+                    brandName = brandSpinner.selectedItem.toString()
+                )
+
+                // Handle result
+                withContext(Dispatchers.Main) {
+                    loadingDialog.dismiss()
+                    when {
+                        result.isSuccess -> {
+                            Toast.makeText(this@AddProductActivity, "Product added successfully", Toast.LENGTH_SHORT).show()
+                            setResult(Activity.RESULT_OK)
+                            finish()
+                        }
+                        result.isFailure -> {
+                            val error = result.exceptionOrNull()?.message ?: "Unknown error"
+                            showError("Failed to add product: $error")
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    loadingDialog.dismiss()
+                    showError("Error: ${e.message}")
+                }
+            }
+        }
     }
 
     private fun showAddVariantDialog() {
@@ -155,7 +245,7 @@ class AddProductActivity : AppCompatActivity() {
         }
     }
     private fun setupSpinners() {
-        val brands = listOf("Chọn thương hiệu", "Nike", "Adidas", "Puma", "Reebok", "Converse")
+        val brands = listOf("Chọn thương hiệu", "Nike", "Adidas", "Puma", "Lacoste", "New Balance", "Rebook")
         val categories = listOf("Chọn danh mục", "MEN", "WOMEN", "UNISEX")
 
         val brandAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, brands)
