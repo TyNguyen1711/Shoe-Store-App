@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +33,10 @@ class ProductCheckoutAdapter(
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = productList[position]
-
+        println("Product list: ${productList}")
+        println("Product list: ${names}")
+        println("Product list: ${images}")
+        println("Product list: ${prices}")
         // Load ảnh sản phẩm
         Glide.with(holder.itemView.context).load(images[position]).into(holder.productImage)
 

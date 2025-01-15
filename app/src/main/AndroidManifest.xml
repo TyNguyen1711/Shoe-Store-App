@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".classes.ConfigCloudinary"
@@ -40,13 +42,25 @@
             android:name=".activity.NewAddressActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.AdressSelectionActivity"
+            android:name=".activity.SearchActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.DisplayProductListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.PaymentActivity"
             android:exported="false" />
         <activity
             android:name=".activity.PayActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.PaymentActivity"
+            android:name=".activity.AddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.OrderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.DetailsActivity"
             android:exported="false" />
         <activity
             android:name=".activity.NotificationActivity"

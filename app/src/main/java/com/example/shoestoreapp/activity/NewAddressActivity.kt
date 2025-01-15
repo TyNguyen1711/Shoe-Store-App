@@ -21,11 +21,13 @@ class NewAddressActivity : AppCompatActivity() {
     private lateinit var isDefault: Switch
     private var cityName: String? = ""
     private var addressId: String = ""
-    private val userId = "example_userId"
+    private var userId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_address)
+
+        userId = intent.getStringExtra("userId")
 
         cityTV = findViewById(R.id.cityTV)
         fullNameET = findViewById(R.id.fullNameAddressET)
@@ -45,7 +47,7 @@ class NewAddressActivity : AppCompatActivity() {
         submitBT.setOnClickListener {
             // Tạo ID
             addressId = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-                .collection("address").document(userId).collection("addresses").document().id
+                .collection("address").document(userId!!).collection("addresses").document().id
 
             val address = Address(
                 id = addressId,
@@ -53,9 +55,9 @@ class NewAddressActivity : AppCompatActivity() {
                 phoneNumber = phoneNumberET.text.toString(),
                 city = cityName ?: "",
                 houseNo = houseNoET.text.toString(),
-                isDefault = isDefault.isChecked
+                default = isDefault.isChecked
             )
-            saveAddressToFirestore(userId, address)
+            saveAddressToFirestore(userId!!, address)
 
             val resultsIntent = Intent()
             resultsIntent.putExtra("id", addressId)
@@ -70,14 +72,14 @@ class NewAddressActivity : AppCompatActivity() {
         val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
         val addressesRef = db.collection("address").document(userId).collection("addresses")
 
-        if (address.isDefault) {
+        if (address.default) {
             addressesRef.get()
                 .addOnSuccessListener { documents ->
                     db.runTransaction { transaction ->
                         for (document in documents) {
                             val oldAddress = document.toObject(Address::class.java)
                             // Nếu địa chỉ cũ là mặc định, cập nhật lại thành false
-                            if (oldAddress.isDefault) {
+                            if (oldAddress.default) {
                                 val docRef = addressesRef.document(document.id)
                                 transaction.update(docRef, "default", false)
                             }

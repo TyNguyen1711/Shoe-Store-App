@@ -21,6 +21,7 @@
     <color name="gradient_right_end">#FFFFFF</color>
     <color name="button_gradient_start">#FF4778</color>
     <color name="button_gradient_end">#FF6B95</color>
-
+    <color name="orange">#f59900</color>
+    <color name="burnt_orange">#964000</color>
 
 </resources>

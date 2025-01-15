@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.data.repository
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.model.ProductVariant
@@ -13,6 +14,7 @@ class ProductRepository(
 ) {
     private val productsCollection: CollectionReference = firestore.collection("products")
     private val categoriesCollection: CollectionReference = firestore.collection("categories")
+    private val brandsCollection: CollectionReference = firestore.collection("brands")
 
     suspend fun createProductWithNames(
         product: Product,
@@ -39,17 +41,18 @@ class ProductRepository(
         val document = productsCollection.document(id).get().await()
         val documentData = document.data ?: throw Exception("Product not found")
         // Lấy danh sách variants và ánh xạ từng phần tử
-        val variants = (documentData["variants"] as? List<Map<String, Any>>)?.map {
+        val variants = (documentData["variants"] as? List<Map<String, Any>>)?.map { variantMap ->
             ProductVariant(
-                id = it["id"] as? String ?: "",
-                size = it["size"] as? String ?: "",
-                stock = (it["stock"] as? Number)?.toInt() ?: 0
+                id = variantMap["id"] as? String ?: "",
+                size = variantMap["size"] as? String ?: "",
+                stock = (variantMap["stock"] as? Number)?.toInt() ?: 0
             )
         } ?: emptyList()
 
         // Trả về Product với danh sách variants đã được xử lý
         Product(
             id = document.id,
+            averageRating = (document["averageRating"] as? Number)?.toDouble() ?: 0.0,
             name = documentData["name"] as? String ?: "",
             description = documentData["description"] as? String ?: "",
             price = (documentData["price"] as? Number)?.toDouble() ?: 0.0,
@@ -57,12 +60,17 @@ class ProductRepository(
             brand = documentData["brand"] as? String ?: "",
             variants = variants,
             thumbnail =  documentData["thumbnail"] as? String?: "",
-            images = documentData["images"] as? List<String> ?: emptyList()
+            images = documentData["images"] as? List<String> ?: emptyList(),
+            soldCount = documentData["soldCount"] as? Int ?: 0,
+            salePercentage = document["salePercentage"] as? Int ?: 0
         )
     }
 
     suspend fun getAllProducts(): Result<List<Product>> = runCatching {
-        val snapshot = productsCollection.get().await()
+        val snapshot = productsCollection
+            .get()
+            .await()
+
         // Ánh xạ tài liệu thành danh sách Product và xử lý variants riêng
         snapshot.documents.map { document ->
             val documentData = document.data ?: throw Exception("Product not found")
@@ -79,6 +87,7 @@ class ProductRepository(
             // Trả về Product với danh sách variants đã được xử lý
             Product(
                 id = document.id,
+                averageRating = (document["averageRating"] as? Number)?.toDouble() ?: 0.0,
                 name = documentData["name"] as? String ?: "",
                 description = documentData["description"] as? String ?: "",
                 price = (documentData["price"] as? Number)?.toDouble() ?: 0.0,
@@ -86,7 +95,9 @@ class ProductRepository(
                 brand = documentData["brand"] as? String ?: "",
                 variants = variants,
                 thumbnail =  documentData["thumbnail"] as? String?: "",
-                images = documentData["images"] as? List<String> ?: emptyList()
+                images = documentData["images"] as? List<String> ?: emptyList(),
+                soldCount = (documentData["soldCount"] as? Number)?.toInt() ?: 0,
+                salePercentage = (document["salePercentage"] as? Number)?.toInt() ?: 0
             )
         }
     }
@@ -131,9 +142,9 @@ class ProductRepository(
         }
     }
 
-    suspend fun getProductsByBrand(brandId: String): Result<List<Product>> = runCatching {
+    suspend fun getProductsByBrand(brand: String): Result<List<Product>> = runCatching {
         val snapshot = productsCollection
-            .whereEqualTo("brand_id", brandId)
+            .whereEqualTo("brand", brand) // Lọc sản phẩm có brand khớp với brandId
             .get()
             .await()
         snapshot.documents.map { document ->
@@ -151,6 +162,7 @@ class ProductRepository(
             // Trả về Product với danh sách variants đã được xử lý
             Product(
                 id = document.id,
+                averageRating = (document["averageRating"] as? Number)?.toDouble() ?: 0.0,
                 name = documentData["name"] as? String ?: "",
                 description = documentData["description"] as? String ?: "",
                 price = (documentData["price"] as? Number)?.toDouble() ?: 0.0,
@@ -158,7 +170,9 @@ class ProductRepository(
                 brand = documentData["brand"] as? String ?: "",
                 variants = variants,
                 thumbnail =  documentData["thumbnail"] as? String?: "",
-                images = documentData["images"] as? List<String> ?: emptyList()
+                images = documentData["images"] as? List<String> ?: emptyList(),
+                soldCount = (documentData["soldCount"] as? Number)?.toInt() ?: 0,
+                salePercentage = (document["salePercentage"] as? Number)?.toInt() ?: 0
             )
         }
     }
@@ -194,14 +208,17 @@ class ProductRepository(
             // Trả về Product với danh sách variants đã được xử lý
             Product(
                 id = document.id,
+                averageRating = (document["averageRating"] as? Number)?.toDouble() ?: 0.0,
                 name = documentData["name"] as? String ?: "",
                 description = documentData["description"] as? String ?: "",
                 price = (documentData["price"] as? Number)?.toDouble() ?: 0.0,
                 categoryId = documentData["categoryId"] as? String ?: "",
                 brand = documentData["brand"] as? String ?: "",
                 variants = variants,
-                thumbnail = documentData["thumbnail"] as? String ?: "",
-                images = documentData["images"] as? List<String> ?: emptyList()
+                thumbnail =  documentData["thumbnail"] as? String?: "",
+                images = documentData["images"] as? List<String> ?: emptyList(),
+                soldCount = (documentData["soldCount"] as? Number)?.toInt() ?: 0,
+                salePercentage = (document["salePercentage"] as? Number)?.toInt() ?: 0
             )
         }
     }

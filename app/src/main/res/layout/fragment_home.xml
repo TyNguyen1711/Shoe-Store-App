@@ -29,9 +29,9 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="12dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="24dp">
+            android:layout_marginEnd="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -97,54 +97,95 @@
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
-                    <LinearLayout
-                        android:layout_marginTop='8dp'
-                        android:layout_marginStart="15dp"
-                        android:layout_marginEnd="15dp"
-                        android:orientation="horizontal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center">
+                    <HorizontalScrollView
+                        android:id="@+id/filter"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp">
 
-                        <!-- Các view cần cuộn theo chiều ngang -->
-                        <TextView
-                            android:layout_width="80dp"
-                            android:gravity="center"
-                            android:textSize="16sp"
-                            android:layout_height="wrap_content"
-                            android:text="All"
-                            android:layout_marginEnd="20dp"/>
-                        <TextView
-                            android:layout_width="80dp"
-                            android:gravity="center"
-                            android:textSize="16sp"
-                            android:layout_height="wrap_content"
-                            android:text="Status"
-                            android:layout_marginEnd="20dp"/>
-                        <TextView
-                            android:layout_width="80dp"
-                            android:gravity="center"
-                            android:textSize="16sp"
-                            android:layout_height="wrap_content"
-                            android:text="Brand"
-                            android:layout_marginEnd="20dp"/>
-                        <TextView
-                            android:layout_width="80dp"
-                            android:gravity="center"
-                            android:textSize="16sp"
-                            android:layout_height="wrap_content"
-                            android:text="Item 2"
-                            android:layout_marginEnd="12dp"/>
-                        <!-- Thêm nhiều phần tử theo chiều ngang ở đây -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginEnd="15dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:gravity="center">
 
-                    </LinearLayout>
+                            <TextView
+                                android:id="@+id/filter_all"
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:text="All"
+                                android:gravity="center"
+                                android:textSize="16sp"
+                                android:layout_marginEnd="20dp"/>
+
+                            <TextView
+                                android:id="@+id/filter_Nike"
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:text="Nike"
+                                android:gravity="center"
+                                android:textSize="16sp"
+                                android:layout_marginEnd="20dp"/>
+
+                            <TextView
+                                android:id="@+id/filter_Adidas"
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:text="Adidas"
+                                android:gravity="center"
+                                android:textSize="16sp"
+                                android:layout_marginEnd="20dp"/>
+
+                            <TextView
+                                android:id="@+id/filter_Puma"
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:text="Puma"
+                                android:gravity="center"
+                                android:textSize="16sp"
+                                android:layout_marginEnd="12dp"/>
+
+                            <TextView
+                                android:id="@+id/filter_NewBalance"
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:text="New Balance"
+                                android:gravity="center"
+                                android:textSize="16sp"
+                                android:layout_marginEnd="20dp"/>
+
+                            <TextView
+                                android:id="@+id/filter_Rebook"
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:text="Rebook"
+                                android:gravity="center"
+                                android:textSize="16sp"
+                                android:layout_marginEnd="12dp"/>
+
+                            <TextView
+                                android:id="@+id/filter_Lacoste"
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:text="Lacoste"
+                                android:gravity="center"
+                                android:textSize="16sp"
+                                android:layout_marginEnd="12dp"/>
+
+                        </LinearLayout>
+                    </HorizontalScrollView>
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
                         android:layout_width="match_parent"
-                        android:layout_height="24dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_weight="1"
-                        android:orientation="horizontal"/>
+                        android:layout_height="720dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        app:layout_constraintHorizontal_bias="0.0"/>
 
                 </LinearLayout>
 

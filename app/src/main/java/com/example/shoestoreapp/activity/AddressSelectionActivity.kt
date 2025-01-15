@@ -12,16 +12,18 @@ import com.example.shoestoreapp.adapter.AddressAdapter
 import com.example.shoestoreapp.data.model.Address
 
 class AddressSelectionActivity : AppCompatActivity() {
-    private val userId = "example_userId"
+    private var userId: String? = null
     private var selectedAddressId: String? = null
-    private lateinit var addressList: List<Address>
+    private var currentAddressId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_address_selection)
 
         // Tải danh sách địa chỉ
-        loadAddressesFromFirestore(userId)
+        userId = intent.getStringExtra("userId")
+        currentAddressId = intent.getStringExtra("addressId")
+        loadAddressesFromFirestore(userId!!)
 
         findViewById<ImageButton>(R.id.backAddressSelectionIB).setOnClickListener {
             finish()
@@ -30,6 +32,7 @@ class AddressSelectionActivity : AppCompatActivity() {
 
     fun onAddNewAddressClick(view: View) {
         val intent = Intent(this, NewAddressActivity::class.java)
+        intent.putExtra("userId", userId)
         startActivityForResult(intent, 1)
     }
 
@@ -37,13 +40,13 @@ class AddressSelectionActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1 && resultCode == RESULT_OK) {
             // Dữ liệu đã được thêm, gọi lại load lại địa chỉ từ Firestore
-            loadAddressesFromFirestore(userId)
+            loadAddressesFromFirestore(userId!!)
         }
     }
 
     override fun onResume() {
         super.onResume()
-        loadAddressesFromFirestore(userId)
+        loadAddressesFromFirestore(userId!!)
     }
 
     private fun loadAddressesFromFirestore(userId: String) {
@@ -66,14 +69,12 @@ class AddressSelectionActivity : AppCompatActivity() {
 
                 // Nếu chỉ có một địa chỉ trong danh sách, đặt nó làm mặc định.
                 if (addressList.size == 1) {
-                    addressList[0].isDefault = true
+                    addressList[0].default = true
                     updateDefaultAddressInFirestore(userId, addressList, addressList[0].id)
                 }
 
                 // Hiển thị danh sách địa chỉ trên RecyclerView.
                 setupRecyclerView(addressList)
-            } else {
-                showToast("No addresses found.")
             }
         }
     }
@@ -92,18 +93,23 @@ class AddressSelectionActivity : AppCompatActivity() {
             },
             onEditAddress = { addressToEdit ->
                 val intent = Intent(this, EditAddressActivity::class.java)
-                intent.putExtra("addressId", addressToEdit.id )
-                startActivity(intent)
+                intent.putExtra("userId", userId)
+                intent.putExtra("addressId", addressToEdit.id)
+                startActivityForResult(intent, 2)
             }
         )
         addressRecyclerView.adapter = adapter
         addressRecyclerView.layoutManager = LinearLayoutManager(this)
 
         // Đặt địa chỉ mặc định
-        val defaultAddress = addressList.find { it.isDefault }
-        if (defaultAddress != null) {
-            selectedAddressId = defaultAddress.id
-            adapter.selectAddress(defaultAddress.id)
+        if (currentAddressId != null) {
+            adapter.selectAddress(currentAddressId!!)
+        } else {
+            val defaultAddress = addressList.find { it.default }
+            if (defaultAddress != null) {
+                selectedAddressId = defaultAddress.id
+                adapter.selectAddress(defaultAddress.id)
+            }
         }
     }
 
@@ -116,7 +122,7 @@ class AddressSelectionActivity : AppCompatActivity() {
             val addressDocRef = addressesRef.document(address.id)
 
             // Cập nhật trường "isDefault"
-            addressDocRef.update("isDefault", isDefault)
+            addressDocRef.update("default", isDefault)
                 .addOnFailureListener { e ->
                     showToast("Error updating default address: ${e.message}")
                 }

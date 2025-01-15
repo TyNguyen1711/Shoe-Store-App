@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_window"
     tools:context=".activity.SignupActivity">
 
     <ImageView
@@ -23,13 +24,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:text="Sign Up"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logoIV"
-        app:layout_constraintVertical_bias="0.100000024" />
+        app:layout_constraintVertical_bias="0.05" />
 
     <TextView
         android:id="@+id/signupTV_2"
@@ -37,30 +38,31 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:text="Enter your credentials to continue"
-        android:textColor="@color/login_activity_text"
+        android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signupTV" />
 
     <TextView
         android:id="@+id/signupTV_4"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginEnd="24dp"
         android:textColor="@color/red"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signupTV_2" />
+        app:layout_constraintTop_toBottomOf="@+id/signupTV_2"
+        app:layout_constraintBottom_toTopOf="@id/usernameTV"/>
 
     <TextView
         android:id="@+id/usernameTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="64dp"
         android:text="Username"
-        android:textColor="@color/login_activity_text"
+        android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signupTV_2" />
@@ -72,9 +74,10 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
+        android:textColorHint="@color/white"
         android:hint="Enter your username"
         android:inputType="text|textPersonName"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/usernameTV" />
@@ -86,7 +89,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="20dp"
         android:text="Email"
-        android:textColor="@color/login_activity_text"
+        android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/usernameET" />
@@ -98,9 +101,10 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
+        android:textColorHint="@color/white"
         android:hint="Enter your email"
         android:inputType="textEmailAddress"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailTV" />
@@ -112,7 +116,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="20dp"
         android:text="Password"
-        android:textColor="@color/login_activity_text"
+        android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailET" />
@@ -121,19 +125,21 @@
         android:id="@+id/passwordLayoutET"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:passwordToggleEnabled="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordTV"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp">
+        android:textColorHint="@color/white"
+        app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/passwordET"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/enter_password"
-            android:inputType="textPassword"/>
+            android:textColor="@color/white"
+            android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
@@ -146,7 +152,7 @@
         android:clickable="true"
         android:focusableInTouchMode="true"
         android:text="By continuing you agree to our Tearms of Service and Privacy Policy."
-        android:textColor="@color/login_activity_text"
+        android:textColor="@color/white"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -160,7 +166,7 @@
         android:layout_marginTop="80dp"
         android:layout_marginEnd="24dp"
         android:background="@drawable/roundstyle"
-        android:backgroundTint="@color/login_button"
+        android:backgroundTint="@color/burnt_orange"
         android:capitalize="none"
         android:text="Sign Up"
         android:textColor="@color/white"
@@ -182,7 +188,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Already have an account? "
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="16sp" />
 
         <TextView
@@ -192,7 +198,7 @@
             android:clickable="true"
             android:focusableInTouchMode="true"
             android:text="Login"
-            android:textColor="@color/signup_text_button"
+            android:textColor="#3F43FF"
             android:textSize="16sp" />
     </LinearLayout>
 
