@@ -35,7 +35,7 @@ class CouponAdapter(
         val coupon = coupons[position]
         holder.code.text = coupon.code
         holder.description.text = coupon.description
-        holder.time.text = coupon.endTime
+        holder.time.text = coupon.threshold.toString()
         holder.discountPercent.text = coupon.discount.toString() + " %"
 
         if (holder.bindingAdapterPosition == selectedPosition) {

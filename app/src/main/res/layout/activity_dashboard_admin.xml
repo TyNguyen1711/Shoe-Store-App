@@ -40,17 +40,6 @@
 
 
         <Button
-            android:id="@+id/btnOrders"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#00FFFFFF"
-            android:drawableTop="@drawable/inventory_24px"
-            android:text="Orders"
-            android:textAllCaps="false"
-            android:textSize="10sp" />
-
-        <Button
             android:id="@+id/btnProducts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -70,6 +59,27 @@
             android:text="Users"
             android:textAllCaps="false"
             android:textSize="8sp" />
+
+        <Button
+            android:id="@+id/btnOrders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:drawableTop="@drawable/inventory_24px"
+            android:text="Orders"
+            android:textAllCaps="false"
+            android:textSize="10sp" />
+        <Button
+            android:id="@+id/btnVoucher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:drawableTop="@drawable/manager_voucher"
+            android:text="Voucher"
+            android:textAllCaps="false"
+            android:textSize="10sp" />
         <Button
             android:id="@+id/btnAccount"
             android:layout_width="wrap_content"

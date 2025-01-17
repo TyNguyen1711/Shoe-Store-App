@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.fragment.ProductManagementFragment
 import com.example.shoestoreapp.fragment.ReportFragment
+import com.example.shoestoreapp.fragment.VoucherManagementFragment
 
 class DashboardAdmin : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +32,10 @@ class DashboardAdmin : AppCompatActivity() {
         // Gán sự kiện cho các button
         findViewById<Button>(R.id.btnProducts).setOnClickListener {
             switchFragment(ProductManagementFragment())
+        }
+
+        findViewById<Button>(R.id.btnVoucher).setOnClickListener {
+            switchFragment(VoucherManagementFragment())
         }
     }
 

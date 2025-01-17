@@ -33,10 +33,10 @@ class CouponActivity : AppCompatActivity() {
         btnFinish = findViewById(R.id.btn_finish)
 
         val coupons = listOf(
-            Coupon("1","WELCOME200", "Add items worth $2 more to unlock", "Get 50% OFF", 5),
-            Coupon("2","SUMMER50", "Minimum purchase $10", "Get 50% OFF on summer collection", 8),
-            Coupon("3", "FIRST10", "First time users", "Get $10 OFF on first purchase", 5),
-            Coupon("4","HOLIDAY25", "Holiday special", "25% OFF on all items", 6)
+            Coupon("1","WELCOME200", "Add items worth $2 more to unlock", 2, 5, 50000),
+            Coupon("2","SUMMER50", "Minimum purchase $10", 2, 5, 50000),
+            Coupon("3", "FIRST10", "First time users", 2, 5, 50000),
+            Coupon("4","HOLIDAY25", "Holiday special", 2, 5, 50000)
         )
 
         adapter = CouponAdapter(
