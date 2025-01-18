@@ -17,7 +17,10 @@ import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.ProductCheckoutAdapter
 import com.example.shoestoreapp.data.model.Address
 import com.example.shoestoreapp.data.model.CartItem
+import com.example.shoestoreapp.data.model.Order
+import com.example.shoestoreapp.data.model.ProductItem
 import com.example.shoestoreapp.data.repository.CartRepository
+import com.example.shoestoreapp.data.repository.OrderRepository
 import com.example.shoestoreapp.data.repository.ProductRepository
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
@@ -131,30 +134,28 @@ class PayActivity : AppCompatActivity() {
 
     private fun saveOrderToFirestore(callback: (Boolean) -> Unit) {
         val firestore = FirebaseFirestore.getInstance()
-        val ordersCollection = firestore.collection("orders")
         val productsCollection = firestore.collection("products")
-        val orderId = ordersCollection.document().id // Tạo ID ngẫu nhiên cho order
+        val orderRepository = OrderRepository(firestore)
 
         // Get currently date
         val dateFormatter = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
         val currentDate = dateFormatter.format(Date(System.currentTimeMillis()))
 
         // Chuẩn bị dữ liệu đơn hàng
-        val orderData = hashMapOf(
-            "id" to orderId,
-            "userId" to userId_tmp,
-            "products" to selectedProducts.map { cartItem ->
-                mapOf(
-                    "productId" to cartItem.productId,
-                    "quantity" to cartItem.quantity,
-                    "size" to cartItem.size
-                )
+        val order = Order(
+            id = firestore.collection("orders").document().id,
+            userId =  userId_tmp,
+            products = selectedProducts.map { cartItem ->
+                ProductItem(cartItem.productId, cartItem.quantity, cartItem.size)
             },
-            "totalPayment" to totalPayment,
-            "addressId" to selectedAddressId,
-            "message" to messageET.text.toString(),
-            "paymentMethod" to selectedPaymentMethod,
-            "orderTime" to currentDate
+            totalPayment = totalPayment,
+            recipientName = nameOrdererTV.text.toString(),
+            recipientPhone = sdtPayTV.text.toString(),
+            recipientAddress = "${addressDetailTV.text}, ${cityNameTV.text}",
+            message = messageET.text.toString(),
+            paymentMethod = selectedPaymentMethod ?: "",
+            orderTime = currentDate,
+            status = "pending"
         )
 
         // Kiểm tra và cập nhật stock từng sản phẩm
@@ -198,33 +199,28 @@ class PayActivity : AppCompatActivity() {
         Tasks.whenAll(tasks).addOnCompleteListener { stockUpdateTask ->
             if (stockUpdateTask.isSuccessful) {
                 // Lưu đơn hàng vào Firestore
-                ordersCollection.document(orderId)
-                    .set(orderData)
-                    .addOnSuccessListener {
-                        // Xóa sản phẩm khỏi giỏ hàng
+                lifecycleScope.launch {
+                    val result = orderRepository.saveOrder(order)
+                    result.onSuccess {
+                        // Xóa sản phẩm khỏi giỏ hàng sau khi lưu thành công
                         val productIds = selectedProducts.map { it.productId }
                         val sizeList = selectedProducts.map { it.size }
 
-                        lifecycleScope.launch {
-                            val result = cartRepository.removeProductFromCart(userId_tmp, productIds, sizeList)
-                            result.onSuccess { (success, _) ->
-                                if (success) {
-                                    callback(true)
-                                }
-                            }.onFailure { exception ->
-                                Toast.makeText(
-                                    this@PayActivity,
-                                    "Error removing products from cart: ${exception.message}",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                callback(false)
+                        val cartResult = cartRepository.removeProductFromCart(userId_tmp, productIds, sizeList)
+                        cartResult.onSuccess { (success, _) ->
+                            if (success) {
+                                callback(true)
                             }
+                        }.onFailure { exception ->
+                            Toast.makeText(
+                                this@PayActivity,
+                                "Error removing products from cart: ${exception.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            callback(false)
                         }
                     }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(this, "Error saving order: ${e.message}", Toast.LENGTH_SHORT).show()
-                        callback(false)
-                    }
+                }
             } else {
                 Toast.makeText(this, "Error updating stock: ${stockUpdateTask.exception?.message}", Toast.LENGTH_SHORT).show()
                 callback(false)
