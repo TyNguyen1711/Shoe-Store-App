@@ -11,8 +11,8 @@ data class Order(
     val message: String,
     val paymentMethod: String,
     val orderTime: String,
-    val voucher: Double,
-    val status: String
+    val status: String,
+    val voucher: Double
 )
 
 data class ProductItem(

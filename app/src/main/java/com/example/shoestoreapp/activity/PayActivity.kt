@@ -155,9 +155,8 @@ class PayActivity : AppCompatActivity() {
             message = messageET.text.toString(),
             paymentMethod = selectedPaymentMethod ?: "",
             orderTime = currentDate,
-            voucher = costVoucher,
-            status = "pending"
-
+            status = "pending",
+            voucher = costVoucher
         )
 
         // Kiểm tra và cập nhật stock từng sản phẩm
