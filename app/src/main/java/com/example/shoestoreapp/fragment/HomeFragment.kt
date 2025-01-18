@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -80,7 +81,7 @@ class HomeFragment :
         textView.setTextColor(Color.BLUE)
     }
 
-    private fun setupFilterClickListeners() {
+    private fun setupFilterClickListeners(recyclerView: RecyclerView) {
         setSelectedFilter(filterTextViews[0])
 
         filterTextViews.forEachIndexed { index, textView ->
@@ -118,6 +119,7 @@ class HomeFragment :
                             result = brandProductRepository.getProductsByBrand(brand)
                         }
                     }
+                    Log.d("BRAND1", "$brand")
                     result.onSuccess { items ->
                         brandProductList.clear()
                         if (items.size > 5) {
@@ -126,6 +128,7 @@ class HomeFragment :
                             brandProductList.addAll(items)
                         }
                         brandProductAdapter = ProductItemAdapter(brandProductList, this@HomeFragment, viewLifecycleOwner,true, brand)
+                        recyclerView.adapter = brandProductAdapter
                     }.onFailure { error ->
                         Log.e("HomeFragment", "Failed to fetch brand products: ${error.message}")
                     }
@@ -156,6 +159,21 @@ class HomeFragment :
             view.findViewById(R.id.filter_Lacoste),
         )
 
+        val seeAllBtn_1 = view.findViewById<Button>(R.id.seeAllBtn_1)
+        val seeAllBtn_2 = view.findViewById<Button>(R.id.seeAllBtn_2)
+
+        seeAllBtn_1.setOnClickListener {
+            val intent = Intent(requireContext(), DisplayProductListActivity::class.java)
+            intent.putExtra("listName", "ExclusiveOffer")
+            startActivity(intent)
+        }
+
+        seeAllBtn_2.setOnClickListener {
+            val intent = Intent(requireContext(), DisplayProductListActivity::class.java)
+            intent.putExtra("listName", "BestSelling")
+            startActivity(intent)
+        }
+
         // Setup RecyclerView for Brand
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
         brandProductAdapter = ProductItemAdapter(brandProductList, this, viewLifecycleOwner,true, "All")
@@ -174,7 +192,7 @@ class HomeFragment :
         bestSellingRecyclerView.adapter = bestSellingAdapter
         bestSellingRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-        setupFilterClickListeners()
+        setupFilterClickListeners(recyclerView)
         lifecycleScope.launch {
             val exclusiveOfferRepo = exclusiveOfferRepository.getAllProducts()
             val bestSellingRepo = bestSellingRepository.getAllProducts()
@@ -207,14 +225,14 @@ class HomeFragment :
                 Log.e("HomeFragment", "Failed to fetch best selling products: ${error.message}")
             }
 
-
-        brandProductRepo.onSuccess { items ->
+            brandProductRepo.onSuccess { items ->
                 brandProductList.clear()
                 if (items.size > 7) {
                     brandProductList.addAll(items.subList(0, 5))
                 } else {
                     brandProductList.addAll(items)
                 }
+                Log.d("BRAND2", "${brandProductAdapter.toString()}")
                 brandProductAdapter.notifyDataSetChanged()
             }.onFailure { error ->
                 Log.e("HomeFragment", "Failed to fetch brand products: ${error.message}")
@@ -231,7 +249,7 @@ class HomeFragment :
     }
 
     override fun onMoreButtonClick(listName: String) {
-        Toast.makeText(requireContext(), "More Button Clicked!", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(requireContext(), "More Button Clicked!", Toast.LENGTH_SHORT).show()
         val intent = Intent(requireContext(), DisplayProductListActivity::class.java)
         intent.putExtra("listName", listName)
         startActivity(intent)

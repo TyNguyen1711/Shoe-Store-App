@@ -8,14 +8,15 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.data.model.User
 import com.example.shoestoreapp.data.model.Wishlist
+import com.example.shoestoreapp.data.repository.UserRepository
 import com.example.shoestoreapp.data.repository.WishListRepository
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.Firebase
@@ -28,6 +29,7 @@ class SignupActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private val wishListRepository = WishListRepository()
     private var wishlists: Wishlist? = null
+    private val userRepository = UserRepository()
 
     public override fun onStart() {
         super.onStart()
@@ -55,7 +57,7 @@ class SignupActivity : AppCompatActivity() {
         val usernameET = findViewById<EditText>(R.id.usernameET)
         val emailET = findViewById<EditText>(R.id.emailET)
         val passwordET = findViewById<TextInputEditText>(R.id.passwordET)
-        val signupBtn = findViewById<Button>(R.id.signupBtn)
+        val signupBtn = findViewById<Button>(R.id.sendBtn)
         val loginTV = findViewById<TextView>(R.id.loginTV)
 
         signupBtn.setOnClickListener {
@@ -86,6 +88,8 @@ class SignupActivity : AppCompatActivity() {
                         }
                         user!!.updateProfile(profileUpdates)
 
+                        addUser(User(user.uid, username, email))
+
                         if (wishlists == null) {
                             wishlists = Wishlist()
                         }
@@ -111,6 +115,13 @@ class SignupActivity : AppCompatActivity() {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
+        }
+    }
+
+    private fun addUser(user: User) {
+        Log.d("Add User", "User: $user")
+        lifecycleScope.launch {
+            userRepository.createUser(user)
         }
     }
 }

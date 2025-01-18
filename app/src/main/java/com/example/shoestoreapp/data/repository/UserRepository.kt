@@ -8,9 +8,8 @@ import kotlinx.coroutines.tasks.await
 class UserRepository (private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()) {
     private val usersCollection: CollectionReference = firestore.collection("users")
 
-    suspend fun createUser(user: User): Result<User> = runCatching {
-        val documentReference = usersCollection.add(user).await()
-        user.copy(id = documentReference.id)
+    suspend fun createUser(user: User): Result<Unit> = runCatching {
+        usersCollection.document(user.id).set(user).await()
     }
 
     suspend fun getUser(id: String): Result<User> = runCatching {

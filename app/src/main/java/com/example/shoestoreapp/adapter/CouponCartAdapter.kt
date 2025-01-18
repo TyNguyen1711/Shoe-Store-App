@@ -32,7 +32,7 @@ class CouponCartAdapter(
         val coupon = coupons[position]
         holder.code.text = coupon.code
         holder.description.text = coupon.description
-        holder.time.text = coupon.endTime
+//        holder.time.text = "${}"
         holder.discountPercent.text = "${coupon.discount} %"
 
         // Gắn sự kiện khi bấm nút
