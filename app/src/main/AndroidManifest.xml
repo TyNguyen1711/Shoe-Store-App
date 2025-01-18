@@ -50,7 +50,22 @@
             android:name=".activity.PayActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.AddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.OrderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.DetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.NotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CouponCartActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AddAddressActivity"
             android:exported="false" />
         <activity
             android:name=".activity.HelpActivity"

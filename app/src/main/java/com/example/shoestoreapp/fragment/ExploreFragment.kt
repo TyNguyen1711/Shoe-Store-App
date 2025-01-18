@@ -1,6 +1,7 @@
 package com.example.shoestoreapp.fragment
 
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
@@ -17,6 +18,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import android.graphics.Color
+import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.activity.SearchActivity
@@ -41,6 +43,16 @@ class ExploreFragment : Fragment() {
 
     private var searchHistory = mutableListOf<String>()
     private val productList = mutableListOf<Product>()
+
+    // Khai báo ActivityResultLauncher
+    private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // Xóa tất cả các item còn lại trong historyView
+            historyView.removeAllViews()
+            // Logic làm mới dữ liệu trong Fragment
+            showShortlist()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -98,12 +110,51 @@ class ExploreFragment : Fragment() {
                 productList.clear()
                 productList.addAll(items)
 
-                // Cập nhật UI sau khi dữ liệu được tải xong
-                for (i in 0..7) {
-                    fullNameTextViews[i].text = productList[i].name
-                    Glide.with(this@ExploreFragment) // Hoặc context nếu không trong Activity
-                        .load(productList[i].thumbnail)
-                        .into(avatarImageViews[i]) // Gán vào ImageView
+                if(searchHistory.size == 0){
+                    // Cập nhật UI sau khi dữ liệu được tải xong
+
+                    for (i in 0..7) {
+                        fullNameTextViews[i].text = productList[i].name
+                        Glide.with(this@ExploreFragment) // Hoặc context nếu không trong Activity
+                            .load(productList[i].thumbnail)
+                            .into(avatarImageViews[i]) // Gán vào ImageView
+                    }
+
+                }
+                else
+                {
+                    val quantity = minOf(1,(8/searchHistory.size))
+                    var cnt = 0
+                    val rcmdList = mutableListOf<Product>()
+                    var idx = 0
+
+                    while(cnt < 8){
+                        val result = productRepos.searchProducts(searchHistory[idx % searchHistory.size])
+                        // Cập nhật UI sau khi dữ liệu được tải xong
+                        result.onSuccess { items ->
+                            if (quantity * idx/searchHistory.size < items.size){
+                            for (j in quantity * idx/searchHistory.size until minOf(quantity * (1 + idx/searchHistory.size),items.size)) {
+                                if(cnt == 8)
+                                    break
+                                if(!rcmdList.contains(items[j])) {
+                                    rcmdList.add(items[j])
+                                    cnt += 1
+                                }
+                            }
+                                }
+
+                        }.onFailure { error ->
+                            println("Failed to fetch search items: ${error.message}")
+                        }
+                        idx += 1
+                    }
+
+                    for(i in 0..7) {
+                        fullNameTextViews[i].text = rcmdList[i].name
+                        Glide.with(this@ExploreFragment) // Hoặc context nếu không trong Activity
+                            .load(rcmdList[i].thumbnail)
+                            .into(avatarImageViews[i]) // Gán vào ImageView
+                    }
                 }
             }.onFailure { error ->
                 // Xử lý lỗi nếu không lấy được danh sách giỏ hàng
@@ -116,8 +167,17 @@ class ExploreFragment : Fragment() {
         return view
     }
 
-    fun Int.dpToPx(): Int {
+
+
+    private fun Int.dpToPx(): Int {
         return (this * Resources.getSystem().displayMetrics.density).toInt()
+    }
+
+    private fun startActivityForResult(searchText: String) {
+        val intent = Intent(requireContext(), SearchActivity::class.java).apply {
+            putExtra("SEARCH_QUERY", searchText)
+        }
+        activityResultLauncher.launch(intent)
     }
 
     private fun setupListeners() {
@@ -125,11 +185,8 @@ class ExploreFragment : Fragment() {
         searchBtn.setOnClickListener {
             val searchText = autoCompleteSearch.text.toString()
             if (searchText.isNotEmpty()) {
-                val intent = Intent(requireContext(), SearchActivity::class.java).apply {
-                    putExtra("SEARCH_QUERY", searchText)
-                }
                 updateHistory(searchText)
-                startActivity(intent)
+                startActivityForResult(searchText)
             } else {
                 Toast.makeText(requireContext(), "Vui lòng nhập từ khóa tìm kiếm", Toast.LENGTH_SHORT).show()
             }
@@ -138,7 +195,7 @@ class ExploreFragment : Fragment() {
     }
 
     private fun showShortlist() {
-        for (i in 0 until minOf(3,searchHistory.size - 1)) {
+        for (i in 0 until minOf(3,searchHistory.size)) {
             val newItem = TextView(requireContext()).apply {
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -214,7 +271,10 @@ class ExploreFragment : Fragment() {
                 )
                 gravity = Gravity.CENTER_VERTICAL
                 setPadding(15.dpToPx(), 0, 0, 0)
-                text = "Trending search"
+                lifecycleScope.launch {
+                    val mostFrequentTerm = userRepos.getMostFrequentSearchTerm()
+                    text = mostFrequentTerm
+                }
                 textSize = 15f
                 isClickable = true
                 isFocusable = true
@@ -234,7 +294,7 @@ class ExploreFragment : Fragment() {
 
     private fun showFullList(seeAllTV: TextView) {
         // Thêm các item còn thiếu (4 đến 10) vào lịch sử
-        for (i in 3 until minOf(10,searchHistory.size - 1)) {
+        for (i in 3 until minOf(10,searchHistory.size)) {
             val newItem = TextView(requireContext()).apply {
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -289,6 +349,8 @@ class ExploreFragment : Fragment() {
             val result = userRepos.updateSearchHistory(userId)
             result.onSuccess {
                 // Xử lý khi cập nhật thành công
+                searchHistory = mutableListOf<String>()
+                showShortlist()
                 println("Search history updated successfully!")
             }.onFailure { exception ->
                 // Xử lý lỗi nếu có
@@ -315,4 +377,6 @@ class ExploreFragment : Fragment() {
             }
         }
     }
+
+
 }

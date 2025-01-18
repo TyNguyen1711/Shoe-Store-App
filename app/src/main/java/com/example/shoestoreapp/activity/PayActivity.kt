@@ -6,11 +6,11 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
@@ -31,7 +31,7 @@ import java.util.Date
 import java.util.Locale
 
 class PayActivity : AppCompatActivity() {
-    private val userId_tmp = "example_userId"
+    private val userId_tmp = "example_user_id"
     private lateinit var productRepository: ProductRepository
     private lateinit var cartRepository: CartRepository
     private val selectedProducts = mutableListOf<CartItem>()
@@ -47,6 +47,7 @@ class PayActivity : AppCompatActivity() {
     private lateinit var saveOrderTV: TextView
     private var costDelivery: Double = 0.0
     private var costVoucher: Double = 0.0
+    private var totalPayment: Double = 0.0
     private lateinit var cityNameTV: TextView
     private lateinit var addressDetailTV: TextView
     private lateinit var nameOrdererTV: TextView
@@ -103,26 +104,34 @@ class PayActivity : AppCompatActivity() {
             }
         }
 
+        // Click Place Order
         placeOrderBT.setOnClickListener {
+            if (selectedAddressId == null) {
+                Toast.makeText(this, "Please select a shipping address before ordering!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             if (selectedPaymentMethod == null) {
                 Toast.makeText(this, "Please select a payment method before placing the order.", Toast.LENGTH_SHORT).show()
-            } else {
-                saveOrderToFirestore { isSuccess ->
-                    if (isSuccess) {
-                        showOrderSuccessDialog()
-                    } else {
-                        Toast.makeText(this, "Failed to place order. Please try again.", Toast.LENGTH_SHORT).show()
-                    }
+                return@setOnClickListener
+            }
+
+            saveOrderToFirestore { isSuccess ->
+                if (isSuccess) {
+                    showOrderSuccessDialog()
+                } else {
+                    Toast.makeText(this, "Failed to place order. Please try again.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
+        // Click Back Button
         backIB.setOnClickListener { finish() }
     }
 
     private fun saveOrderToFirestore(callback: (Boolean) -> Unit) {
         val firestore = FirebaseFirestore.getInstance()
-        val ordersCollection = firestore.collection("orders").document(userId_tmp).collection("order details")
+        val ordersCollection = firestore.collection("orders")
         val productsCollection = firestore.collection("products")
         val orderId = ordersCollection.document().id // Tạo ID ngẫu nhiên cho order
 
@@ -133,6 +142,7 @@ class PayActivity : AppCompatActivity() {
         // Chuẩn bị dữ liệu đơn hàng
         val orderData = hashMapOf(
             "id" to orderId,
+            "userId" to userId_tmp,
             "products" to selectedProducts.map { cartItem ->
                 mapOf(
                     "productId" to cartItem.productId,
@@ -140,6 +150,7 @@ class PayActivity : AppCompatActivity() {
                     "size" to cartItem.size
                 )
             },
+            "totalPayment" to totalPayment,
             "addressId" to selectedAddressId,
             "message" to messageET.text.toString(),
             "paymentMethod" to selectedPaymentMethod,
@@ -190,7 +201,25 @@ class PayActivity : AppCompatActivity() {
                 ordersCollection.document(orderId)
                     .set(orderData)
                     .addOnSuccessListener {
-                        callback(true)
+                        // Xóa sản phẩm khỏi giỏ hàng
+                        val productIds = selectedProducts.map { it.productId }
+                        val sizeList = selectedProducts.map { it.size }
+
+                        lifecycleScope.launch {
+                            val result = cartRepository.removeProductFromCart(userId_tmp, productIds, sizeList)
+                            result.onSuccess { (success, _) ->
+                                if (success) {
+                                    callback(true)
+                                }
+                            }.onFailure { exception ->
+                                Toast.makeText(
+                                    this@PayActivity,
+                                    "Error removing products from cart: ${exception.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                callback(false)
+                            }
+                        }
                     }
                     .addOnFailureListener { e ->
                         Toast.makeText(this, "Error saving order: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -302,7 +331,7 @@ class PayActivity : AppCompatActivity() {
             }
 
             withContext(Dispatchers.Main) {
-                val totalPayment = merchandiseSubtotal + costDelivery - costVoucher
+                totalPayment = merchandiseSubtotal + costDelivery - costVoucher
 
                 costProductsTV.text = "${String.format("%,.0f", merchandiseSubtotal)}đ"
                 costDeliveryTV.text = "${String.format("%,.0f", costDelivery)}đ"

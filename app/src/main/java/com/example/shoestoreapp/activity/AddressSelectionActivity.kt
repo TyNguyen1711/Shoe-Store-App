@@ -32,6 +32,7 @@ class AddressSelectionActivity : AppCompatActivity() {
 
     fun onAddNewAddressClick(view: View) {
         val intent = Intent(this, NewAddressActivity::class.java)
+        intent.putExtra("userId", userId)
         startActivityForResult(intent, 1)
     }
 
@@ -74,8 +75,6 @@ class AddressSelectionActivity : AppCompatActivity() {
 
                 // Hiển thị danh sách địa chỉ trên RecyclerView.
                 setupRecyclerView(addressList)
-            } else {
-                showToast("No addresses found.")
             }
         }
     }
