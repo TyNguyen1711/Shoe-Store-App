@@ -319,7 +319,6 @@ class SearchActivity : AppCompatActivity(), ProductItemAdapter.OnProductClickLis
             }
 
             val result = productRepos.searchProducts(searchQuery)
-            Log.d("SEARCH TEXT: ",result.toString())
             result.onSuccess { items ->
                 resultProducts.clear()
                 savedProducts.clear()
