@@ -21,6 +21,7 @@ import com.example.shoestoreapp.data.model.CartItem
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.repository.CartRepository
 import com.example.shoestoreapp.data.repository.WishListRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 
@@ -37,7 +38,7 @@ class WishlistFragment : Fragment(), WishlistAdapter.ProductCountListener,
     private lateinit var cartBtn: Button
     private var isSearchVisible = false
     private val wishlistRepository = WishListRepository()
-    private val cartRepository = CartRepository()
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,10 +56,10 @@ class WishlistFragment : Fragment(), WishlistAdapter.ProductCountListener,
         lifecycleScope.launch {
             try {
                 wishlistRepository.removeFromWishlist(
-                    userId = "example_user_id",
+                    userId = userId,
                     productId = product.id
                 )
-                val result = wishlistRepository.getWishlistByUserId(userId = "example_user_id")
+                val result = wishlistRepository.getWishlistByUserId(userId = userId)
                 if (result.isSuccess) {
                     val updatedProducts = result.getOrNull() ?: emptyList()
                     wishlistAdapter.updateData(updatedProducts)
@@ -127,7 +128,7 @@ class WishlistFragment : Fragment(), WishlistAdapter.ProductCountListener,
     private fun fetchProductList() {
         lifecycleScope.launch {
             val result =
-                wishlistRepository.getWishlistByUserId(userId = "example_user_id")
+                wishlistRepository.getWishlistByUserId(userId = userId)
             if (result.isSuccess) {
                 val products = result.getOrNull() ?: emptyList()
                 wishlistAdapter.updateData(products)

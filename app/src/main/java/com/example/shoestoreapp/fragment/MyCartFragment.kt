@@ -43,8 +43,6 @@ class MyCartFragment : Fragment() {
     private lateinit var bottomLayout: LinearLayout
     private lateinit var couponLayout: LinearLayout
 
-    private var usedCoupon: Boolean = false
-    private var totalPrice: Double = 0.0
     private var saving: Double = 0.0
 
     private val firestore = FirebaseFirestore.getInstance()

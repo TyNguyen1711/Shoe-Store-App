@@ -7,10 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.activity.*
+import com.example.shoestoreapp.data.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
 class AccountFragment : Fragment() {
 
@@ -25,6 +29,9 @@ class AccountFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val nameTv = view.findViewById<TextView>(R.id.nameTv)
+        val emailTv = view.findViewById<TextView>(R.id.emailTv)
+
         val ordersSection = view.findViewById<LinearLayout>(R.id.option_orders)
         val myDetailsSection = view.findViewById<LinearLayout>(R.id.option_myDetail)
         val deliveryAddressSection = view.findViewById<LinearLayout>(R.id.option_delivery)
@@ -34,6 +41,18 @@ class AccountFragment : Fragment() {
         val helpSection = view.findViewById<LinearLayout>(R.id.option_help)
         val aboutSection = view.findViewById<LinearLayout>(R.id.option_about)
         val logoutButton = view.findViewById<Button>(R.id.my_button)
+
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
+        val userRepos = UserRepository()
+        lifecycleScope.launch {
+            val user = userRepos.getUser(userId)
+            user.onSuccess { userData ->
+                nameTv.text = userData.fullname
+                emailTv.text = userData.email
+            }.onFailure { error ->
+                println("Failed to fetch user information: ${error.message}")
+            }
+        }
 
         // Khi bấm vào nút "Logout"
         logoutButton.setOnClickListener {
@@ -68,6 +87,7 @@ class AccountFragment : Fragment() {
         }
 
         myDetailsSection.setOnClickListener {
+            val intent = Intent(requireContext(), DetailsActivity::class.java)
             startActivity(Intent(requireContext(), DetailsActivity::class.java))
         }
 
