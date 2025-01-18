@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.activity.*
+import com.google.firebase.auth.FirebaseAuth
 
 class AccountFragment : Fragment() {
 
@@ -34,6 +35,18 @@ class AccountFragment : Fragment() {
         val aboutSection = view.findViewById<LinearLayout>(R.id.option_about)
         val logoutButton = view.findViewById<Button>(R.id.my_button)
 
+        // Khi bấm vào nút "Logout"
+        logoutButton.setOnClickListener {
+            // Đăng xuất người dùng
+            FirebaseAuth.getInstance().signOut()
+
+            // Chuyển hướng người dùng về menu
+            val intent = Intent(requireContext(), HomeActivity::class.java)
+            startActivity(intent)
+
+            activity?.finish()
+        }
+
         couponSection.setOnClickListener {
             startActivity(Intent(requireContext(), CouponActivity::class.java))
         }
@@ -48,6 +61,22 @@ class AccountFragment : Fragment() {
 
         aboutSection.setOnClickListener {
             startActivity(Intent(requireContext(), AboutActivity::class.java))
+        }
+
+        ordersSection.setOnClickListener {
+            startActivity(Intent(requireContext(), OrderActivity::class.java))
+        }
+
+        myDetailsSection.setOnClickListener {
+            startActivity(Intent(requireContext(), DetailsActivity::class.java))
+        }
+
+        deliveryAddressSection.setOnClickListener {
+            startActivity(Intent(requireContext(), AddressActivity::class.java))
+        }
+
+        paymentMethodsSection.setOnClickListener {
+            startActivity(Intent(requireContext(), PaymentActivity::class.java))
         }
     }
 }

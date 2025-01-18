@@ -4,23 +4,32 @@ import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.data.model.User
+import com.example.shoestoreapp.data.model.Wishlist
+import com.example.shoestoreapp.data.repository.UserRepository
+import com.example.shoestoreapp.data.repository.WishListRepository
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.auth.userProfileChangeRequest
+import kotlinx.coroutines.launch
 
 class SignupActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
+    private val wishListRepository = WishListRepository()
+    private var wishlists: Wishlist? = null
+    private val userRepository = UserRepository()
 
     public override fun onStart() {
         super.onStart()
@@ -48,48 +57,55 @@ class SignupActivity : AppCompatActivity() {
         val usernameET = findViewById<EditText>(R.id.usernameET)
         val emailET = findViewById<EditText>(R.id.emailET)
         val passwordET = findViewById<TextInputEditText>(R.id.passwordET)
-        val signupBtn = findViewById<Button>(R.id.signupBtn)
+        val signupBtn = findViewById<Button>(R.id.sendBtn)
         val loginTV = findViewById<TextView>(R.id.loginTV)
 
-        signupBtn.setOnClickListener() {
+        signupBtn.setOnClickListener {
             val username = usernameET.text.toString()
             val email = emailET.text.toString()
             val password = passwordET.text.toString()
+            notificationTV.text = ""
 
             if (TextUtils.isEmpty(username)) {
                 notificationTV.text = getResources().getString(R.string.enter_username)
+                return@setOnClickListener
             }
-
             if (TextUtils.isEmpty(email)) {
                 notificationTV.text = getResources().getString(R.string.enter_email)
+                return@setOnClickListener
             }
-
-            if (TextUtils.isEmpty(password)) {
+            if (TextUtils.isEmpty(password) || password.length < 6) {
                 notificationTV.text = getResources().getString(R.string.enter_password)
+                return@setOnClickListener
             }
 
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        // Set username through update user profile
                         val user = Firebase.auth.currentUser
                         val profileUpdates = userProfileChangeRequest {
                             displayName = username
                         }
                         user!!.updateProfile(profileUpdates)
 
-                        // Return to login activity after finish sign up
+                        addUser(User(user.uid, username, email))
+
+                        if (wishlists == null) {
+                            wishlists = Wishlist()
+                        }
+                        wishlists!!.userId = user.uid
+
+                        lifecycleScope.launch {
+                            wishListRepository.addUserWishlist(wishlists!!)
+                        }
+
                         val intent = Intent(this, LoginActivity::class.java)
                         startActivity(intent)
                         finish()
-
                     } else {
-                        // If sign in fails, display a message to the user.
-                        Toast.makeText(
-                            baseContext,
-                            "Authentication failed.",
-                            Toast.LENGTH_SHORT,
-                        ).show()
+                        Log.w("TAG", "createUserWithEmail:failure", task.exception)
+                        notificationTV.text = task.exception?.message.toString()
+//                        Toast.makeText(baseContext, "Sign-up failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
         }
@@ -99,6 +115,13 @@ class SignupActivity : AppCompatActivity() {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
+        }
+    }
+
+    private fun addUser(user: User) {
+        Log.d("Add User", "User: $user")
+        lifecycleScope.launch {
+            userRepository.createUser(user)
         }
     }
 }

@@ -40,8 +40,11 @@ dependencies {
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation("com.cloudinary:cloudinary-android:2.3.1")
     implementation("com.cloudinary:cloudinary-core:1.33.0")
+    implementation("at.blogc:expandabletextview:1.0.5")
+    implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation(libs.play.services.analytics.impl)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.generativeai)
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.firebase:firebase-auth")
@@ -59,4 +62,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("org.apache.commons:commons-text:1.9")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 }

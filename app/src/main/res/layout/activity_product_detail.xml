@@ -21,8 +21,8 @@
 
             <Button
                 android:id="@+id/backBtn"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="28dp"
+                android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/back" />
 
@@ -32,11 +32,12 @@
                 android:layout_weight="1" />
 
             <Button
-                android:id="@+id/shareBtn"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/share" />
+                android:id="@+id/favouriteBtn"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="16dp"
+                android:layout_gravity="center"
+                android:background="@drawable/favorite_border" />
 
         </LinearLayout>
 
@@ -116,13 +117,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
 
-                    <Button
-                        android:id="@+id/favouriteBtn"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/favourite" />
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -132,47 +126,6 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="24dp"
                     android:orientation="horizontal">
-
-                    <RelativeLayout
-                        android:layout_width="128dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp">
-
-                        <Button
-                            android:id="@+id/removeBtn"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_alignParentStart="true"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/custom_btn_remove"
-                            android:backgroundTint="@color/login_activity_text" />
-
-                        <EditText
-                            android:id="@+id/itemQuanET"
-                            android:layout_width="64dp"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:background="@android:drawable/alert_light_frame"
-                            android:inputType="number"
-                            android:minEms="1"
-                            android:text="1"
-                            android:textAlignment="center"
-                            android:textAllCaps="false"
-                            android:textColor="@android:color/black"
-                            android:textSize="20sp" />
-
-                        <Button
-                            android:id="@+id/addBtn"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/custom_btn_add"
-                            android:backgroundTint="@color/login_activity_text" />
-                    </RelativeLayout>
 
                     <View
                         android:id="@+id/view2"
@@ -189,7 +142,6 @@
                         android:textColor="@color/black"
                         android:textSize="32sp"
                         android:textStyle="bold" />
-
 
                 </LinearLayout>
 
@@ -212,20 +164,32 @@
                         android:textStyle="bold" />
 
                     <Button
-                        android:id="@+id/extendBtn"
+                        android:id="@+id/comment_extendBtn"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:background="@drawable/extend" />
                 </LinearLayout>
 
-                <TextView
+                <at.blogc.android.views.ExpandableTextView
+                    android:id="@+id/commentTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:text="TextView"
+                    android:textSize="16sp"
+                    android:maxLines="3"
+                    android:ellipsize="end"
+                    app:animation_duration="750"/>
+
+<!--                <TextView
                     android:id="@+id/productDescriptionTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_marginEnd="24dp"
                     android:text="TextView"
-                    android:textSize="16sp" />
+                    android:textSize="16sp" />-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -279,7 +243,7 @@
     <Button
         android:id="@+id/addToCartBtn"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="56dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="32dp"

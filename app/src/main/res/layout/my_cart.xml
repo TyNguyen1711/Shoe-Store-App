@@ -4,22 +4,8 @@
     android:id="@+id/main"
     android:layout_marginTop="50dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MyCart">
+    android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/backBtn"
-        android:layout_width="40dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="15dp"
-        android:drawableStart="@drawable/arrow_left"
-        android:background="@null"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/myCart"
-        app:layout_constraintBottom_toBottomOf="@id/myCart"/>
 
     <TextView
         android:id="@+id/myCart"
@@ -30,18 +16,20 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginStart="5dp"
-        app:layout_constraintStart_toEndOf="@id/backBtn"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingStart="18dp"/>
 
     <TextView
         android:id="@+id/productsNum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="(128)"
+        android:text="(0)"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@id/myCart"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingTop="2dp"/>
 
     <TextView
         android:id="@+id/editTV"
@@ -123,32 +111,103 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <!-- Total TextView -->
-        <TextView
-            android:id="@+id/textViewTotal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Total: 812.000đ"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:layout_marginEnd="10dp" />
 
-        <!-- Checkout TextView -->
-        <TextView
-            android:id="@+id/textViewCheckout"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
-            android:text="Check Out\n(0)"
-            android:gravity="center"
-            android:lineSpacingExtra="2dp"
-            android:background="#53B175"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginStart="5dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Top LinearLayout (Total and Checkout TextViews) -->
+            <LinearLayout
+                android:id="@+id/topLayout"
+                android:layout_width="380dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="end|center_vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:paddingEnd="55dp">
+
+                <!-- Total TextView -->
+                <TextView
+                    android:id="@+id/textViewTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total: 0.000đ"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="10dp" />
+
+                <!-- Checkout TextView -->
+                <TextView
+                    android:id="@+id/textViewCheckout"
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:text="Check Out\n(0)"
+                    android:gravity="center"
+                    android:lineSpacingExtra="2dp"
+                    android:background="#53B175"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="5dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground" />
+
+            </LinearLayout>
+
+            <!-- Bottom LinearLayout (Wishlist and Delete Buttons) -->
+            <LinearLayout
+                android:id="@+id/bottomLayout"
+                android:layout_width="280dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="end|center_vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:paddingEnd="55dp">
+
+                <!-- Add to Wishlist Button -->
+                <Button
+                    android:id="@+id/toWishlist"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:text="Add to Wishlist"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textAllCaps="false"
+                    android:background="@drawable/green_button_bg"
+                    android:layout_marginEnd="10dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center" />
+
+                <!-- Delete Button -->
+                <Button
+                    android:id="@+id/delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Delete"
+                    android:textAllCaps="false"
+                    android:gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="15dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/gray_button_bg"
+                    android:foreground="?attr/selectableItemBackground" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 
 
     </LinearLayout>

@@ -132,7 +132,7 @@ class CartDialog(
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val result = cartRepository.addProductToCart(
-                    userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2",
+                    userId = "example_user_id",
                     product = cartItem
                 )
 

@@ -17,7 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <LinearLayout
         android:id="@+id/searchBar"
         android:layout_width="match_parent"
@@ -25,7 +24,8 @@
         android:orientation="horizontal"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        android:background="@drawable/border">
 
         <AutoCompleteTextView
             android:id="@+id/autoCompleteSearch"
@@ -33,7 +33,10 @@
             android:layout_height="45dp"
             android:layout_weight="1"
             android:hint="Search products"
-            android:textSize="15sp" />
+            android:textStyle="normal"
+            android:textSize="15sp"
+            android:paddingStart="10dp"
+            android:background="@android:color/transparent" />
 
         <ImageButton
             android:id="@+id/searchBtn"
@@ -42,28 +45,447 @@
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/search"
             android:layout_gravity="center_vertical" />
-
     </LinearLayout>
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <android.widget.ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchBar"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/historyView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            </LinearLayout>
+
+            <View
+                android:id="@+id/boundary"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="#E0E0E0"
+                app:layout_constraintTop_toBottomOf="@+id/historyView"
+                app:layout_constraintBottom_toTopOf="@id/recommend"/>
+
+            <TextView
+                android:id="@+id/recommend"
+                android:hint="Recommended products"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:paddingStart="15dp"
+                android:gravity="center_vertical" />
+
+            <LinearLayout
+                android:id="@+id/linearLayoutContainer2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp">
+
+                <!-- Row 1 with two CardViews -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- CardView 1 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="189.11dp"
+                        android:layout_margin="8dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="12dp"
+                        android:id="@+id/card_view1"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:background="@drawable/border_card_coupon">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:id="@+id/avatarTV1"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:scaleType="centerCrop"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintVertical_bias="0.224" />
+
+                            <TextView
+                                android:id="@+id/fullNameTV1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="15dp"
+                                android:text="Item 1"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:gravity="center"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.5"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV1"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- CardView 2 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="189.11dp"
+                        android:layout_margin="8dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="12dp"
+                        android:id="@+id/card_view2"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:background="@drawable/border_card_coupon">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:id="@+id/avatarTV2"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:scaleType="centerCrop"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintVertical_bias="0.224" />
+
+                            <TextView
+                                android:id="@+id/fullNameTV2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="15dp"
+                                android:text="Item 2"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:gravity="center"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.5"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV2"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+                <!-- Row 2 with two CardViews -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- CardView 3 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="189.11dp"
+                        android:layout_margin="8dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="12dp"
+                        android:id="@+id/card_view3"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:background="@drawable/border_card_coupon">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:id="@+id/avatarTV3"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:scaleType="centerCrop"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintVertical_bias="0.224" />
+
+                            <TextView
+                                android:id="@+id/fullNameTV3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="15dp"
+                                android:text="Item 3"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:gravity="center"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.5"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV3"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- CardView 4 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="189.11dp"
+                        android:layout_margin="8dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="12dp"
+                        android:id="@+id/card_view4"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:background="@drawable/border_card_coupon">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:id="@+id/avatarTV4"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:scaleType="centerCrop"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintVertical_bias="0.224" />
+
+                            <TextView
+                                android:id="@+id/fullNameTV4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="15dp"
+                                android:text="Item 4"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:gravity="center"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.5"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV4"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+                <!-- Row 3 with two CardViews -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- CardView 5 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="189.11dp"
+                        android:layout_margin="8dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="12dp"
+                        android:id="@+id/card_view5"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:background="@drawable/border_card_coupon">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:id="@+id/avatarTV5"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:scaleType="centerCrop"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintVertical_bias="0.224" />
+
+                            <TextView
+                                android:id="@+id/fullNameTV5"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="15dp"
+                                android:text="Item 5"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:gravity="center"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.5"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV5"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- CardView 6 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="189.11dp"
+                        android:layout_margin="8dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="12dp"
+                        android:id="@+id/card_view6"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:background="@drawable/border_card_coupon">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:id="@+id/avatarTV6"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:scaleType="centerCrop"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintVertical_bias="0.224" />
+
+                            <TextView
+                                android:id="@+id/fullNameTV6"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="15dp"
+                                android:text="Item 6"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:gravity="center"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.5"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV6"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+                <!-- Row 4 with two CardViews -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- CardView 7 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="189.11dp"
+                        android:layout_margin="8dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="12dp"
+                        android:id="@+id/card_view7"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:background="@drawable/border_card_coupon">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:id="@+id/avatarTV7"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:scaleType="centerCrop"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintVertical_bias="0.224" />
+
+                            <TextView
+                                android:id="@+id/fullNameTV7"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="15dp"
+                                android:text="Item 7"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:gravity="center"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.5"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV7"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- CardView 8 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="189.11dp"
+                        android:layout_margin="8dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="12dp"
+                        android:id="@+id/card_view8"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:background="@drawable/border_card_coupon">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:id="@+id/avatarTV8"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:scaleType="centerCrop"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintVertical_bias="0.224" />
+
+                            <TextView
+                                android:id="@+id/fullNameTV8"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="15dp"
+                                android:text="Item 8"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:gravity="center"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.5"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV8"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
 
+            </LinearLayout>
 
-
-
+        </LinearLayout>
+    </android.widget.ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

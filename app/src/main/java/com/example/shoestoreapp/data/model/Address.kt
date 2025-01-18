@@ -6,5 +6,5 @@ data class Address (
     val phoneNumber: String = "",
     val city: String = "",
     val houseNo: String = "",
-    var isDefault: Boolean = false
+    var default: Boolean = false
 ) : java.io.Serializable
