@@ -134,6 +134,16 @@ class ProductManagementFragment : Fragment() {
                 val position = products.indexOf(product)
                 products.removeAt(position)
                 productAdapter.removeProduct(position)
+
+                lifecycleScope.launch {
+                    val result = productRepository.deleteProduct(product.id)
+                    result.onSuccess {
+                        Toast.makeText(requireContext(),"Xóa sản phẩm thành công", Toast.LENGTH_SHORT).show()
+
+                    }.onFailure { exception ->
+                        Toast.makeText(requireContext(), exception.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
                 dialog.dismiss()
             }
             .setNegativeButton("Cancel") { dialog, _ ->
@@ -142,7 +152,5 @@ class ProductManagementFragment : Fragment() {
             .show()
     }
 
-    private fun showAddProductDialog() {
-        Toast.makeText(requireContext(), "Add Product clicked", Toast.LENGTH_SHORT).show()
-    }
+
 }

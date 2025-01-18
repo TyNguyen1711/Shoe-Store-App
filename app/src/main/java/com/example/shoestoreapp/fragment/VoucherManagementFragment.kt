@@ -2,25 +2,30 @@ package com.example.shoestoreapp.fragment
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.data.model.Coupon
+import com.example.shoestoreapp.data.repository.CouponRepository
+import com.example.shoestoreapp.data.repository.ProductRepository
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.launch
 
 
 class VoucherManagementFragment : Fragment() {
-    private val voucherList = mutableListOf<Coupon>()
+    private var voucherList = mutableListOf<Coupon>()
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
-
+    private val couponRepository = CouponRepository()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,11 +42,25 @@ class VoucherManagementFragment : Fragment() {
         view.findViewById<ImageButton>(R.id.btnAdd).setOnClickListener {
             showVoucherDialog()
         }
-
+        setupRecyclerView()
         setupViewPager()
     }
 
+    private fun setupRecyclerView() {
+        lifecycleScope.launch {
+            val result = couponRepository.getAllCoupons()
+            result.onSuccess { coupons ->
+                voucherList.clear()
+                voucherList.addAll(coupons)
+                refreshLists()
+            }.onFailure { exception ->
+                exception.printStackTrace()
+            }
+        }
+    }
+
     private fun setupViewPager() {
+        viewPager.offscreenPageLimit = 1
         viewPager.adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount() = 2
             override fun createFragment(position: Int) =
@@ -89,29 +108,52 @@ class VoucherManagementFragment : Fragment() {
     }
 
     private fun addVoucher(coupon: Coupon) {
-        voucherList.add(coupon)
-        refreshLists()
+        lifecycleScope.launch {
+            val result = couponRepository.addCoupon(coupon)
+            result.onSuccess {
+                voucherList.add(coupon)
+                refreshLists()
+            }.onFailure { exception ->
+                exception.printStackTrace()
+            }
+        }
     }
 
     private fun updateVoucher(coupon: Coupon) {
-        val index = voucherList.indexOfFirst { it.id == coupon.id }
-        if (index != -1) {
-            voucherList[index] = coupon
-            refreshLists()
+        lifecycleScope.launch {
+            val result = couponRepository.updateCoupon(coupon)
+            result.onSuccess {
+                val index = voucherList.indexOfFirst { it.id == coupon.id }
+                if (index != -1) {
+                    voucherList[index] = coupon
+                    refreshLists()
+                }
+            }.onFailure { exception ->
+                exception.printStackTrace()
+            }
         }
     }
+
 
     fun deleteVoucher(coupon: Coupon) {
         AlertDialog.Builder(requireContext())
             .setTitle("Xóa Voucher")
             .setMessage("Bạn có chắc chắn muốn xóa voucher này?")
             .setPositiveButton("Xóa") { _, _ ->
-                voucherList.remove(coupon)
-                refreshLists()
+                lifecycleScope.launch {
+                    val result = couponRepository.deleteCoupon(coupon.id)
+                    result.onSuccess {
+                        voucherList.remove(coupon)
+                        refreshLists()
+                    }.onFailure { exception ->
+                        exception.printStackTrace()
+                    }
+                }
             }
             .setNegativeButton("Hủy", null)
             .show()
     }
+
 
     private fun refreshLists() {
         childFragmentManager.fragments.forEach {

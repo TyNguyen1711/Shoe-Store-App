@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cloudinary.utils.ObjectUtils
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.adapter.ImagesAdapter
 import com.example.shoestoreapp.adapter.VariantsAdapter
 import com.example.shoestoreapp.classes.ConfigCloudinary
 import com.example.shoestoreapp.data.model.Product
@@ -37,6 +38,7 @@ class AddProductActivity : AppCompatActivity() {
     private lateinit var discountPriceEditText: EditText
     private lateinit var salePercentageEditText: EditText
     private lateinit var variantsRecyclerView: RecyclerView
+    private lateinit var btnDeleteThumbnail: ImageButton
     private lateinit var btnAddVariant: Button
     private val productRepository = ProductRepository()
     private val imagesList = mutableListOf<Uri>()
@@ -70,6 +72,8 @@ class AddProductActivity : AppCompatActivity() {
         salePercentageEditText = findViewById(R.id.et_sale_percentage)
         variantsRecyclerView = findViewById(R.id.rv_variants)
         btnAddVariant = findViewById(R.id.btn_add_variant)
+        btnDeleteThumbnail = findViewById(R.id.btn_delete_thumbnail)
+
     }
 
     private fun setupRecyclerView() {
@@ -101,7 +105,11 @@ class AddProductActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btn_add).setOnClickListener {
             addProduct()
         }
-
+        btnDeleteThumbnail.setOnClickListener {
+            thumbnailUri = null
+            thumbnailImageView.setImageDrawable(null)
+            btnDeleteThumbnail.visibility = View.GONE
+        }
 
     }
     private suspend fun uploadImageToCloudinary(uri: Uri): String {
@@ -126,7 +134,6 @@ class AddProductActivity : AppCompatActivity() {
             .create()
         loadingDialog.show()
 
-        // Launch coroutine for async operations
         lifecycleScope.launch {
             try {
                 // Upload thumbnail
@@ -137,7 +144,6 @@ class AddProductActivity : AppCompatActivity() {
                     uploadImageToCloudinary(uri)
                 }
 
-                // Create product object
                 val product = Product(
                     name = nameEditText.text.toString(),
                     thumbnail = thumbnailUrl,
@@ -225,6 +231,7 @@ class AddProductActivity : AppCompatActivity() {
                     data.data?.let { uri ->
                         thumbnailUri = uri
                         thumbnailImageView.setImageURI(uri)
+                        findViewById<ImageButton>(R.id.btn_delete_thumbnail).visibility = View.VISIBLE
                     }
                 }
                 PICK_IMAGES_REQUEST -> {
@@ -258,8 +265,10 @@ class AddProductActivity : AppCompatActivity() {
     }
 
     private fun updateImagesListView() {
-        // Tạo adapter cho RecyclerView thay vì ArrayAdapter
-        val adapter = ImagesAdapter(imagesList)
+        val adapter = ImagesAdapter(imagesList) { position ->
+            imagesList.removeAt(position)
+            productImagesRecyclerView.adapter?.notifyItemRemoved(position)
+        }
         productImagesRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         productImagesRecyclerView.adapter = adapter
     }
