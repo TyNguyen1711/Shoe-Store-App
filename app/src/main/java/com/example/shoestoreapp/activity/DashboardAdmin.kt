@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.activity
 
+import AdminUserFragment
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
@@ -36,6 +37,9 @@ class DashboardAdmin : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnVoucher).setOnClickListener {
             switchFragment(VoucherManagementFragment())
+        }
+        findViewById<Button>(R.id.btnUsers).setOnClickListener {
+            switchFragment(AdminUserFragment())
         }
     }
 

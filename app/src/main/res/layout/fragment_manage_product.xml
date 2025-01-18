@@ -17,9 +17,9 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
-            android:text="Product Management"
+            android:text="Quản lý sản phẩm"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
         <Button
@@ -30,7 +30,8 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
             android:background="@drawable/btn_bg"
-            android:text="+ Add Product"
+            android:text="Thêm sản phẩm"
+            android:padding="2dp"
             android:textColor="#313434" />
     </RelativeLayout>
 
