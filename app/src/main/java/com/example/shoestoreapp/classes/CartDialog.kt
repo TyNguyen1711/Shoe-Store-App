@@ -17,6 +17,7 @@ import com.example.shoestoreapp.R
 import com.example.shoestoreapp.data.model.CartItem
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.repository.CartRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,6 +31,7 @@ class CartDialog(
     private lateinit var sizeButtons: List<TextView>
     private lateinit var quantityEditText: EditText
     private var selectedSize: String? = null
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
 
     fun show() {
         dialog = Dialog(context)
@@ -39,6 +41,7 @@ class CartDialog(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+
 
         val gridLayout = view.findViewById<GridLayout>(R.id.sizeGridLayout)
         quantityEditText = view.findViewById(R.id.quantityEditText)
@@ -132,7 +135,7 @@ class CartDialog(
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val result = cartRepository.addProductToCart(
-                    userId = "example_user_id",
+                    userId = userId,
                     product = cartItem
                 )
 

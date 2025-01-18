@@ -9,6 +9,11 @@ data class User (
     val username: String = "",
     val email: String = "",
     var searchHistory: MutableList<String> = mutableListOf(),
+    var bio: String ="",
+    var sex: String = "",
+    var birthday: String = "",
+    var fullname: String = "",
+    var phoneNumber: String = "",
     @get:PropertyName("isAdmin")
     @set:PropertyName("isAdmin")
     var isAdmin: Boolean = false,

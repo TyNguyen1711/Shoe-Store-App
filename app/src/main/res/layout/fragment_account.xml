@@ -41,6 +41,7 @@ tools:context=".fragment.AccountFragment">
             android:layout_gravity="center">
 
             <TextView
+                android:id="@+id/nameTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
@@ -63,7 +64,7 @@ tools:context=".fragment.AccountFragment">
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="abcd@gmail.com"
-
+            android:id="@+id/emailTv"
             />
     </LinearLayout>
 
