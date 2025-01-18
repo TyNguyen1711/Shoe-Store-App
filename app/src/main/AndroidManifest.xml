@@ -17,6 +17,15 @@
         android:theme="@style/Theme.ShoeStoreApp"
         tools:targetApi="31">
         <activity
+            android:name=".activity.ForgotPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.WriteReviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ReviewActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.EditAddressActivity"
             android:exported="false" />
         <activity
@@ -39,7 +48,6 @@
             android:exported="false" />
         <activity
             android:name=".activity.PayActivity"
-            android:exported="false" />
             android:exported="false" />
         <activity
             android:name=".activity.NotificationActivity"

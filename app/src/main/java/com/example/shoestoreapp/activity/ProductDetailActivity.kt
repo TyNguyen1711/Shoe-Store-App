@@ -2,6 +2,7 @@ package com.example.shoestoreapp.activity
 
 import android.app.Dialog
 import android.content.ContentValues.TAG
+import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
@@ -13,7 +14,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.RatingBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -23,9 +23,13 @@ import androidx.viewpager2.widget.ViewPager2
 import at.blogc.android.views.ExpandableTextView
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.ImageSliderAdapter
+import com.example.shoestoreapp.classes.CartDialog
+import com.example.shoestoreapp.data.model.Comment
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.model.Wishlist
+import com.example.shoestoreapp.data.repository.CartRepository
 import com.example.shoestoreapp.data.repository.ProductRepository
+import com.example.shoestoreapp.data.repository.ReviewRepository
 import com.example.shoestoreapp.data.repository.WishListRepository
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.Firebase
@@ -43,6 +47,8 @@ class ProductDetailActivity : AppCompatActivity() {
     private val wishListRepository = WishListRepository()
     private var wishlists: Wishlist? = Wishlist()
     private lateinit var auth: FirebaseAuth
+    private var commentList = mutableListOf<Comment>()
+    private val reviewRepository = ReviewRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,19 +83,20 @@ class ProductDetailActivity : AppCompatActivity() {
     private fun updateUI(product: Product) {
         val productTitleTV = findViewById<TextView>(R.id.productTitleTV)
         val priceTV = findViewById<TextView>(R.id.priceTV)
-        val productDescriptionTV = findViewById<ExpandableTextView>(R.id.productDescriptionTV)
-        val extentBtn = findViewById<Button>(R.id.extendBtn)
+        val productDescriptionTV = findViewById<ExpandableTextView>(R.id.commentTV)
+        val extentBtn = findViewById<Button>(R.id.comment_extendBtn)
         val ratingStar = findViewById<RatingBar>(R.id.ratingStar)
         val viewPageSlider = findViewById<ViewPager2>(R.id.viewPageSlider)
         val dotsIndicator = findViewById<DotsIndicator>(R.id.dots_indicator)
         val favouriteBtn = findViewById<Button>(R.id.favouriteBtn)
+        val addToCartBtn = findViewById<Button>(R.id.addToCartBtn)
+        val reviewBtn = findViewById<Button>(R.id.reviewBtn)
 
         // Cập nhật thông tin cơ bản
         productTitleTV.text = product.name
         val formattedPrice = formatCurrency(product.price.toDouble())
         priceTV.text = formattedPrice
         productDescriptionTV.text = product.description
-        ratingStar.rating = product.averageRating.toFloat() ?: 0f
 
         if (userId != null) {
             lifecycleScope.launch {
@@ -113,6 +120,24 @@ class ProductDetailActivity : AppCompatActivity() {
             }
         }
 
+        lifecycleScope.launch {
+            val reviewRepo = reviewRepository.getReview(product.id)
+            reviewRepo.onSuccess { items ->
+                commentList.clear()
+                commentList.addAll(items.commentList)
+                ratingStar.rating = averageRating(commentList).toFloat()
+                Log.d("Review Success1", "$commentList")
+            }.onFailure { e ->
+                Log.d("Review Error", "$e")
+            }
+        }
+
+        reviewBtn.setOnClickListener {
+            val intent = Intent(this, ReviewActivity::class.java)
+            intent.putExtra("productId", product.id)
+            startActivity(intent)
+        }
+
         // Cài đặt Adapter và xử lý sự kiện click
         val adapter = ImageSliderAdapter(product.images ?: emptyList(), 1)
         viewPageSlider.adapter = adapter
@@ -131,6 +156,17 @@ class ProductDetailActivity : AppCompatActivity() {
             else {
                 productDescriptionTV.expand()
                 extentBtn.setBackgroundResource(R.drawable.retract)
+            }
+        }
+
+        addToCartBtn.setOnClickListener {
+            if (userId == null) {
+                Log.d("Favourite Button UID", "$userId")
+                showSignUpDialog()
+            }
+            else {
+                val cartDialog = CartDialog(this, product, CartRepository())
+                cartDialog.show()
             }
         }
 
@@ -170,6 +206,14 @@ class ProductDetailActivity : AppCompatActivity() {
         }
     }
 
+    private fun averageRating(commentList: List<Comment>): Double {
+        var sum = 0.0
+        for (comment in commentList) {
+            sum += comment.rating
+        }
+        return sum / commentList.size
+    }
+
     private fun updateUserWishlist(wishlist: Wishlist) {
         lifecycleScope.launch {
             Log.d("Favourite Button UpdateWishlist", "$wishlist")
@@ -192,7 +236,7 @@ class ProductDetailActivity : AppCompatActivity() {
         val usernameET = dialog.findViewById<EditText>(R.id.usernameET)
         val emailET = dialog.findViewById<EditText>(R.id.emailET)
         val passwordET = dialog.findViewById<TextInputEditText>(R.id.passwordET)
-        val signupBtn = dialog.findViewById<Button>(R.id.signupBtn)
+        val signupBtn = dialog.findViewById<Button>(R.id.sendBtn)
         val loginTV = dialog.findViewById<TextView>(R.id.loginTV)
 
         auth = Firebase.auth
@@ -276,7 +320,7 @@ class ProductDetailActivity : AppCompatActivity() {
         val emailET = dialog.findViewById<EditText>(R.id.emailET)
         val passwordET = dialog.findViewById<TextInputEditText>(R.id.passwordET)
         val forgotPasswordTV = dialog.findViewById<TextView>(R.id.forgotPasswordTV)
-        val loginBtn = dialog.findViewById<Button>(R.id.signupBtn)
+        val loginBtn = dialog.findViewById<Button>(R.id.sendBtn)
         val signupTV = dialog.findViewById<TextView>(R.id.signupTV)
 
         auth = Firebase.auth

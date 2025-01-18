@@ -69,7 +69,6 @@ class ProductRepository(
         val snapshot = productsCollection
             .get()
             .await()
-
         // Ánh xạ tài liệu thành danh sách Product và xử lý variants riêng
         snapshot.documents.map { document ->
             val documentData = document.data ?: throw Exception("Product not found")

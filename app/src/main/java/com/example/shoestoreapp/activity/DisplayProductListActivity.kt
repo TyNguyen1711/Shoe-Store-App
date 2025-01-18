@@ -8,10 +8,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,7 +39,7 @@ class DisplayProductListActivity : AppCompatActivity(), ProductItemAdapter.OnPro
         }
 
         val _pageName = intent.getStringExtra("listName")
-        val backBtn = findViewById<Button>(R.id.displayact_backBtn)
+        val backBtn = findViewById<Button>(R.id.reviewact_backBtn)
         val productListRC = findViewById<RecyclerView>(R.id.productListRV)
 
         val pageName = findViewById<TextView>(R.id.pageName)
@@ -51,7 +49,7 @@ class DisplayProductListActivity : AppCompatActivity(), ProductItemAdapter.OnPro
             finish()
         }
 
-        productListAdapters = ProductItemAdapter(productList, this, this)
+        productListAdapters = ProductItemAdapter(productList, this, this, false)
         productListRC.adapter = productListAdapters
         productListRC.layoutManager = GridLayoutManager(this, 2)
 

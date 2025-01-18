@@ -1,6 +1,7 @@
 package com.example.shoestoreapp.data.repository
 
 
+import android.util.Log
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.model.Wishlist
 import com.google.firebase.firestore.CollectionReference

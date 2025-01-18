@@ -81,113 +81,106 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                <TextView
+                    android:id="@+id/brandTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:orientation="vertical">
+                    android:layout_weight="1"
+                    android:text="Brand"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/brandTV"
+                <HorizontalScrollView
+                    android:id="@+id/filter"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp">
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Brand"
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginBottom="5dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
 
-                    <HorizontalScrollView
-                        android:id="@+id/filter"
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp">
+                        <TextView
+                            android:id="@+id/filter_all"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="20dp"
+                            android:gravity="center"
+                            android:text="All"
+                            android:textSize="16sp" />
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal"
-                            android:layout_marginStart="15dp"
-                            android:layout_marginEnd="15dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
-                            android:gravity="center">
+                        <TextView
+                            android:id="@+id/filter_Nike"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="20dp"
+                            android:gravity="center"
+                            android:text="Nike"
+                            android:textSize="16sp" />
 
-                            <TextView
-                                android:id="@+id/filter_all"
-                                android:layout_width="80dp"
-                                android:layout_height="wrap_content"
-                                android:text="All"
-                                android:gravity="center"
-                                android:textSize="16sp"
-                                android:layout_marginEnd="20dp"/>
+                        <TextView
+                            android:id="@+id/filter_Adidas"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="20dp"
+                            android:gravity="center"
+                            android:text="Adidas"
+                            android:textSize="16sp" />
 
-                            <TextView
-                                android:id="@+id/filter_Nike"
-                                android:layout_width="80dp"
-                                android:layout_height="wrap_content"
-                                android:text="Nike"
-                                android:gravity="center"
-                                android:textSize="16sp"
-                                android:layout_marginEnd="20dp"/>
+                        <TextView
+                            android:id="@+id/filter_Puma"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:gravity="center"
+                            android:text="Puma"
+                            android:textSize="16sp" />
 
-                            <TextView
-                                android:id="@+id/filter_Adidas"
-                                android:layout_width="80dp"
-                                android:layout_height="wrap_content"
-                                android:text="Adidas"
-                                android:gravity="center"
-                                android:textSize="16sp"
-                                android:layout_marginEnd="20dp"/>
+                        <TextView
+                            android:id="@+id/filter_NewBalance"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="20dp"
+                            android:gravity="center"
+                            android:text="New Balance"
+                            android:textSize="16sp" />
 
-                            <TextView
-                                android:id="@+id/filter_Puma"
-                                android:layout_width="80dp"
-                                android:layout_height="wrap_content"
-                                android:text="Puma"
-                                android:gravity="center"
-                                android:textSize="16sp"
-                                android:layout_marginEnd="12dp"/>
+                        <TextView
+                            android:id="@+id/filter_Rebook"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:gravity="center"
+                            android:text="Rebook"
+                            android:textSize="16sp" />
 
-                            <TextView
-                                android:id="@+id/filter_NewBalance"
-                                android:layout_width="80dp"
-                                android:layout_height="wrap_content"
-                                android:text="New Balance"
-                                android:gravity="center"
-                                android:textSize="16sp"
-                                android:layout_marginEnd="20dp"/>
+                        <TextView
+                            android:id="@+id/filter_Lacoste"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:gravity="center"
+                            android:text="Lacoste"
+                            android:textSize="16sp" />
 
-                            <TextView
-                                android:id="@+id/filter_Rebook"
-                                android:layout_width="80dp"
-                                android:layout_height="wrap_content"
-                                android:text="Rebook"
-                                android:gravity="center"
-                                android:textSize="16sp"
-                                android:layout_marginEnd="12dp"/>
+                    </LinearLayout>
+                </HorizontalScrollView>
 
-                            <TextView
-                                android:id="@+id/filter_Lacoste"
-                                android:layout_width="80dp"
-                                android:layout_height="wrap_content"
-                                android:text="Lacoste"
-                                android:gravity="center"
-                                android:textSize="16sp"
-                                android:layout_marginEnd="12dp"/>
-
-                        </LinearLayout>
-                    </HorizontalScrollView>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerView"
-                        android:layout_width="match_parent"
-                        android:layout_height="720dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true"
-                        app:layout_constraintHorizontal_bias="0.0"/>
-
-                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="720dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    app:layout_constraintHorizontal_bias="0.0" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

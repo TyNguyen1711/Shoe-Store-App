@@ -9,20 +9,27 @@
     import android.util.Log
     import android.view.LayoutInflater
     import android.view.View
+    import android.view.View.INVISIBLE
+    import android.view.View.VISIBLE
     import android.view.ViewGroup
     import android.widget.Button
     import android.widget.EditText
     import android.widget.ImageButton
     import android.widget.ImageView
+    import android.widget.ProgressBar
     import android.widget.TextView
-    import android.widget.Toast
     import androidx.lifecycle.LifecycleOwner
     import androidx.lifecycle.lifecycleScope
     import androidx.recyclerview.widget.RecyclerView
     import com.bumptech.glide.Glide
     import com.example.shoestoreapp.R
+    import com.example.shoestoreapp.activity.LoginActivity
+    import com.example.shoestoreapp.classes.CartDialog
+    import com.example.shoestoreapp.data.model.Comment
     import com.example.shoestoreapp.data.model.Product
     import com.example.shoestoreapp.data.model.Wishlist
+    import com.example.shoestoreapp.data.repository.CartRepository
+    import com.example.shoestoreapp.data.repository.ReviewRepository
     import com.example.shoestoreapp.data.repository.WishListRepository
     import com.google.android.material.textfield.TextInputEditText
     import com.google.firebase.Firebase
@@ -40,7 +47,6 @@
         private var isHome: Boolean = true,
         private val listName: String = ""
     ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
         private var wishlists: Wishlist = Wishlist()
 
         companion object {
@@ -90,7 +96,7 @@
             private val lifecycleOwner: LifecycleOwner
         )
             : RecyclerView.ViewHolder(itemView) {
-            private lateinit var auth: FirebaseAuth
+            private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
             private val productImage: ImageView = itemView.findViewById(R.id.productImage)
             private val productName: TextView = itemView.findViewById(R.id.fullNameTV)
@@ -99,8 +105,9 @@
             private val productFavoriteBtn: ImageButton = itemView.findViewById(R.id.heartBtn)
             private val productSoldCount: TextView = itemView.findViewById(R.id.soldTV)
             private val productSalePercentage: TextView = itemView.findViewById(R.id.salePercentage)
-
-            private val userId = FirebaseAuth.getInstance().currentUser?.uid
+            private val cartBtn: ImageButton = itemView.findViewById(R.id.cartBtn)
+            private var commentList = mutableListOf<Comment>()
+            private val reviewRepository = ReviewRepository()
 
             fun bind(product: Product, listener: OnProductClickListener, wishlists: Wishlist?) {
                 // Gắn dữ liệu sản phẩm
@@ -115,11 +122,11 @@
                 productPrice.text = formattedPrice
 
                 productName.text = product.name
-                productRating.text = "${product.averageRating} stars"
+//                productRating.text = "${product.averageRating} stars"
                 productSoldCount.text = product.soldCount.toString()
                 productSalePercentage.text = "-${product.salePercentage}%"
 
-                if (userId != null) {
+                if (FirebaseAuth.getInstance().currentUser?.uid != null) {
                     // Cập nhật trạng thái nút yêu thích
                     if (wishlists?.products?.contains(product.id) == true) {
                         productFavoriteBtn.setImageResource(R.drawable.favorite_full)
@@ -135,9 +142,29 @@
                     productFavoriteBtn.setImageResource(R.drawable.favorite_border)
                 }
 
+                lifecycleOwner.lifecycleScope.launch {
+                    val reviewRepo = reviewRepository.getReview(product.id)
+                    reviewRepo.onSuccess { items ->
+                        commentList.clear()
+                        commentList.addAll(items.commentList)
+                        productRating.text = "${averageRating(commentList)} stars"
+                    }.onFailure { e ->
+                        Log.d("Review Error", "$e")
+                    }
+                }
+
+                cartBtn.setOnClickListener() {
+                    if (FirebaseAuth.getInstance().currentUser?.uid == null) {
+                        showSignUpDialog(wishlists)
+                    }
+                    else {
+                        val dialog = CartDialog(itemView.context, product, CartRepository())
+                        dialog.show()
+                    }
+                }
+
                 productFavoriteBtn.setOnClickListener {
-                    if (userId == null) {
-                        Log.d("Favourite Button UID", "$userId")
+                    if (FirebaseAuth.getInstance().currentUser?.uid == null) {
                         showSignUpDialog(wishlists)
                     }
                     else {
@@ -170,6 +197,14 @@
                     }
                 }
 
+            private fun averageRating(commentList: List<Comment>): Double {
+                var sum = 0.0
+                for (comment in commentList) {
+                    sum += comment.rating
+                }
+                return sum / commentList.size
+            }
+
             private fun showSignUpDialog(wishlists: Wishlist?) {
                 // Hiển thị dialog đăng ký
                 val dialog = Dialog(itemView.context, R.style.LoginDialogStyle)
@@ -185,10 +220,8 @@
                 val usernameET = dialog.findViewById<EditText>(R.id.usernameET)
                 val emailET = dialog.findViewById<EditText>(R.id.emailET)
                 val passwordET = dialog.findViewById<TextInputEditText>(R.id.passwordET)
-                val signupBtn = dialog.findViewById<Button>(R.id.signupBtn)
+                val signupBtn = dialog.findViewById<Button>(R.id.sendBtn)
                 val loginTV = dialog.findViewById<TextView>(R.id.loginTV)
-
-                auth = Firebase.auth
 
                 signupBtn.setOnClickListener() {
                     val username = usernameET.text.toString()
@@ -245,8 +278,8 @@
 
                 loginTV.setOnClickListener {
                     loginTV.setPaintFlags(loginTV.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
-                    dialog.dismiss()
                     showLoginDialog(wishlists)
+                    dialog.dismiss()
                 }
 
                 dialog.show()
@@ -267,15 +300,13 @@
                 val emailET = dialog.findViewById<EditText>(R.id.emailET)
                 val passwordET = dialog.findViewById<TextInputEditText>(R.id.passwordET)
                 val forgotPasswordTV = dialog.findViewById<TextView>(R.id.forgotPasswordTV)
-                val loginBtn = dialog.findViewById<Button>(R.id.signupBtn)
+                val loginBtn = dialog.findViewById<Button>(R.id.sendBtn)
                 val signupTV = dialog.findViewById<TextView>(R.id.signupTV)
-
-                auth = Firebase.auth
 
                 forgotPasswordTV.setOnClickListener() {
                     forgotPasswordTV.setPaintFlags(forgotPasswordTV.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
-                    // val intent = Intent(this)
-                    // startActivity(intent)
+                    showForgotPasswordDialog(wishlists)
+                    dialog.dismiss()
                 }
 
                 loginBtn.setOnClickListener() {
@@ -313,8 +344,47 @@
 
                 signupTV.setOnClickListener() {
                     signupTV.setPaintFlags(signupTV.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
-                    dialog.dismiss()
                     showSignUpDialog(wishlists)
+                    dialog.dismiss()
+                }
+
+                dialog.show()
+            }
+
+            private fun showForgotPasswordDialog(wishlists: Wishlist?) {
+                // Hiển thị dialog quên mật khẩu
+                val dialog = Dialog(itemView.context, R.style.LoginDialogStyle)
+                dialog.setContentView(R.layout.dialog_forgot_password_popup)
+                dialog.window?.setBackgroundDrawableResource(R.drawable.bg_window)
+
+                val sendPB = dialog.findViewById<ProgressBar>(R.id.sendPB)
+                val dismissBtn = dialog.findViewById<Button>(R.id.dismissBtn)
+                val emailET = dialog.findViewById<EditText>(R.id.emailET)
+                val sendBtn = dialog.findViewById<Button>(R.id.sendBtn)
+                val emailTV = dialog.findViewById<TextView>(R.id.notificationTV)
+
+                sendBtn.setOnClickListener{
+                    val email = emailET.text.toString()
+                    if (email.isNotEmpty()) {
+                        sendPB.visibility = VISIBLE
+                        sendBtn.visibility = INVISIBLE
+
+                        auth.sendPasswordResetEmail(email).addOnSuccessListener {
+                            showLoginDialog(wishlists)
+                            dialog.dismiss()
+                        }.addOnFailureListener { e ->
+                            emailTV.text = "Error: ${e.message}"
+                            sendPB.visibility = INVISIBLE
+                            sendBtn.visibility = VISIBLE
+                        }
+                    }
+                    else {
+                        emailTV.text = "Email can't be error"
+                    }
+                }
+
+                dismissBtn.setOnClickListener{
+                    dialog.dismiss()
                 }
 
                 dialog.show()
