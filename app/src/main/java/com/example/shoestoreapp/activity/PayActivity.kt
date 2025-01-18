@@ -34,7 +34,8 @@ import java.util.Date
 import java.util.Locale
 
 class PayActivity : AppCompatActivity() {
-    private val userId_tmp = "example_user_id"
+    //private val userId_tmp = "example_user_id"
+    private var userId: String? = "example_user_id"
     private lateinit var productRepository: ProductRepository
     private lateinit var cartRepository: CartRepository
     private val selectedProducts = mutableListOf<CartItem>()
@@ -68,18 +69,18 @@ class PayActivity : AppCompatActivity() {
         // Nhận danh sách các ID sản phẩm và userId
         val selectedProductIds = intent.getStringArrayListExtra("selectedProductIds") ?: emptyList<String>()
         val selectedSize = intent.getStringArrayListExtra("selectedSize") ?: emptyList<String>()
-        val userId = intent.getStringExtra("userId")
+        userId = intent.getStringExtra("userId")
 
         if (selectedProductIds.isNotEmpty() && userId != null) {
             val firestore = FirebaseFirestore.getInstance()
             productRepository = ProductRepository(firestore)
             cartRepository = CartRepository(firestore)
-            loadSelectedProducts(selectedProductIds, selectedSize, userId)
+            loadSelectedProducts(selectedProductIds, selectedSize)
         } else {
             finish()
         }
 
-        loadAddressDefault(userId_tmp)
+        loadAddressDefault()
 
         val backIB = findViewById<ImageButton>(R.id.backPayIB)
         val placeOrderBT = findViewById<Button>(R.id.orderBT)
@@ -144,7 +145,7 @@ class PayActivity : AppCompatActivity() {
         // Chuẩn bị dữ liệu đơn hàng
         val order = Order(
             id = firestore.collection("orders").document().id,
-            userId =  userId_tmp,
+            userId =  userId!!,
             products = selectedProducts.map { cartItem ->
                 ProductItem(cartItem.productId, cartItem.quantity, cartItem.size)
             },
@@ -207,7 +208,7 @@ class PayActivity : AppCompatActivity() {
                         val productIds = selectedProducts.map { it.productId }
                         val sizeList = selectedProducts.map { it.size }
 
-                        val cartResult = cartRepository.removeProductFromCart(userId_tmp, productIds, sizeList)
+                        val cartResult = cartRepository.removeProductFromCart(userId!!, productIds, sizeList)
                         cartResult.onSuccess { (success, _) ->
                             if (success) {
                                 callback(true)
@@ -258,9 +259,9 @@ class PayActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadAddressDefault(userId_tmp: String) {
+    private fun loadAddressDefault() {
         val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-        val addressesRef = db.collection("address").document(userId_tmp).collection("addresses")
+        val addressesRef = db.collection("address").document(userId!!).collection("addresses")
 
         addressesRef.get()
             .addOnSuccessListener { querySnapshot ->
@@ -288,7 +289,7 @@ class PayActivity : AppCompatActivity() {
     private fun fetchAddressById(addressId: String) {
         val db = FirebaseFirestore.getInstance()
         db.collection("address")
-            .document(userId_tmp)
+            .document(userId!!)
             .collection("addresses")
             .document(addressId)
             .get()
@@ -312,7 +313,7 @@ class PayActivity : AppCompatActivity() {
 
     fun onAddressSectionClick(view: View) {
         val intent = Intent(this, AddressSelectionActivity::class.java)
-        intent.putExtra("userId", userId_tmp)
+        intent.putExtra("userId", userId!!)
         intent.putExtra("addressId", selectedAddressId)
         startActivityForResult(intent, 1)
     }
@@ -340,10 +341,10 @@ class PayActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadSelectedProducts(productIds: List<String>, sizes: List<String>, userId: String) {
+    private fun loadSelectedProducts(productIds: List<String>, sizes: List<String>) {
         CoroutineScope(Dispatchers.IO).launch {
             // Lấy danh sách sản phẩm trong giỏ hàng của người dùng
-            val cartResult = cartRepository.getCartItems(userId)
+            val cartResult = cartRepository.getCartItems(userId!!)
 
             cartResult.onSuccess { cartItems ->
                 val cartProductIds = cartItems.map { it.productId } // Lấy danh sách productId trong giỏ hàng
