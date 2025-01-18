@@ -35,10 +35,10 @@ class CouponCartActivity : AppCompatActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.recycler_coupons)
 
         val coupons = listOf(
-            Coupon("1","WELCOME200", "Enable to use", "Get 50% OFF", 5),
-            Coupon("2","SUMMER50", "Enable to use", "Get 50% OFF on summer collection", 8),
-            Coupon("3", "FIRST10", "Enable to use", "Get $10 OFF on first purchase", 5),
-            Coupon("4","HOLIDAY25", "Enable to use", "25% OFF on all items", 6)
+            Coupon("1","WELCOME200", "Enable to use", 3, 5),
+            Coupon("2","SUMMER50", "Enable to use", 2, 8),
+            Coupon("3", "FIRST10", "Enable to use", 2, 5),
+            Coupon("4","HOLIDAY25", "Enable to use", 2, 6)
         )
 
         val selectedProductIds = intent.getStringArrayListExtra("selectedProductIds") ?: arrayListOf()

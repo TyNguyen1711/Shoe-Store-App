@@ -1,6 +1,5 @@
 package com.example.shoestoreapp.data.repository
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.model.ProductVariant
@@ -69,7 +68,6 @@ class ProductRepository(
         val snapshot = productsCollection
             .get()
             .await()
-
         // Ánh xạ tài liệu thành danh sách Product và xử lý variants riêng
         snapshot.documents.map { document ->
             val documentData = document.data ?: throw Exception("Product not found")

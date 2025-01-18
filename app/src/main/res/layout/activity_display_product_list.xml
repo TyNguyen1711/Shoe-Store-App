@@ -24,7 +24,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/displayact_backBtn"
+                android:id="@+id/reviewact_backBtn"
                 android:layout_width="28dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"

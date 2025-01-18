@@ -8,7 +8,9 @@ data class User (
     val id: String = "",
     val username: String = "",
     val email: String = "",
-    val isAdmin: Boolean = false,
-    var searchHistory: MutableList<String> = mutableListOf()
+    var searchHistory: MutableList<String> = mutableListOf(),
+    @get:PropertyName("isAdmin")
+    @set:PropertyName("isAdmin")
+    var isAdmin: Boolean = false,
+    val avatar: String = ""
 )
-
