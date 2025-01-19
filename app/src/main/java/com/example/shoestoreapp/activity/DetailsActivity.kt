@@ -135,7 +135,6 @@ class DetailsActivity : AppCompatActivity() {
                         userData.isAdmin,
                         imageUrl!!
                     )
-                    println("$userData\n, $newUser")
                     if(userData != newUser) {
                         val shouldSave = SaveInformationDialog(this@DetailsActivity) // Sử dụng dialog
                         if (shouldSave) {
@@ -230,5 +229,4 @@ class DetailsActivity : AppCompatActivity() {
             }
         }
     }
-
 }

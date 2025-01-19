@@ -33,7 +33,6 @@ class LoginActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 var flag = false
                 val userRepo = userRepository.getUser(currentUser.uid)
-                Log.d("test13", "User: $userRepo")
                 userRepo.onSuccess {
                     flag = it.isAdmin
                 }.onFailure {
@@ -74,7 +73,6 @@ class LoginActivity : AppCompatActivity() {
 
         forgotPasswordTV.setOnClickListener() {
             forgotPasswordTV.setPaintFlags(forgotPasswordTV.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
-            Log.d("ForgotPassword1", "First")
             val intent = Intent(this, ForgotPasswordActivity::class.java)
             startActivity(intent)
             finish()
@@ -100,16 +98,13 @@ class LoginActivity : AppCompatActivity() {
                             val user = Firebase.auth.currentUser
                             var flag = false
                             val userRepo = userRepository.getUser(user!!.uid)
-                            Log.d("test13", "User: $userRepo")
                             userRepo.onSuccess {
                                 flag = it.isAdmin
                             }.onFailure {
                                 flag = false
                             }
                             if (flag) {
-                                val intent = Intent(this@LoginActivity, DashboardAdmin::class.java)
-                                startActivity(intent)
-                                finish()
+                                Toast.makeText(this@LoginActivity, "Admin", Toast.LENGTH_SHORT).show()
                             }
                             else {
                                 // Sign in success, switch to home activity

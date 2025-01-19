@@ -154,7 +154,7 @@ class ExploreFragment : Fragment() {
                                     cnt += 1
                                 }
                             }
-                                }
+                            }
 
                         }.onFailure { error ->
                             println("Failed to fetch search items: ${error.message}")
