@@ -138,6 +138,25 @@ class ProductRepository(
             )
         }
     }
+    suspend fun updateProductWithNames(
+        product: Product,
+        categoryName: String,
+        brandName: String
+    ): Result<Unit> = runCatching {
+        val categorySnapshot = categoriesCollection
+            .whereEqualTo("name", categoryName)
+            .get()
+            .await()
+        val categoryId = categorySnapshot.documents.firstOrNull()?.id
+            ?: throw Exception("Category not found: $categoryName")
+
+        val productToUpdate = product.copy(
+            categoryId = categoryId,
+            brand = brandName
+        )
+
+        productsCollection.document(product.id).set(productToUpdate).await()
+    }
 
     suspend fun getProductsByBrand(brand: String): Result<List<Product>> = runCatching {
         val snapshot = productsCollection

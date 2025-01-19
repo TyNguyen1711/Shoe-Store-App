@@ -41,6 +41,7 @@ class OrderRepository(private val firestore: FirebaseFirestore = FirebaseFiresto
         }
     }
 
+
     suspend fun getAllOrders(): Result<List<Pair<Order, List<ProductDetailItem>>>> = runCatching {
         val ordersSnapshot = ordersCollection.get().await()
         ordersSnapshot.documents.map { orderDocument ->
