@@ -74,10 +74,12 @@ class DetailsActivity : AppCompatActivity() {
                 birthday.text = userData.birthday
                 bioEdit.setText(userData.bio)
                 sex.text = userData.sex
-                Glide.with(this@DetailsActivity)
-                    .load(userData.avatar) // Glide sẽ tải ảnh từ URL
-                    .transform(CircleCrop())
-                    .into(avatar) // Đặt ảnh vào ImageView avatar
+                if (userData.avatar.isNotEmpty()) {
+                    Glide.with(this@DetailsActivity)
+                        .load(userData.avatar) // Glide sẽ tải ảnh từ URL
+                        .transform(CircleCrop())
+                        .into(avatar) // Đặt ảnh vào ImageView avatar
+                }
             }.onFailure { error ->
                 println("Failed to fetch user information: ${error.message}")
             }

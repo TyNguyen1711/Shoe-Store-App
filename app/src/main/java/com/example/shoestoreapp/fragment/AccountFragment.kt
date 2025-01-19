@@ -109,12 +109,15 @@ class AccountFragment : Fragment() {
         lifecycleScope.launch {
             val user = userRepos.getUser(userId)
             user.onSuccess { userData ->
-                nameTv.text = userData.fullname
+                nameTv.text = if(userData.fullname.isNotEmpty()) userData.fullname else userData.username
                 emailTv.text = userData.email
+                if (userData.avatar.isNotEmpty())
+                {
                 Glide.with(requireContext())
                     .load(userData.avatar) // Glide sẽ tải ảnh từ URL
                     .transform(CircleCrop())
                     .into(avatar) // Đặt ảnh vào ImageView avatar
+                }
             }.onFailure { error ->
                 println("Failed to fetch user information: ${error.message}")
             }

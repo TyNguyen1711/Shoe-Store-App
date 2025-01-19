@@ -88,7 +88,7 @@ class SignupActivity : AppCompatActivity() {
                         }
                         user!!.updateProfile(profileUpdates)
 
-                        addUser(User(user.uid, username, email))
+                        addUser(User(id = user.uid, username = username, email = email))
 
                         if (wishlists == null) {
                             wishlists = Wishlist()
