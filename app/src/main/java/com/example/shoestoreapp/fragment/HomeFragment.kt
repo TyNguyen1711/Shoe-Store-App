@@ -23,6 +23,7 @@ import com.example.shoestoreapp.activity.ProductDetailActivity
 import com.example.shoestoreapp.adapter.ProductItemAdapter
 import com.example.shoestoreapp.adapter.SliderAdapter
 import com.example.shoestoreapp.data.model.Product
+import com.example.shoestoreapp.data.model.Wishlist
 import com.example.shoestoreapp.data.repository.BestSellingRepository
 import com.example.shoestoreapp.data.repository.ExclusiveOfferRepository
 import com.example.shoestoreapp.data.repository.ProductRepository
@@ -67,6 +68,7 @@ class HomeFragment :
             lifecycleScope.launch {
                 val result = wishListRepository.getUserWishlist(userId)
                 result.onSuccess { items ->
+                    brandProductAdapter.updateWishlist(items)
                     exclusiveAdapter.updateWishlist(items)
                     bestSellingAdapter.updateWishlist(items)
                 }.onFailure { error ->
@@ -81,7 +83,7 @@ class HomeFragment :
         textView.setTextColor(Color.BLUE)
     }
 
-    private fun setupFilterClickListeners(recyclerView: RecyclerView) {
+    private fun setupFilterClickListeners(recyclerView: RecyclerView, newWishlist: Wishlist) {
         setSelectedFilter(filterTextViews[0])
 
         filterTextViews.forEachIndexed { index, textView ->
@@ -128,6 +130,7 @@ class HomeFragment :
                             brandProductList.addAll(items)
                         }
                         brandProductAdapter = ProductItemAdapter(brandProductList, this@HomeFragment, viewLifecycleOwner,true, brand)
+                        brandProductAdapter.updateWishlist(newWishlist)
                         recyclerView.adapter = brandProductAdapter
                     }.onFailure { error ->
                         Log.e("HomeFragment", "Failed to fetch brand products: ${error.message}")
@@ -164,13 +167,13 @@ class HomeFragment :
 
         seeAllBtn_1.setOnClickListener {
             val intent = Intent(requireContext(), DisplayProductListActivity::class.java)
-            intent.putExtra("listName", "ExclusiveOffer")
+            intent.putExtra("listName", "Exclusive Offer")
             startActivity(intent)
         }
 
         seeAllBtn_2.setOnClickListener {
             val intent = Intent(requireContext(), DisplayProductListActivity::class.java)
-            intent.putExtra("listName", "BestSelling")
+            intent.putExtra("listName", "Best Selling")
             startActivity(intent)
         }
 
@@ -182,21 +185,25 @@ class HomeFragment :
 
         // Setup RecyclerView for Exclusive Offers
         val exclusiveRecyclerView: RecyclerView = view.findViewById(R.id.exclusiveOfferRV)
-        exclusiveAdapter = ProductItemAdapter(exclusiveProducts, this, viewLifecycleOwner,true, "ExclusiveOffer")
+        exclusiveAdapter = ProductItemAdapter(exclusiveProducts, this, viewLifecycleOwner,true, "Exclusive Offer")
         exclusiveRecyclerView.adapter = exclusiveAdapter
         exclusiveRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         // Setup RecyclerView for Best Selling
         val bestSellingRecyclerView: RecyclerView = view.findViewById(R.id.bestSellingRV)
-        bestSellingAdapter = ProductItemAdapter(bestSellingProducts, this, viewLifecycleOwner,true, "BestSelling")
+        bestSellingAdapter = ProductItemAdapter(bestSellingProducts, this, viewLifecycleOwner,true, "Best Selling")
         bestSellingRecyclerView.adapter = bestSellingAdapter
         bestSellingRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-        setupFilterClickListeners(recyclerView)
         lifecycleScope.launch {
+            val wishlistRepo = wishListRepository.getUserWishlist(FirebaseAuth.getInstance().currentUser?.uid!!)
             val exclusiveOfferRepo = exclusiveOfferRepository.getAllProducts()
             val bestSellingRepo = bestSellingRepository.getAllProducts()
             val brandProductRepo = brandProductRepository.getAllProducts()
+
+            wishlistRepo.onSuccess { items ->
+                setupFilterClickListeners(recyclerView, items)
+            }
 
             // Sử dụng CoroutineScope để xử lý các hàm suspend
             exclusiveOfferRepo.onSuccess { items ->

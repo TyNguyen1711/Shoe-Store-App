@@ -61,8 +61,8 @@ class DisplayProductListActivity : AppCompatActivity(), ProductItemAdapter.OnPro
             "New Balance" -> loadBrandProducts("New Balance")
             "Rebook" -> loadBrandProducts("Rebook")
             "Lacoste" -> loadBrandProducts("Lacoste")
-            "ExclusiveOffer" -> loadExclusiveOffer()
-            "BestSelling" -> loadBestSelling()
+            "Exclusive Offer" -> loadExclusiveOffer()
+            "Best Selling" -> loadBestSelling()
         }
     }
 
