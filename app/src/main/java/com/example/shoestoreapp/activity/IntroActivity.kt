@@ -54,9 +54,6 @@ class IntroActivity : AppCompatActivity() {
 //            wishlistRepository.addToWishlist(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2", productId = "z7dSFUDqx2RMdp744vPc")
 //
 //        }
-        lifecycleScope.launch {
-
-        }
 
 
     }

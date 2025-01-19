@@ -19,8 +19,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import android.graphics.Color
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.Glide
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.activity.ProductDetailActivity
 import com.example.shoestoreapp.activity.SearchActivity
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.repository.ProductRepository
@@ -93,6 +95,17 @@ class ExploreFragment : Fragment() {
             view.findViewById<TextView>(R.id.fullNameTV8)
         )
 
+        val itemList = listOf(
+            view.findViewById<ConstraintLayout>(R.id.item1),
+            view.findViewById<ConstraintLayout>(R.id.item2),
+            view.findViewById<ConstraintLayout>(R.id.item3),
+            view.findViewById<ConstraintLayout>(R.id.item4),
+            view.findViewById<ConstraintLayout>(R.id.item5),
+            view.findViewById<ConstraintLayout>(R.id.item6),
+            view.findViewById<ConstraintLayout>(R.id.item7),
+            view.findViewById<ConstraintLayout>(R.id.item8)
+        )
+
 
         lifecycleScope.launch {
             val result = productRepos.getAllProducts()
@@ -154,6 +167,13 @@ class ExploreFragment : Fragment() {
                         Glide.with(this@ExploreFragment) // Hoặc context nếu không trong Activity
                             .load(rcmdList[i].thumbnail)
                             .into(avatarImageViews[i]) // Gán vào ImageView
+                        itemList[i].setOnClickListener{
+                            // Chuyển sang Activity khác với dữ liệu sản phẩm
+                            val intent = Intent(requireContext(), ProductDetailActivity::class.java).apply {
+                                putExtra("productId", rcmdList[i].id)
+                            }
+                            startActivity(intent)
+                        }
                     }
                 }
             }.onFailure { error ->

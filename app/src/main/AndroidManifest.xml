@@ -60,6 +60,9 @@
             android:name=".activity.AddressActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.ReviewActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.OrderActivity"
             android:exported="false" />
         <activity

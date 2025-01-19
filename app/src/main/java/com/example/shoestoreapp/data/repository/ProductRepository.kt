@@ -238,4 +238,29 @@ class ProductRepository(
             )
         }
     }
+
+    suspend fun updateProductDiscountPrice(): Result<Unit> = runCatching {
+        try {
+            // Lấy danh sách tài liệu trong collection
+            val documents = productsCollection.get().await()
+
+            // Duyệt qua từng tài liệu
+            for (document in documents) {
+                val docId = document.id
+                val price = document.get("price") as? Double ?: continue
+                val salePercentage = document.get("salePercentage") as? Double ?: continue
+
+                // Tính toán giá trị discountPrice
+                val discountPrice = (1.0 - salePercentage) * price
+
+                // Cập nhật tài liệu với giá trị mới
+                productsCollection.document(docId).update("discountPrice", discountPrice).await()
+                println("Cập nhật tài liệu $docId thành công")
+            }
+        } catch (e: Exception) {
+            println("Lỗi khi cập nhật sản phẩm: ${e.message}")
+            throw e
+        }
+    }
+
 }

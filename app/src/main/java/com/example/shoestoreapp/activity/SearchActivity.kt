@@ -144,7 +144,7 @@ class SearchActivity : AppCompatActivity(), ProductItemAdapter.OnProductClickLis
             }
             if (positionRating != RecyclerView.NO_POSITION) {
                 ratingFilter.text = ratingList[positionRating]
-                resultProducts.retainAll { it.averageRating >= (5 - positionRating - 1) }
+                resultProducts.retainAll { it.averageRating >= (5 - positionRating) }
 
                 ratingFilter.setTextColor(Color.parseColor("#FF0000"))
                 underlineRating.setBackgroundColor(Color.parseColor("#FF0000"))  // Màu đỏ
@@ -334,7 +334,9 @@ class SearchActivity : AppCompatActivity(), ProductItemAdapter.OnProductClickLis
     }
 
     override fun onProductClick(productId: String) {
-        Toast.makeText(this, "Clicked Product: $productId", Toast.LENGTH_SHORT).show()
+        val intent = Intent(this@SearchActivity, ProductDetailActivity::class.java)
+        intent.putExtra("productId", productId)
+        startActivity(intent)
     }
 
     override fun onMoreButtonClick(listName: String) {

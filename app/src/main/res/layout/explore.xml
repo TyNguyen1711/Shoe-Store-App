@@ -114,7 +114,8 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item1">
 
                             <ImageView
                                 android:id="@+id/avatarTV1"
@@ -159,7 +160,8 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item2">
 
                             <ImageView
                                 android:id="@+id/avatarTV2"
@@ -211,7 +213,8 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item3">
 
                             <ImageView
                                 android:id="@+id/avatarTV3"
@@ -256,7 +259,8 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item4">
 
                             <ImageView
                                 android:id="@+id/avatarTV4"
@@ -308,7 +312,8 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item5">
 
                             <ImageView
                                 android:id="@+id/avatarTV5"
@@ -353,7 +358,8 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item6">
 
                             <ImageView
                                 android:id="@+id/avatarTV6"
@@ -405,7 +411,8 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item7">
 
                             <ImageView
                                 android:id="@+id/avatarTV7"
@@ -450,7 +457,8 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item8">
 
                             <ImageView
                                 android:id="@+id/avatarTV8"

@@ -20,6 +20,7 @@ import com.example.shoestoreapp.adapter.CartAdapter
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.activity.CouponCartActivity
 import com.example.shoestoreapp.activity.PayActivity
+import com.example.shoestoreapp.activity.ProductDetailActivity
 import com.example.shoestoreapp.data.model.CartItem
 import com.example.shoestoreapp.data.repository.CartRepository
 import com.example.shoestoreapp.data.repository.ProductRepository
@@ -90,7 +91,14 @@ class MyCartFragment : Fragment() {
             images = emptyList(),
             prices = emptyList(),
             names = emptyList(),
-            stockList = emptyList()
+            stockList = emptyList(),
+            onItemClick = { productId ->
+                // Chuyển sang Activity khác với dữ liệu sản phẩm
+                val intent = Intent(requireContext(), ProductDetailActivity::class.java).apply {
+                    putExtra("productId", productId)
+                }
+                startActivity(intent)
+            }
         )
         recyclerView.adapter = cartAdapter
 
@@ -360,4 +368,5 @@ class MyCartFragment : Fragment() {
             }
         }
     }
+
 }

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.adapter.ProductItemAdapter.OnProductClickListener
 import com.example.shoestoreapp.data.model.CartItem
 
 class CartAdapter(
@@ -22,7 +23,8 @@ class CartAdapter(
     private var images: List<String>,
     private var prices: List<Double>,
     private var names: List<String>,
-    private var stockList: List<Int>
+    private var stockList: List<Int>,
+    private val onItemClick: (productId: String) -> Unit
 ) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
     inner class CartViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -75,6 +77,7 @@ class CartAdapter(
             }
 
 
+
             decreaseButton.setOnClickListener {
                 notifyItemChanged(adapterPosition)
                 increaseButton.isEnabled = true
@@ -100,6 +103,9 @@ class CartAdapter(
 
     override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
         holder.bind(products[position], names[position], prices[position], images[position])
+        holder.itemView.setOnClickListener {
+            onItemClick(products[position].productId) // Gọi callback khi bấm vào item
+        }
     }
 
     override fun getItemCount(): Int = products.size
