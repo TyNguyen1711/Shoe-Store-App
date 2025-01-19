@@ -2,8 +2,10 @@ package com.example.shoestoreapp.activity
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.cloudinary.utils.ObjectUtils
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.ImagesAdapter
@@ -40,6 +43,7 @@ class AddProductActivity : AppCompatActivity() {
     private lateinit var variantsRecyclerView: RecyclerView
     private lateinit var btnDeleteThumbnail: ImageButton
     private lateinit var btnAddVariant: Button
+    private lateinit var btnBack: Button
     private val productRepository = ProductRepository()
     private val imagesList = mutableListOf<Uri>()
     private var thumbnailUri: Uri? = null
@@ -73,7 +77,7 @@ class AddProductActivity : AppCompatActivity() {
         variantsRecyclerView = findViewById(R.id.rv_variants)
         btnAddVariant = findViewById(R.id.btn_add_variant)
         btnDeleteThumbnail = findViewById(R.id.btn_delete_thumbnail)
-
+        btnBack = findViewById(R.id.btn_back)
     }
 
     private fun setupRecyclerView() {
@@ -105,6 +109,9 @@ class AddProductActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btn_add).setOnClickListener {
             addProduct()
         }
+        btnBack.setOnClickListener {
+            finish()
+        }
         btnDeleteThumbnail.setOnClickListener {
             thumbnailUri = null
             thumbnailImageView.setImageDrawable(null)
@@ -112,22 +119,27 @@ class AddProductActivity : AppCompatActivity() {
         }
 
     }
-    private suspend fun uploadImageToCloudinary(uri: Uri): String {
+
+    suspend fun uploadImageToCloudinary(uri: Uri): String {
         val inputStream = contentResolver.openInputStream(uri)
         val bytes = inputStream?.readBytes()
 
         return withContext(Dispatchers.IO) {
-            val result = (application as ConfigCloudinary).cloudinary.uploader()
-                .upload(bytes, ObjectUtils.emptyMap())
-            result["url"] as String
+            val result = (application as ConfigCloudinary).cloudinary.uploader().upload(bytes, ObjectUtils.emptyMap())
+            var imageUrl = result["url"] as String
+            if (!imageUrl.startsWith("https://")) {
+                imageUrl = imageUrl.replace("http://", "https://")
+            }
+
+            imageUrl
         }
     }
+
     private fun addProduct() {
         if (!validateInputs()) {
             return
         }
 
-        // Show loading dialog
         val loadingDialog = AlertDialog.Builder(this)
             .setMessage("Adding product...")
             .setCancelable(false)

@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.fragment
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -34,9 +35,10 @@ class ProductManagementFragment : Fragment() {
     private lateinit var products: MutableList<Product>
 
     private val productRepository = ProductRepository()
-    // Sample product list
+
     companion object {
         const val REQUEST_CODE_EDIT_PRODUCT = 1001
+        const val REQUEST_CODE_ADD_PRODUCT = 1002  // Thêm mã request code cho AddProductActivity
     }
 
     override fun onCreateView(
@@ -44,7 +46,6 @@ class ProductManagementFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_manage_product, container, false)
     }
 
@@ -85,11 +86,10 @@ class ProductManagementFragment : Fragment() {
                 }
             } else {
                 val error = result.exceptionOrNull()
-                Log.e("WishlistFragment", "Error fetching products: $error")
+                Log.e("ProductManagementFragment", "Error fetching products: $error")
             }
         }
     }
-
 
     private fun setupSearchBar() {
         searchBar.addTextChangedListener(object : TextWatcher {
@@ -104,7 +104,7 @@ class ProductManagementFragment : Fragment() {
     private fun setupAddButton() {
         btnAddProduct.setOnClickListener {
             val intent = Intent(requireContext(), AddProductActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, REQUEST_CODE_ADD_PRODUCT)  // Gọi startActivityForResult
         }
     }
 
@@ -116,25 +116,12 @@ class ProductManagementFragment : Fragment() {
         productAdapter.updateProducts(filteredProducts)
     }
 
-//    private fun handleEditProduct(product: Product) {
-//        AlertDialog.Builder(requireContext())
-//            .setTitle("Edit Product")
-//            .setMessage("Do you want to edit ${product.name}?")
-//            .setPositiveButton("Edit") { dialog, _ ->
-//                dialog.dismiss()
-//            }
-//            .setNegativeButton("Cancel") { dialog, _ ->
-//                dialog.dismiss()
-//            }
-//            .show()
-//    }
     private fun handleEditProduct(product: Product) {
         val intent = Intent(requireContext(), EditProductActivity::class.java).apply {
             putExtra("product_id", product.id) // Send only the product id
         }
         startActivityForResult(intent, REQUEST_CODE_EDIT_PRODUCT)
     }
-
 
     private fun handleDeleteProduct(product: Product) {
         AlertDialog.Builder(requireContext())
@@ -148,19 +135,44 @@ class ProductManagementFragment : Fragment() {
                 lifecycleScope.launch {
                     val result = productRepository.deleteProduct(product.id)
                     result.onSuccess {
-                        Toast.makeText(requireContext(),"Xóa sản phẩm thành công", Toast.LENGTH_SHORT).show()
-
+                        Toast.makeText(requireContext(), "Product deleted successfully", Toast.LENGTH_SHORT).show()
                     }.onFailure { exception ->
                         Toast.makeText(requireContext(), exception.message, Toast.LENGTH_SHORT).show()
                     }
                 }
                 dialog.dismiss()
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
             .show()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE_ADD_PRODUCT && resultCode == Activity.RESULT_OK) {
+            loadProductsFromAPI()
+            setupRecyclerView()
+        }
+
+        if (requestCode == REQUEST_CODE_EDIT_PRODUCT && resultCode == Activity.RESULT_OK) {
+            loadProductsFromAPI()
+            setupRecyclerView()
+        }
+    }
+
+    private fun loadProductsFromAPI() {
+        lifecycleScope.launch {
+            val result = productRepository.getAllProducts()
+            if (result.isSuccess) {
+                val products1 = result.getOrNull() ?: emptyList()
+                products.clear()
+                products.addAll(products1)
+                productAdapter.notifyDataSetChanged()
+            } else {
+                val error = result.exceptionOrNull()
+                Log.e("ProductManagementFragment", "Error fetching products: $error")
+            }
+        }
+    }
 
 }

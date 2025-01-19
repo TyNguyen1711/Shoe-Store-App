@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,17 +42,17 @@ class EditProductActivity : AppCompatActivity() {
     private lateinit var variantsRecyclerView: RecyclerView
     private lateinit var btnDeleteThumbnail: ImageButton
     private lateinit var btnAddVariant: Button
-    private lateinit var product: Product
+    private lateinit var btnBack: Button
+    private lateinit var variantsAdapter: VariantsAdapter
+    private lateinit var currentProduct: Product
     private val productRepository = ProductRepository()
     private val imagesList = mutableListOf<Uri>()
     private val existingImageUrls = mutableListOf<String>()
     private var thumbnailUri: Uri? = null
     private var currentThumbnailUrl: String? = null
     private val variants = mutableListOf<ProductVariant>()
+    private val categoryRepository = CategoryRepository()
 
-    private lateinit var variantsAdapter: VariantsAdapter
-    private lateinit var currentProduct: Product
-    private lateinit var categoryRepository: CategoryRepository
     private var productId: String = ""
     private val PICK_THUMBNAIL_REQUEST = 1
     private val PICK_IMAGES_REQUEST = 2
@@ -84,10 +85,10 @@ class EditProductActivity : AppCompatActivity() {
     private fun fetchProductData(productId: String) {
         lifecycleScope.launch {
             try {
-                // Fetch product data by id
                 val result = productRepository.getProduct(productId)
                 if (result.isSuccess) {
                     currentProduct = result.getOrNull() ?: return@launch
+                    Log.d("112233: ", "${currentProduct}")
                     loadProductData()
                 } else {
                     showError("Failed to fetch product data")
@@ -99,6 +100,7 @@ class EditProductActivity : AppCompatActivity() {
     }
 
     private fun loadProductData() {
+        Log.d("222: ", "${currentProduct}")
         nameEditText.setText(currentProduct.name)
         descriptionEditText.setText(currentProduct.description)
         priceEditText.setText(currentProduct.price.toString())
@@ -152,27 +154,28 @@ class EditProductActivity : AppCompatActivity() {
             variants.removeAt(position)
             variantsAdapter.notifyItemRemoved(position)
         }
-
         variantsRecyclerView.layoutManager = LinearLayoutManager(this)
         variantsRecyclerView.adapter = variantsAdapter
     }
 
+
     private fun updateExistingImagesView() {
-        val uriList = existingImageUrls.map { Uri.parse(it) }.toMutableList()
+        val allImages = mutableListOf<Uri>()
+        allImages.addAll(existingImageUrls.map { Uri.parse(it) })
+        allImages.addAll(imagesList)
 
-        val adapter = ImagesAdapter(uriList) { position ->
-            existingImageUrls.removeAt(position)
-            uriList.removeAt(position)
-
-            productImagesRecyclerView.adapter?.notifyItemRemoved(position)
-
-            productImagesRecyclerView.adapter?.notifyItemRangeChanged(position, uriList.size)
+        val adapter = ImagesAdapter(allImages) { position ->
+            if (position < existingImageUrls.size) {
+                existingImageUrls.removeAt(position)
+            } else {
+                imagesList.removeAt(position - existingImageUrls.size)
+            }
+            updateExistingImagesView()
         }
 
         productImagesRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         productImagesRecyclerView.adapter = adapter
     }
-
 
 
     private fun initializeViews() {
@@ -188,8 +191,8 @@ class EditProductActivity : AppCompatActivity() {
         variantsRecyclerView = findViewById(R.id.rv_variants)
         btnAddVariant = findViewById(R.id.btn_add_variant)
         btnDeleteThumbnail = findViewById(R.id.btn_delete_thumbnail)
+        btnBack = findViewById(R.id.btn_back)
 
-        // Change title
         findViewById<TextView>(R.id.tv_title).text = "Chỉnh sửa sản phẩm"
         findViewById<Button>(R.id.btn_add).text = "Cập nhật"
     }
@@ -259,7 +262,9 @@ class EditProductActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btn_add).setOnClickListener {
             updateProduct()
         }
-
+        btnBack.setOnClickListener {
+            finish()
+        }
         btnDeleteThumbnail.setOnClickListener {
             thumbnailUri = null
             currentThumbnailUrl = null
@@ -274,7 +279,12 @@ class EditProductActivity : AppCompatActivity() {
 
         return withContext(Dispatchers.IO) {
             val result = (application as ConfigCloudinary).cloudinary.uploader().upload(bytes, ObjectUtils.emptyMap())
-            result["url"] as String
+            var imageUrl = result["url"] as String
+            if (!imageUrl.startsWith("https://")) {
+                imageUrl = imageUrl.replace("http://", "https://")
+            }
+
+            imageUrl
         }
     }
 
@@ -291,14 +301,13 @@ class EditProductActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                // Handle thumbnail
+
                 val finalThumbnailUrl = if (thumbnailUri != null) {
                     uploadImageToCloudinary(thumbnailUri!!)
                 } else {
                     currentThumbnailUrl
                 } ?: ""
 
-                // Handle product images
                 val newImageUrls = imagesList.map { uri -> uploadImageToCloudinary(uri) }
                 val finalImageUrls = existingImageUrls + newImageUrls
 
@@ -372,7 +381,6 @@ class EditProductActivity : AppCompatActivity() {
             return false
         }
 
-        // Validate discount price
         val price = priceEditText.text.toString().toDoubleOrNull() ?: 0.0
         val discountPrice = discountPriceEditText.text.toString().toDoubleOrNull()
         if (discountPrice != null && discountPrice >= price) {
@@ -380,7 +388,6 @@ class EditProductActivity : AppCompatActivity() {
             return false
         }
 
-        // Validate sale percentage
         val salePercentage = salePercentageEditText.text.toString().toIntOrNull() ?: 0
         if (salePercentage !in 0..100) {
             showError("Sale percentage must be between 0 and 100")
@@ -423,12 +430,15 @@ class EditProductActivity : AppCompatActivity() {
                         val count = data.clipData!!.itemCount
                         for (i in 0 until count) {
                             val imageUri = data.clipData!!.getItemAt(i).uri
-                            imagesList.add(imageUri)
+                            imagesList.add(imageUri) // Đảm bảo Uri được thêm chính xác
                         }
                     } else {
-                        data.data?.let { uri -> imagesList.add(uri) }
+                        data.data?.let { uri ->
+                            imagesList.add(uri) // Thêm Uri từ intent
+                        }
                     }
-                    updateExistingImagesView()
+                    updateExistingImagesView() // Cập nhật RecyclerView
+
                 }
             }
         }
