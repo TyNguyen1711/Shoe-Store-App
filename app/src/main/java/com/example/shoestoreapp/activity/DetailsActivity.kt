@@ -8,13 +8,17 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.WindowManager
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ListView
 import android.widget.PopupWindow
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -74,10 +78,12 @@ class DetailsActivity : AppCompatActivity() {
                 birthday.text = userData.birthday
                 bioEdit.setText(userData.bio)
                 sex.text = userData.sex
-                Glide.with(this@DetailsActivity)
-                    .load(userData.avatar) // Glide sẽ tải ảnh từ URL
-                    .transform(CircleCrop())
-                    .into(avatar) // Đặt ảnh vào ImageView avatar
+                if (userData.avatar.isNotEmpty()) {
+                    Glide.with(this@DetailsActivity)
+                        .load(userData.avatar) // Glide sẽ tải ảnh từ URL
+                        .transform(CircleCrop())
+                        .into(avatar) // Đặt ảnh vào ImageView avatar
+                }
             }.onFailure { error ->
                 println("Failed to fetch user information: ${error.message}")
             }
