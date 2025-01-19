@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.play.services.analytics.impl)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.generativeai)
+    implementation(libs.androidx.material3.android)
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.firebase:firebase-auth")
@@ -64,4 +65,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("org.apache.commons:commons-text:1.9")
     implementation("com.google.android.gms:play-services-location:21.0.1")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.0")
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
 }

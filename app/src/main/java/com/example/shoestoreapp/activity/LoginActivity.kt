@@ -42,6 +42,7 @@ class LoginActivity : AppCompatActivity() {
                 if (flag) {
                     val intent = Intent(this@LoginActivity, DashboardAdmin::class.java)
                     startActivity(intent)
+                    finish()
                 }
                 else {
                     val intent = Intent(this@LoginActivity, HomeActivity::class.java)
