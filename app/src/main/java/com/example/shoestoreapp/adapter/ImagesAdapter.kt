@@ -7,16 +7,22 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.shoestoreapp.R
 
+
+
+
+
+
 class ImagesAdapter(
-    private val images: MutableList<Uri>,
+    private val images: List<Uri>,
     private val onDeleteClick: (Int) -> Unit
 ) : RecyclerView.Adapter<ImagesAdapter.ImageViewHolder>() {
 
-    class ImageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageView: ImageView = view.findViewById(R.id.iv_product_image)
-        val deleteButton: ImageButton = view.findViewById(R.id.btn_delete_image)
+    inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val imageView: ImageView = itemView.findViewById(R.id.iv_product_image)
+        val deleteButton: ImageButton = itemView.findViewById(R.id.btn_delete_image)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
@@ -26,7 +32,15 @@ class ImagesAdapter(
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        holder.imageView.setImageURI(images[position])
+        val imageUri = images[position]
+
+        // Use Glide to load both local Uri and remote URL
+        Glide.with(holder.itemView.context)
+            .load(imageUri)
+            .placeholder(R.drawable.placeholder_image)
+            .error(R.drawable.error_image)
+            .into(holder.imageView)
+
         holder.deleteButton.setOnClickListener {
             onDeleteClick(position)
         }
@@ -34,3 +48,5 @@ class ImagesAdapter(
 
     override fun getItemCount() = images.size
 }
+
+

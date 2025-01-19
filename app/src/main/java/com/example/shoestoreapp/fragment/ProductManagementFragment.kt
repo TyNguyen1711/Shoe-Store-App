@@ -116,18 +116,7 @@ class ProductManagementFragment : Fragment() {
         productAdapter.updateProducts(filteredProducts)
     }
 
-//    private fun handleEditProduct(product: Product) {
-//        AlertDialog.Builder(requireContext())
-//            .setTitle("Edit Product")
-//            .setMessage("Do you want to edit ${product.name}?")
-//            .setPositiveButton("Edit") { dialog, _ ->
-//                dialog.dismiss()
-//            }
-//            .setNegativeButton("Cancel") { dialog, _ ->
-//                dialog.dismiss()
-//            }
-//            .show()
-//    }
+
     private fun handleEditProduct(product: Product) {
         val intent = Intent(requireContext(), EditProductActivity::class.java).apply {
             putExtra("product_id", product.id) // Send only the product id

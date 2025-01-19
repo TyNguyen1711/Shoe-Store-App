@@ -2,8 +2,10 @@ package com.example.shoestoreapp.activity
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.cloudinary.utils.ObjectUtils
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.ImagesAdapter
@@ -25,6 +28,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 
 class AddProductActivity : AppCompatActivity() {
     private lateinit var thumbnailImageView: ImageView
@@ -112,22 +116,27 @@ class AddProductActivity : AppCompatActivity() {
         }
 
     }
-    private suspend fun uploadImageToCloudinary(uri: Uri): String {
+
+    suspend fun uploadImageToCloudinary(uri: Uri): String {
         val inputStream = contentResolver.openInputStream(uri)
         val bytes = inputStream?.readBytes()
 
         return withContext(Dispatchers.IO) {
-            val result = (application as ConfigCloudinary).cloudinary.uploader()
-                .upload(bytes, ObjectUtils.emptyMap())
-            result["url"] as String
+            val result = (application as ConfigCloudinary).cloudinary.uploader().upload(bytes, ObjectUtils.emptyMap())
+            var imageUrl = result["url"] as String
+            if (!imageUrl.startsWith("https://")) {
+                imageUrl = imageUrl.replace("http://", "https://")
+            }
+
+            imageUrl
         }
     }
+
     private fun addProduct() {
         if (!validateInputs()) {
             return
         }
 
-        // Show loading dialog
         val loadingDialog = AlertDialog.Builder(this)
             .setMessage("Adding product...")
             .setCancelable(false)

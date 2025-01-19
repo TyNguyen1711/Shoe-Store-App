@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,6 +42,8 @@ class EditProductActivity : AppCompatActivity() {
     private lateinit var variantsRecyclerView: RecyclerView
     private lateinit var btnDeleteThumbnail: ImageButton
     private lateinit var btnAddVariant: Button
+    private lateinit var variantsAdapter: VariantsAdapter
+    private lateinit var currentProduct: Product
     private lateinit var product: Product
     private val productRepository = ProductRepository()
     private val imagesList = mutableListOf<Uri>()
@@ -48,10 +51,8 @@ class EditProductActivity : AppCompatActivity() {
     private var thumbnailUri: Uri? = null
     private var currentThumbnailUrl: String? = null
     private val variants = mutableListOf<ProductVariant>()
+    private val categoryRepository = CategoryRepository()
 
-    private lateinit var variantsAdapter: VariantsAdapter
-    private lateinit var currentProduct: Product
-    private lateinit var categoryRepository: CategoryRepository
     private var productId: String = ""
     private val PICK_THUMBNAIL_REQUEST = 1
     private val PICK_IMAGES_REQUEST = 2
@@ -157,22 +158,42 @@ class EditProductActivity : AppCompatActivity() {
         variantsRecyclerView.adapter = variantsAdapter
     }
 
+//    private fun updateExistingImagesView() {
+//        val uriList = existingImageUrls.map { Uri.parse(it) }.toMutableList()
+//
+//        val adapter = ImagesAdapter(uriList) { position ->
+//            existingImageUrls.removeAt(position)
+//            uriList.removeAt(position)
+//
+//            productImagesRecyclerView.adapter?.notifyItemRemoved(position)
+//
+//            productImagesRecyclerView.adapter?.notifyItemRangeChanged(position, uriList.size)
+//        }
+//
+//        productImagesRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+//        productImagesRecyclerView.adapter = adapter
+//    }
+
     private fun updateExistingImagesView() {
-        val uriList = existingImageUrls.map { Uri.parse(it) }.toMutableList()
+        val allImages = mutableListOf<Uri>()
 
-        val adapter = ImagesAdapter(uriList) { position ->
-            existingImageUrls.removeAt(position)
-            uriList.removeAt(position)
+        // Gộp hình ảnh từ URL cũ và URI mới
+        allImages.addAll(existingImageUrls.map { Uri.parse(it) })
+        allImages.addAll(imagesList)
+        Log.d("test100: ", "${allImages}")
 
-            productImagesRecyclerView.adapter?.notifyItemRemoved(position)
-
-            productImagesRecyclerView.adapter?.notifyItemRangeChanged(position, uriList.size)
+        val adapter = ImagesAdapter(allImages) { position ->
+            if (position < existingImageUrls.size) {
+                existingImageUrls.removeAt(position)
+            } else {
+                imagesList.removeAt(position - existingImageUrls.size)
+            }
+            updateExistingImagesView()
         }
 
         productImagesRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         productImagesRecyclerView.adapter = adapter
     }
-
 
 
     private fun initializeViews() {
@@ -274,7 +295,12 @@ class EditProductActivity : AppCompatActivity() {
 
         return withContext(Dispatchers.IO) {
             val result = (application as ConfigCloudinary).cloudinary.uploader().upload(bytes, ObjectUtils.emptyMap())
-            result["url"] as String
+            var imageUrl = result["url"] as String
+            if (!imageUrl.startsWith("https://")) {
+                imageUrl = imageUrl.replace("http://", "https://")
+            }
+
+            imageUrl
         }
     }
 
@@ -423,12 +449,15 @@ class EditProductActivity : AppCompatActivity() {
                         val count = data.clipData!!.itemCount
                         for (i in 0 until count) {
                             val imageUri = data.clipData!!.getItemAt(i).uri
-                            imagesList.add(imageUri)
+                            imagesList.add(imageUri) // Đảm bảo Uri được thêm chính xác
                         }
                     } else {
-                        data.data?.let { uri -> imagesList.add(uri) }
+                        data.data?.let { uri ->
+                            imagesList.add(uri) // Thêm Uri từ intent
+                        }
                     }
-                    updateExistingImagesView()
+                    updateExistingImagesView() // Cập nhật RecyclerView
+
                 }
             }
         }
