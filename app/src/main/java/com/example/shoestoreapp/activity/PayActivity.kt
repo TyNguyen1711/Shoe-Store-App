@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
@@ -119,7 +121,10 @@ class PayActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            showLoading(true)
+
             saveOrderToFirestore { isSuccess ->
+                showLoading(false)
                 if (isSuccess) {
                     showOrderSuccessDialog()
                 } else {
@@ -130,6 +135,19 @@ class PayActivity : AppCompatActivity() {
 
         // Click Back Button
         backIB.setOnClickListener { finish() }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        val loadingLayout = findViewById<FrameLayout>(R.id.loadingLayout)
+        val progressBar = findViewById<ProgressBar>(R.id.loadingProgressBar)
+
+        if (isLoading) {
+            loadingLayout.visibility = View.VISIBLE
+            progressBar.visibility = View.VISIBLE
+        } else {
+            loadingLayout.visibility = View.GONE
+            progressBar.visibility = View.GONE
+        }
     }
 
     private fun saveOrderToFirestore(callback: (Boolean) -> Unit) {
