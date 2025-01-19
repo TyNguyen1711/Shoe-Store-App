@@ -55,15 +55,23 @@
             android:padding="16dp"
             android:background="@drawable/right_section_gradient">
 
-            <TextView
-                android:id="@+id/code"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SUMMER2024"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_dark"
-                android:letterSpacing="0.1"/>
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SUMMER2024"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_dark"
+                    android:letterSpacing="0.1"/>
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/description"
@@ -74,15 +82,50 @@
                 android:textColor="@color/text_secondary"
                 android:layout_marginTop="8dp"/>
 
-            <TextView
-                android:id="@+id/time"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Min. spend RM12"
-                android:textSize="12sp"
-                android:textColor="@color/text_secondary"
-                android:layout_marginTop="4dp"/>
+                android:layout_weight="1"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Remains: "/>
+
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="Min. spend RM12"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Min Order Value: "/>
+
+                <TextView
+                    android:id="@+id/threshold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary" />
+
+            </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnSelect"
@@ -96,5 +139,6 @@
                 android:paddingEnd="24dp"
                 android:layout_marginTop="8dp"/>
         </LinearLayout>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

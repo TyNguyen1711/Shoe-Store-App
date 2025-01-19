@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -139,6 +140,15 @@ class DetailsActivity : AppCompatActivity() {
                         val shouldSave = SaveInformationDialog(this@DetailsActivity) // Sử dụng dialog
                         if (shouldSave) {
                             userRepos.updateUser(newUser) // Cập nhật thông tin nếu người dùng đồng ý
+                            if(userData.email != newUser.email)
+                            {
+//                                userId.updateEmail("user@example.com")
+//                                    .addOnCompleteListener { task ->
+//                                        if (task.isSuccessful) {
+//                                            Log.d(TAG, "User email address updated.")
+//                                        }
+//                                    }
+                            }
                         }
                     }
                     finish()

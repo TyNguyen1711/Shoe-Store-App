@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_block"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/block_1"
+        android:layout_width="410dp"
+        android:layout_height="165dp"
+        android:background="@drawable/corner_shape_orders"
+        tools:ignore="MissingConstraints">
+
+        <Button
+            android:id="@+id/backBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="22dp"
+            android:background="@drawable/rounded_button"
+            android:drawableStart="@drawable/arrow_left"
+            android:paddingStart="10dp"
+            android:paddingEnd="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/titlePage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="72dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="60dp"
+            android:text="Payment"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/backBtn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="31dp"
+            android:layout_marginTop="12dp"
+            android:text="Balance wallet"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/backBtn" />
+
+        <ImageView
+            android:id="@+id/hideEyeImg"
+            android:layout_width="31dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="107dp"
+            android:tint="@color/black"
+            app:layout_constraintStart_toEndOf="@+id/balanceWallet"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/hidden_eyes" />
+
+        <TextView
+            android:id="@+id/balanceWallet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="36dp"
+            android:text="₫ *** "
+            android:textColor="@color/black"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/backBtn" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/block_2"
+        android:layout_width="365dp"
+        android:layout_height="109dp"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="-20dp"
+        android:background="@drawable/corner_shape_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/block_1"
+        tools:ignore="MissingConstraints">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/deposit_block"
+            android:layout_width="150dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="28dp"
+            android:background="@drawable/corner_shape_chosen"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="30dp"
+                android:layout_height="27dp"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="12dp"
+                android:scaleX="2"
+                android:scaleY="2.2"
+                android:tint="#000000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/deposit" />
+
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="53dp"
+                android:layout_marginTop="8dp"
+                android:text="Deposit"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/transfer_block"
+            android:layout_width="150dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="61dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/deposit_block"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="35dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="12dp"
+                android:scaleX="1.4"
+                android:scaleY="1.4"
+                android:tint="#000000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/transfer" />
+
+
+            <TextView
+                android:id="@+id/textView10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="53dp"
+                android:layout_marginTop="8dp"
+                android:text="Transfer"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/block_suggest"
+        android:layout_width="412dp"
+        android:layout_height="120dp"
+        app:layout_constraintBottom_toTopOf="@+id/qrCodeImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/block_2"
+        app:layout_constraintVertical_bias="0.235"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/text200k"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/corner_shape_button"
+            android:gravity="center"
+            android:text="200.000đ"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text20k" />
+
+        <TextView
+            android:id="@+id/text20k"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/corner_shape_button"
+            android:gravity="center"
+            android:text="20.000đ"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/text50k"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="16dp" />
+
+        <TextView
+            android:id="@+id/text50k"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/corner_shape_button"
+            android:gravity="center"
+            android:text="50.000đ"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/text100k"
+            app:layout_constraintStart_toEndOf="@+id/text20k"
+            tools:layout_editor_absoluteY="16dp" />
+
+        <TextView
+            android:id="@+id/text500k"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/corner_shape_button"
+            android:gravity="center"
+            android:text="500.000đ"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/text100k"
+            app:layout_constraintStart_toEndOf="@+id/text200k"
+            app:layout_constraintTop_toBottomOf="@+id/text50k" />
+
+        <TextView
+            android:id="@+id/text100k"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="30dp"
+            android:background="@drawable/corner_shape_button"
+            android:gravity="center"
+            android:text="100.000đ"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/text50k"
+            tools:layout_editor_absoluteY="14dp" />
+
+        <TextView
+            android:id="@+id/text1m"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="30dp"
+            android:background="@drawable/corner_shape_button"
+            android:gravity="center"
+            android:text="1.000.000đ"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/text500k"
+            app:layout_constraintTop_toBottomOf="@+id/text100k" />
+
+        <TextView
+            android:id="@+id/textView19"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="47dp"
+            android:layout_marginTop="14dp"
+            android:text="Enter money:"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text200k" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/qrCodeImageView"
+        android:layout_width="412dp"
+        android:layout_height="228dp"
+        android:layout_marginTop="90dp"
+        android:contentDescription="QR Code"
+        android:scaleType="centerInside"
+        android:scaleX="1.4"
+        android:scaleY="1.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputMoney"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/inputMoney"
+        android:layout_width="222dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/input_money"
+        android:hint="0đ"
+        android:inputType="numberDecimal|numberSigned"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/block_suggest" />
+
+    <Button
+        android:id="@+id/payBtn"
+        android:layout_width="86dp"
+        android:layout_height="39dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/corner_shape_button"
+        android:text="PAY"
+        app:layout_constraintStart_toEndOf="@+id/inputMoney"
+        app:layout_constraintTop_toBottomOf="@+id/block_suggest" />
+
+    <TextView
+        android:id="@+id/noticeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="105dp"
+        android:layout_marginBottom="30dp"
+        android:text="You are paying 1.000.000đ"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/qrCodeImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputMoney" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

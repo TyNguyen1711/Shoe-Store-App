@@ -11,6 +11,9 @@ class StatusSwitcher(
     private val imageViews: List<ImageView>, // Danh sách các ImageView
     private val selectedBackground: Int,
     private val defaultBackground: Int,
+    private val fragmentContainerId: Int,
+    private val fragmentManager: androidx.fragment.app.FragmentManager,
+    private val fragments: List<androidx.fragment.app.Fragment>, // Danh sách các Fragment
     defaultSelected: TextView? = null
 ) {
     private var currentSelected: TextView? = null
@@ -20,6 +23,8 @@ class StatusSwitcher(
         textViews.forEachIndexed { index, textView ->
             textView.setOnClickListener {
                 selectTextView(textView, index)
+                // Chuyển đổi Fragment tương ứng
+                changeFragment(index)
             }
         }
 
@@ -27,6 +32,8 @@ class StatusSwitcher(
         defaultSelected?.let { textView ->
             val defaultIndex = textViews.indexOf(textView)
             selectTextView(textView, defaultIndex)
+            // Chuyển đổi Fragment mặc định
+            changeFragment(defaultIndex)
         }
     }
 
@@ -40,5 +47,13 @@ class StatusSwitcher(
         textView.setBackgroundResource(selectedBackground)
         imageViews[index].visibility = View.VISIBLE // Hiện ImageView tương ứng
         currentSelected = textView
+    }
+
+    // Hàm thay đổi Fragment tương ứng
+    private fun changeFragment(index: Int) {
+        val fragment = fragments[index]
+        fragmentManager.beginTransaction()
+            .replace(fragmentContainerId, fragment)
+            .commit()
     }
 }

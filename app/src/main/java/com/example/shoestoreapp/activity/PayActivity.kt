@@ -1,7 +1,9 @@
 package com.example.shoestoreapp.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -12,6 +14,7 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,9 +22,11 @@ import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.ProductCheckoutAdapter
 import com.example.shoestoreapp.data.model.Address
 import com.example.shoestoreapp.data.model.CartItem
+import com.example.shoestoreapp.data.model.Coupon
 import com.example.shoestoreapp.data.model.Order
 import com.example.shoestoreapp.data.model.ProductItem
 import com.example.shoestoreapp.data.repository.CartRepository
+import com.example.shoestoreapp.data.repository.CouponRepository
 import com.example.shoestoreapp.data.repository.OrderRepository
 import com.example.shoestoreapp.data.repository.ProductRepository
 import com.google.android.gms.tasks.Task
@@ -50,6 +55,9 @@ class PayActivity : AppCompatActivity() {
     private lateinit var totalPaymentTV: TextView
     private lateinit var priceOrderTV: TextView
     private lateinit var saveOrderTV: TextView
+    private lateinit var voucherSelect: TextView
+    private lateinit var voucherArea: ConstraintLayout
+    private lateinit var orderMain: Button
     private var costDelivery: Double = 0.0
     private var costVoucher: Double = 0.0
     private var totalPayment: Double = 0.0
@@ -58,9 +66,12 @@ class PayActivity : AppCompatActivity() {
     private lateinit var nameOrdererTV: TextView
     private lateinit var sdtPayTV: TextView
     private var selectedAddressId: String? = null // AddressID currently
+    private lateinit var couponRepository: CouponRepository
+    private var merchandiseSubtotal: Double = 0.0
     private lateinit var messageET: EditText
     private lateinit var paymentMethodRG: RadioGroup
     private var selectedPaymentMethod: String? = null // Lưu phương thức thanh toán được chọn
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,19 +80,54 @@ class PayActivity : AppCompatActivity() {
 
         // Nhận danh sách các ID sản phẩm và userId
         val selectedProductIds = intent.getStringArrayListExtra("selectedProductIds") ?: emptyList<String>()
+        Log.d("First", ArrayList(selectedProductIds).toString())
         val selectedSize = intent.getStringArrayListExtra("selectedSize") ?: emptyList<String>()
-        userId = intent.getStringExtra("userId")
+        val userId = intent.getStringExtra("userId")
+        var code = intent?.getStringExtra("code")
+        var discount = intent?.getStringExtra("discount")
+        val quantities = intent.getIntegerArrayListExtra("quantities") ?: emptyList()
+        val sizes = intent.getStringArrayListExtra("sizes") ?: emptyList()
+        val source = intent?.getStringExtra("source")
+        val firestore = FirebaseFirestore.getInstance()
+        productRepository = ProductRepository(firestore)
+        cartRepository = CartRepository(firestore)
 
-        if (selectedProductIds.isNotEmpty() && userId != null) {
-            val firestore = FirebaseFirestore.getInstance()
-            productRepository = ProductRepository(firestore)
-            cartRepository = CartRepository(firestore)
-            loadSelectedProducts(selectedProductIds, selectedSize)
+        if (selectedProductIds.size == sizes.size && sizes.size == quantities.size) {
+            var productIds = mutableListOf<String>()
+            for (i in selectedProductIds.indices) {
+                val productId = selectedProductIds[i]
+                val size = sizes[i]
+                val quantity = quantities[i]
+
+                // Tạo CartItem và thêm vào danh sách
+                val cartItem = CartItem(
+                    productId = productId.toString(),
+                    size = size.toString(),
+                    quantity = quantity.toInt(),
+                    isChecked = true // Đảm bảo isChecked luôn là true
+                )
+                productIds.add(productId)
+                selectedProducts.add(cartItem)
+            }
+            lifecycleScope.launch {
+                loadProductDetails(productIds) // Lấy thông tin sản phẩm cho danh sách productIds
+                updateUI(selectedProducts) // Cập nhật UI sau khi dữ liệu được lấy về
+                calculatePrices(selectedProducts, 0) // Tính giá tiền sau khi cập nhật sản phẩm
+            }
+        } else if (selectedProductIds.isNotEmpty() && userId != null) {
+            if (discount != null) {
+                loadSelectedProducts(selectedProductIds, userId, discount.toInt())
+            }
+            else {
+                loadSelectedProducts(selectedProductIds, userId, 0)
+            }
         } else {
             finish()
         }
 
         loadAddressDefault()
+        Log.d("done", "done")
+
 
         val backIB = findViewById<ImageButton>(R.id.backPayIB)
         val placeOrderBT = findViewById<Button>(R.id.orderBT)
@@ -92,6 +138,7 @@ class PayActivity : AppCompatActivity() {
         totalPaymentTV = findViewById(R.id.totalPaymentTV)
         priceOrderTV =  findViewById(R.id.priceOrderTV)
         saveOrderTV = findViewById(R.id.saveOrderTV)
+        voucherSelect = findViewById(R.id.labelVoucherTV2)
         messageET = findViewById(R.id.messageInput)
         paymentMethodRG = findViewById(R.id.paymentMethodRG)
 
@@ -135,6 +182,37 @@ class PayActivity : AppCompatActivity() {
 
         // Click Back Button
         backIB.setOnClickListener { finish() }
+
+        if (code != null && discount != null) {
+            voucherSelect.text = code + ": " + "SALE OFF " + discount + "%"
+        }
+
+        voucherArea = findViewById<ConstraintLayout>(R.id.voucher_section)
+        voucherArea.setOnClickListener {
+            val intent = Intent(this, CouponCartActivity::class.java).apply {
+                putExtra("pay", "pay")
+                putExtra("totalPrice", merchandiseSubtotal.toString())
+                putStringArrayListExtra("selectedProductIds", ArrayList(selectedProductIds))
+            }
+            startActivity(intent)
+        }
+
+        orderMain = findViewById<Button>(R.id.orderBT)
+        couponRepository = CouponRepository()
+        orderMain.setOnClickListener {
+            lifecycleScope.launch {
+                try {
+                    if (!code.isNullOrEmpty()) {
+                        couponRepository.decrementCouponQuantity(code)
+                        Toast.makeText(this@PayActivity, "Order placed successfully!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@PayActivity, "Invalid coupon code", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(this@PayActivity, "Failed to place order: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun showLoading(isLoading: Boolean) {
@@ -247,6 +325,22 @@ class PayActivity : AppCompatActivity() {
         }
     }
 
+    private fun loadAddressDefault(userId_tmp: String) {
+        val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        val addressesRef = db.collection("address").document(userId_tmp).collection("addresses")
+
+        addressesRef.get()
+            .addOnSuccessListener { querySnapshot ->
+                for (document in querySnapshot) {
+                    val address = document.toObject(Address::class.java)
+                    if (address.default == true) {
+                        updateAddressUI(address)
+                        break
+                    }
+                }
+            }
+    }
+
     private fun showOrderSuccessDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_order_success, null)
         val dialog = android.app.AlertDialog.Builder(this)
@@ -335,8 +429,7 @@ class PayActivity : AppCompatActivity() {
         startActivityForResult(intent, 1)
     }
 
-    private fun calculatePrices(selectedProducts: MutableList<CartItem>) {
-        var merchandiseSubtotal = 0.0
+    private fun calculatePrices(selectedProducts: MutableList<CartItem>, discount: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             for (cartItem in selectedProducts) {
                 val product = productRepository.getProduct(cartItem.productId)
@@ -346,27 +439,31 @@ class PayActivity : AppCompatActivity() {
             }
 
             withContext(Dispatchers.Main) {
-                totalPayment = merchandiseSubtotal + costDelivery - costVoucher
+                val savingMoney = merchandiseSubtotal * discount / 100
+                val totalPayment = merchandiseSubtotal + costDelivery - savingMoney
 
                 costProductsTV.text = "${String.format("%,.0f", merchandiseSubtotal)}đ"
                 costDeliveryTV.text = "${String.format("%,.0f", costDelivery)}đ"
-                voucherTV.text = "-${String.format("%,.0f", costVoucher)}đ"
+                voucherTV.text = "-${String.format("%,.0f", savingMoney)}đ"
                 totalPaymentTV.text = "${String.format("%,.0f", totalPayment)}đ"
                 priceOrderTV.text = "${String.format("%,.0f", totalPayment)}đ"
-                saveOrderTV.text = "${String.format("%,.0f", costVoucher)}đ"
+                saveOrderTV.text = "${String.format("%,.0f", savingMoney)}đ"
             }
         }
     }
 
-    private fun loadSelectedProducts(productIds: List<String>, sizes: List<String>) {
+    private fun loadSelectedProducts(productIds: List<String>,  userId: String, discount: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            // Lấy danh sách sản phẩm trong giỏ hàng của người dùng
-            val cartResult = cartRepository.getCartItems(userId!!)
+            val cartResult = cartRepository.getCartItems(userId)
 
             cartResult.onSuccess { cartItems ->
-                val cartProductIds = cartItems.map { it.productId } // Lấy danh sách productId trong giỏ hàng
-                for ((productId,size) in productIds.zip(sizes)){
-                    validProducts.addAll(cartItems.filter { it.productId == productId && it.size == size })
+                val cartProductIds = cartItems.map { it.productId }
+                validProducts.clear() // Xóa dữ liệu cũ
+
+                for (cartItem in cartItems) {
+                    if (productIds.contains(cartItem.productId)) {
+                        validProducts.add(cartItem)
+                    }
                 }
 
                 for (productId in productIds) {
@@ -377,34 +474,53 @@ class PayActivity : AppCompatActivity() {
                             thumbnail.add(product.thumbnail)
                             names.add(product.name)
                         }.onFailure { error ->
-                            println("Failed to fetch product $productId: ${error.message}")
+                            Log.e("ProductFetch", "Failed to fetch product $productId: ${error.message}")
                         }
                     }
                 }
             }.onFailure { error ->
-                println("Failed to fetch cart items: ${error.message}")
+                Log.e("CartFetch", "Failed to fetch cart items: ${error.message}")
             }
 
-            // Chuyển về Main thread để cập nhật giao diện
             withContext(Dispatchers.Main) {
-                if (validProducts.isNotEmpty()) {
-                    selectedProducts.clear()
-                    selectedProducts.addAll(validProducts)
-                    updateUI(selectedProducts)
-                    calculatePrices(selectedProducts)
-                } else {
-                    Toast.makeText(this@PayActivity, "No valid products found.", Toast.LENGTH_SHORT).show()
-                }
+                selectedProducts.clear()
+                selectedProducts.addAll(validProducts)
+                updateUI(selectedProducts)
+                calculatePrices(selectedProducts, discount)
             }
         }
     }
+
 
     private fun updateUI(selectedProducts: List<CartItem>) {
         val recyclerView = findViewById<RecyclerView>(R.id.listProductPayLV)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
+        Log.d("nnn",selectedProducts.toString())
 
-        val adapter = ProductCheckoutAdapter(selectedProducts, thumbnail, prices, names)
-        recyclerView.adapter = adapter
+        val adapter = recyclerView.adapter as? ProductCheckoutAdapter
+        if (adapter == null) {
+            val newAdapter = ProductCheckoutAdapter(mutableListOf(), mutableListOf(), mutableListOf(), mutableListOf())
+            recyclerView.adapter = newAdapter
+            newAdapter.updateData(selectedProducts, thumbnail, prices, names)  // Cập nhật dữ liệu
+        } else {
+            adapter.updateData(selectedProducts, thumbnail, prices, names)  // Cập nhật dữ liệu nếu Adapter đã được gắn
+        }
+    }
+
+    private suspend fun loadProductDetails(productIds: List<String>) {
+        // Lặp qua danh sách productIds để lấy thông tin từng sản phẩm
+        for (productId in productIds) {
+            try {
+                val productResult = productRepository.getProduct(productId) // Gọi repository để lấy sản phẩm
+                productResult.onSuccess { product ->
+                    prices.add(product.price)
+                    thumbnail.add(product.thumbnail)
+                    names.add(product.name)
+                }
+            } catch (error: Exception) {
+                Log.e("ProductFetch", "Failed to fetch product $productId: ${error.message}")
+            }
+        }
     }
 }
