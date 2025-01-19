@@ -9,7 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.example.shoestoreapp.R
-import com.example.shoestoreapp.fragment.AccountFragment
+import com.example.shoestoreapp.fragment.AdminInfoFragment
 import com.example.shoestoreapp.fragment.AdminOrdersFragment
 import com.example.shoestoreapp.fragment.ProductManagementFragment
 import com.example.shoestoreapp.fragment.ReportFragment
@@ -47,7 +47,7 @@ class DashboardAdmin : AppCompatActivity() {
             switchFragment(AdminOrdersFragment())
         }
         findViewById<Button>(R.id.btnAccount).setOnClickListener {
-            switchFragment(AccountFragment())
+            switchFragment(AdminInfoFragment())
         }
     }
 
