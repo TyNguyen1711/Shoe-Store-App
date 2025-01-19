@@ -92,6 +92,7 @@ class AccountFragment : Fragment() {
         }
 
         myDetailsSection.setOnClickListener {
+            val intent = Intent(requireContext(), DetailsActivity::class.java)
             startActivity(Intent(requireContext(), DetailsActivity::class.java))
         }
 

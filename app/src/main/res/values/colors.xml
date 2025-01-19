@@ -27,5 +27,6 @@
     <color name="admin_badge">#2196F3</color>
     <color name="orange">#f59900</color>
     <color name="burnt_orange">#964000</color>
-
+    <color name="green">#4CAF50</color>
+    <color name="blue">#2196F3</color>
 </resources>

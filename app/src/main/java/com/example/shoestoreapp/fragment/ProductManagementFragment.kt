@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.activity.AddProductActivity
+import com.example.shoestoreapp.activity.EditProductActivity
 import com.example.shoestoreapp.adapter.ProductAdapter
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.repository.ProductRepository
@@ -34,7 +35,9 @@ class ProductManagementFragment : Fragment() {
 
     private val productRepository = ProductRepository()
     // Sample product list
-
+    companion object {
+        const val REQUEST_CODE_EDIT_PRODUCT = 1001
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -113,18 +116,25 @@ class ProductManagementFragment : Fragment() {
         productAdapter.updateProducts(filteredProducts)
     }
 
+//    private fun handleEditProduct(product: Product) {
+//        AlertDialog.Builder(requireContext())
+//            .setTitle("Edit Product")
+//            .setMessage("Do you want to edit ${product.name}?")
+//            .setPositiveButton("Edit") { dialog, _ ->
+//                dialog.dismiss()
+//            }
+//            .setNegativeButton("Cancel") { dialog, _ ->
+//                dialog.dismiss()
+//            }
+//            .show()
+//    }
     private fun handleEditProduct(product: Product) {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Edit Product")
-            .setMessage("Do you want to edit ${product.name}?")
-            .setPositiveButton("Edit") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
+        val intent = Intent(requireContext(), EditProductActivity::class.java).apply {
+            putExtra("product_id", product.id) // Send only the product id
+        }
+        startActivityForResult(intent, REQUEST_CODE_EDIT_PRODUCT)
     }
+
 
     private fun handleDeleteProduct(product: Product) {
         AlertDialog.Builder(requireContext())

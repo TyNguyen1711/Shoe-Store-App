@@ -13,10 +13,29 @@ data class Order(
     val orderTime: String,
     val status: String,
     val voucher: Double
-)
+){
+    constructor() : this(
+        id = "",
+        userId = "",
+        products = emptyList(),
+        totalPayment = 0.0,
+        recipientName = "",
+        recipientPhone = "",
+        recipientAddress = "",
+        message = "",
+        paymentMethod = "",
+        orderTime = "",
+        status = "",
+        voucher = 0.0
+    )
+}
 
 data class ProductItem(
-    val productId: String,
-    val quantity: Int,
-    val size: String
-)
+    var productId: String = "",
+    var quantity: Int = 0,
+    var size: String = ""
+) {
+    // Constructor không tham số (Firebase yêu cầu)
+    constructor() : this("", 0, "")
+}
+
