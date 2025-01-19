@@ -34,7 +34,6 @@ import java.util.Date
 import java.util.Locale
 
 class PayActivity : AppCompatActivity() {
-    //private val userId_tmp = "example_user_id"
     private var userId: String? = "example_user_id"
     private lateinit var productRepository: ProductRepository
     private lateinit var cartRepository: CartRepository
