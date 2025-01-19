@@ -1,6 +1,5 @@
 package com.example.shoestoreapp.fragment
 import OrdersAdapter
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
-import com.example.shoestoreapp.activity.OrderDetailActivity
+import com.example.shoestoreapp.activity.OrderDetailActivityMain
 import com.example.shoestoreapp.data.repository.OrderRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,7 +49,7 @@ class AdminOrdersFragment : Fragment() {
 
     private fun setupRecyclerView() {
         ordersAdapter = OrdersAdapter { order ->
-            val intent = Intent(requireContext(), OrderDetailActivity::class.java)
+            val intent = Intent(requireContext(), OrderDetailActivityMain::class.java)
             intent.putExtra("ORDER_ID", order.first.id)
             startActivityForResult(intent, REQUEST_CODE)
         }

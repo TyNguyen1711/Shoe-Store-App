@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.shoestoreapp.R
 
 class ProductCheckoutAdapter(
-    private val productList: List<com.example.shoestoreapp.data.model.CartItem>,
+    private var productList: List<com.example.shoestoreapp.data.model.CartItem>,
     private var images: List<String>,
     private var prices: List<Double>,
     private var names: List<String>
@@ -49,5 +49,18 @@ class ProductCheckoutAdapter(
 
     override fun getItemCount(): Int {
         return productList.size
+    }
+
+    fun updateData(
+        newProducts: List<com.example.shoestoreapp.data.model.CartItem>,
+        newThumbnails: List<String>,
+        newPrices: List<Double>,
+        newNames: List<String>
+    ) {
+        productList = newProducts
+        images = newThumbnails
+        prices = newPrices
+        names = newNames
+        notifyDataSetChanged() // Thông báo RecyclerView làm mới dữ liệu
     }
 }

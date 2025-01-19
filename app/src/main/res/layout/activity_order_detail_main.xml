@@ -238,7 +238,7 @@ android:layout_height="match_parent">
                     android:id="@+id/allProductTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="210dp"
+                    android:layout_marginStart="204dp"
                     android:text="1.000.000đ"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/textView11" />
@@ -264,7 +264,7 @@ android:layout_height="match_parent">
                     android:gravity="end"
                     android:text="1.000.000đ"
                     app:layout_constraintStart_toEndOf="@+id/cp"
-                    tools:layout_editor_absoluteY="0dp" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -299,7 +299,7 @@ android:layout_height="match_parent">
                 android:id="@+id/totalTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="252dp"
+                android:layout_marginStart="238dp"
                 android:text="Total: đ1.000.000"
                 android:textColor="@color/black" />
 

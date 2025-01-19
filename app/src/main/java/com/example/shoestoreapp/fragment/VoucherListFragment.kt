@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.VoucherAdapter
 import com.example.shoestoreapp.data.model.Coupon
-import com.example.shoestoreapp.fragment.VoucherManagementFragment
+//import com.example.shoestoreapp.fragment.VoucherManagementFragment
 class VoucherListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: VoucherAdapter
@@ -45,10 +45,10 @@ class VoucherListFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = VoucherAdapter(
             onEditClick = { coupon ->
-                (parentFragment as? VoucherManagementFragment)?.showVoucherDialog(coupon)
+//                (parentFragment as? VoucherManagementFragment)?.showVoucherDialog(coupon)
             },
             onDeleteClick = { coupon ->
-                (parentFragment as? VoucherManagementFragment)?.deleteVoucher(coupon)
+//                (parentFragment as? VoucherManagementFragment)?.deleteVoucher(coupon)
             }
         )
 

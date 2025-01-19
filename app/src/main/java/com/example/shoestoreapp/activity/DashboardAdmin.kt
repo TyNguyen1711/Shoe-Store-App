@@ -12,8 +12,8 @@ import com.example.shoestoreapp.R
 import com.example.shoestoreapp.fragment.AccountFragment
 import com.example.shoestoreapp.fragment.AdminOrdersFragment
 import com.example.shoestoreapp.fragment.ProductManagementFragment
-import com.example.shoestoreapp.fragment.ReportFragment
-import com.example.shoestoreapp.fragment.VoucherManagementFragment
+//import com.example.shoestoreapp.fragment.ReportFragment
+//import com.example.shoestoreapp.fragment.VoucherManagementFragment
 
 class DashboardAdmin : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,11 +26,11 @@ class DashboardAdmin : AppCompatActivity() {
             insets
         }
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, ReportFragment())
+//            .replace(R.id.fragment_container, ReportFragment())
             .commit()
         // Gán sự kiện cho các button
         findViewById<Button>(R.id.btnDashboard).setOnClickListener {
-            switchFragment(ReportFragment())
+//            switchFragment(ReportFragment())
         }
         // Gán sự kiện cho các button
         findViewById<Button>(R.id.btnProducts).setOnClickListener {
@@ -38,7 +38,7 @@ class DashboardAdmin : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.btnVoucher).setOnClickListener {
-            switchFragment(VoucherManagementFragment())
+//            switchFragment(VoucherManagementFragment())
         }
         findViewById<Button>(R.id.btnUsers).setOnClickListener {
             switchFragment(AdminUserFragment())

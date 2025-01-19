@@ -11,13 +11,16 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.CouponAdapter
 import com.example.shoestoreapp.adapter.CouponCartAdapter
 import com.example.shoestoreapp.data.model.Coupon
+import com.example.shoestoreapp.data.repository.CouponRepository
 import com.example.shoestoreapp.fragment.MyCartFragment
+import kotlinx.coroutines.launch
 
 class CouponCartActivity : AppCompatActivity() {
     private lateinit var adapter: CouponCartAdapter
@@ -33,44 +36,40 @@ class CouponCartActivity : AppCompatActivity() {
         }
 
         val recyclerView: RecyclerView = findViewById(R.id.recycler_coupons)
-
-        val coupons = listOf(
-            Coupon("1","WELCOME200", "Enable to use", 3, 5),
-            Coupon("2","SUMMER50", "Enable to use", 2, 8),
-            Coupon("3", "FIRST10", "Enable to use", 2, 5),
-            Coupon("4","HOLIDAY25", "Enable to use", 2, 6)
-        )
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         val selectedProductIds = intent.getStringArrayListExtra("selectedProductIds") ?: arrayListOf()
-        println("Checked Product IDs: $selectedProductIds")
+        val totalPrice = intent.getStringExtra("totalPrice")
+        Log.d("totalPrice", totalPrice.toString())
 
-        adapter = CouponCartAdapter(
-            coupons = coupons,
-            onCouponSelected = { coupon ->
-                val intent = Intent(this, HomeActivity::class.java)
-                intent.putExtra("selectedCoupon", coupon.code)  // Truyền mã coupon
-                intent.putExtra("discountCoupon", coupon.discount.toString()) // Truyền giảm giá
-                intent.putStringArrayListExtra("selectedProductIds", ArrayList(selectedProductIds))
-                Log.d("Info Coupon: ", coupon.toString())
-                startActivity(intent)
+        lifecycleScope.launch {
+            val coupons = getCouponsList()
+            if (coupons.isNotEmpty() && totalPrice != null) {
+                adapter = CouponCartAdapter(
+                    coupons = coupons,
+                    totalPrice = totalPrice,
+                    onCouponSelected = { coupon ->
+                        val intent = Intent(this@CouponCartActivity, HomeActivity::class.java)
+                        intent.putExtra("code", coupon.code) // Truyền mã coupon
+                        intent.putExtra("discount", coupon.discount.toString()) // Truyền giảm giá
+                        intent.putStringArrayListExtra("selectedProductIds", ArrayList(selectedProductIds))
+                        Log.d("Info Coupon", coupon.toString())
+                        startActivity(intent)
+                    }
+                )
+                recyclerView.adapter = adapter
+            } else {
+                Log.e("CouponCartActivity", "No coupons available or total price is null")
             }
-        )
-
-
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
-
-        val backButton = findViewById<Button>(R.id.btn_back)
-        backButton.setOnClickListener {
-            finish()
         }
 
+        findViewById<Button>(R.id.btn_back).setOnClickListener {
+            finish()
+        }
     }
 
-    // Hàm chuyển đổi fragment
-    private fun switchFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .commit()
+    private suspend fun getCouponsList(): List<Coupon> {
+        val repository = CouponRepository()
+        return repository.getAllCoupons()
     }
 }
