@@ -64,8 +64,16 @@ class BestSellingRepository(
     }
 
     suspend fun updateProductAverageRating(productId: String, averageRating: Double): Result<Unit> = runCatching {
-        bestSellingCollection.document(productId).update("averageRating", averageRating).await()
+        val documentRef = bestSellingCollection.document(productId)
+        val snapshot = documentRef.get().await()
+
+        if (snapshot.exists()) {
+            documentRef.update("averageRating", averageRating).await()
+        } else {
+            throw Exception("Document with productId $productId does not exist.")
+        }
     }
+
 
     suspend fun getAllProducts(): Result<List<Product>> = runCatching {
         val snapshot = bestSellingCollection.get().await()
