@@ -63,6 +63,10 @@ class BestSellingRepository(
         )
     }
 
+    suspend fun updateProductAverageRating(productId: String, averageRating: Double): Result<Unit> = runCatching {
+        bestSellingCollection.document(productId).update("averageRating", averageRating).await()
+    }
+
     suspend fun getAllProducts(): Result<List<Product>> = runCatching {
         val snapshot = bestSellingCollection.get().await()
 

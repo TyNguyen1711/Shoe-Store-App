@@ -40,7 +40,32 @@ class ReviewRepository (private val firestore: FirebaseFirestore = FirebaseFires
     }
 
     suspend fun updateReview(review: Review): Result<Unit> = runCatching {
-        reviewCollection.document(review.productId!!).set(review).await()
+        val document = reviewCollection.document(review.productId!!).get().await()
+        val documentData = document.data ?: throw Exception("Review not found")
+        // Lấy danh sách comment và ánh xạ từng phần tử
+        val commentList = (documentData["commentList"] as? List<Map<String, Any>>)?.map { commentMap ->
+            val rating = when (val ratingValue = commentMap["rating"]) {
+                is Number -> ratingValue.toDouble()
+                else -> 0.0
+            }
+
+            Comment(
+                username = commentMap["username"] as? String ?: "",
+                email = commentMap["email"] as? String ?: "",
+                rating = rating,
+                comment = commentMap["comment"] as? String ?: ""
+            )
+        } ?: emptyList()
+        var sum = 0.0
+        for (comment in commentList) {
+            sum += comment.rating
+        }
+        val avgRating = sum / commentList.size
+
+        ProductRepository().updateProductAverageRating(review.productId, avgRating)
+        BestSellingRepository().updateProductAverageRating(review.productId, avgRating)
+        ExclusiveOfferRepository().updateProductAverageRating(review.productId, avgRating)
+        reviewCollection.document(review.productId).set(review).await()
     }
 
     suspend fun deleteReview(id: String): Result<Unit> = runCatching {

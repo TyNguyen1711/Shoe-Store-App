@@ -65,6 +65,10 @@ class ExclusiveOfferRepository(
         )
     }
 
+    suspend fun updateProductAverageRating(productId: String, averageRating: Double): Result<Unit> = runCatching {
+        productsCollection.document(productId).update("averageRating", averageRating).await()
+    }
+
     suspend fun getAllProducts(): Result<List<Product>> = runCatching {
         val snapshot = productsCollection.get().await()
 

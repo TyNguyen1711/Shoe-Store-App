@@ -99,6 +99,10 @@ class ProductRepository(
         }
     }
 
+    suspend fun updateProductAverageRating(productId: String, averageRating: Double): Result<Unit> = runCatching {
+        productsCollection.document(productId).update("averageRating", averageRating).await()
+    }
+
     suspend fun updateProduct(product: Product): Result<Unit> = runCatching {
         productsCollection.document(product.id).set(product).await()
     }

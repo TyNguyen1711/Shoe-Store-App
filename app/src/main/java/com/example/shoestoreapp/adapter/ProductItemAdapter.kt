@@ -1,7 +1,6 @@
     package com.example.shoestoreapp.adapter
 
     import android.app.Dialog
-    import android.content.Intent
     import android.graphics.Paint
     import android.os.Handler
     import android.os.Looper
@@ -23,12 +22,12 @@
     import androidx.recyclerview.widget.RecyclerView
     import com.bumptech.glide.Glide
     import com.example.shoestoreapp.R
-    import com.example.shoestoreapp.activity.LoginActivity
     import com.example.shoestoreapp.classes.CartDialog
     import com.example.shoestoreapp.data.model.Comment
     import com.example.shoestoreapp.data.model.Product
     import com.example.shoestoreapp.data.model.Wishlist
     import com.example.shoestoreapp.data.repository.CartRepository
+    import com.example.shoestoreapp.data.repository.ProductRepository
     import com.example.shoestoreapp.data.repository.ReviewRepository
     import com.example.shoestoreapp.data.repository.WishListRepository
     import com.google.android.material.textfield.TextInputEditText
@@ -106,8 +105,6 @@
             private val productSoldCount: TextView = itemView.findViewById(R.id.soldTV)
             private val productSalePercentage: TextView = itemView.findViewById(R.id.salePercentage)
             private val cartBtn: ImageButton = itemView.findViewById(R.id.cartBtn)
-            private var commentList = mutableListOf<Comment>()
-            private val reviewRepository = ReviewRepository()
 
             fun bind(product: Product, listener: OnProductClickListener, wishlists: Wishlist?) {
                 // Gắn dữ liệu sản phẩm
@@ -122,7 +119,7 @@
                 productPrice.text = formattedPrice
 
                 productName.text = product.name
-//                productRating.text = "${product.averageRating} stars"
+                productRating.text = "${product.averageRating} stars"
                 productSoldCount.text = product.soldCount.toString()
                 productSalePercentage.text = "-${product.salePercentage}%"
 
@@ -140,20 +137,6 @@
                 }
                 else {
                     productFavoriteBtn.setImageResource(R.drawable.favorite_border)
-                }
-
-                lifecycleOwner.lifecycleScope.launch {
-                    val reviewRepo = reviewRepository.getReview(product.id)
-                    reviewRepo.onSuccess { items ->
-                        commentList.clear()
-                        commentList.addAll(items.commentList)
-                        if (commentList.size == 0)
-                            productRating.text = "0.0 stars"
-                        else
-                            productRating.text = "${averageRating(commentList)} stars"
-                    }.onFailure { e ->
-                        Log.d("Review Error", "$e")
-                    }
                 }
 
                 cartBtn.setOnClickListener() {
