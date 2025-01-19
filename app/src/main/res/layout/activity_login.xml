@@ -3,9 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:background="@drawable/bg_login_signup"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/thumbnail"
+    android:backgroundTint="@color/text_secondary"
+    android:backgroundTintMode="multiply"
     tools:context=".activity.LoginActivity">
 
     <ImageView
@@ -51,9 +53,9 @@
         android:layout_marginEnd="24dp"
         android:textColor="@color/red"
         android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@id/emailTV"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginTV_2"
-        app:layout_constraintBottom_toTopOf="@id/emailTV"/>
+        app:layout_constraintTop_toBottomOf="@+id/loginTV_2" />
 
     <TextView
         android:id="@+id/emailTV"
@@ -77,6 +79,7 @@
         android:hint="Enter your email"
         android:inputType="textEmailAddress"
         android:textColor="@color/black"
+        android:textColorHint="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailTV" />
@@ -97,19 +100,21 @@
         android:id="@+id/passwordLayoutET"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:passwordToggleEnabled="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:textColorHint="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordTV"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp">
+        app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/passwordET"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/enter_password"
-            android:inputType="textPassword"/>
+            android:hint="Enter password"
+            android:inputType="textPassword"
+            android:textColorHint="#FFFFFF" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView

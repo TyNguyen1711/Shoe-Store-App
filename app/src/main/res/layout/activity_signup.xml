@@ -5,7 +5,9 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_window"
+    android:background="@drawable/thumbnail"
+    android:backgroundTint="@color/text_secondary"
+    android:backgroundTintMode="multiply"
     tools:context=".activity.SignupActivity">
 
     <ImageView
@@ -51,9 +53,9 @@
         android:layout_marginEnd="24dp"
         android:textColor="@color/red"
         android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@id/usernameTV"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signupTV_2"
-        app:layout_constraintBottom_toTopOf="@id/usernameTV"/>
+        app:layout_constraintTop_toBottomOf="@+id/signupTV_2" />
 
     <TextView
         android:id="@+id/usernameTV"
@@ -74,10 +76,10 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:textColorHint="@color/white"
         android:hint="Enter your username"
         android:inputType="text|textPersonName"
         android:textColor="@color/white"
+        android:textColorHint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/usernameTV" />
@@ -101,10 +103,10 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:textColorHint="@color/white"
         android:hint="Enter your email"
         android:inputType="textEmailAddress"
         android:textColor="@color/white"
+        android:textColorHint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailTV" />
@@ -127,10 +129,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
+        android:textColorHint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordTV"
-        android:textColorHint="@color/white"
         app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -138,8 +140,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/enter_password"
-            android:textColor="@color/white"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
