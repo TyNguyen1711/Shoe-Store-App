@@ -41,6 +41,7 @@ class HomeFragment :
     private val exclusiveOfferRepository = ExclusiveOfferRepository()
     private val bestSellingRepository = BestSellingRepository()
     private val brandProductRepository = ProductRepository()
+    private val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
 
     private lateinit var exclusiveAdapter: ProductItemAdapter
     private lateinit var bestSellingAdapter: ProductItemAdapter
@@ -205,7 +206,7 @@ class HomeFragment :
         bestSellingRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         lifecycleScope.launch {
-            val wishlistRepo = wishListRepository.getUserWishlist(FirebaseAuth.getInstance().currentUser?.uid!!)
+            val wishlistRepo = wishListRepository.getUserWishlist(userId)
             val exclusiveOfferRepo = exclusiveOfferRepository.getAllProducts()
             val bestSellingRepo = bestSellingRepository.getAllProducts()
             val brandProductRepo = brandProductRepository.getAllProducts()

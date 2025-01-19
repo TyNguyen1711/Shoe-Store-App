@@ -37,4 +37,13 @@ class OrderRepository(private val firestore: FirebaseFirestore) {
             Result.failure(e)
         }
     }
+
+    suspend fun updateOrderStatus(orderId: String, newStatus: String): Result<Boolean> {
+        return try {
+            ordersCollection.document(orderId).update("status", newStatus).await()
+            Result.success(true)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

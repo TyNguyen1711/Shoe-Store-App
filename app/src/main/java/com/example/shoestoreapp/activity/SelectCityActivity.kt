@@ -16,6 +16,7 @@ import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.shoestoreapp.classes.ApiService
 import com.example.shoestoreapp.data.model.City
@@ -276,7 +277,7 @@ class SelectCityActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<CityResponse>, t: Throwable) {
                 showLoading(false)
-                Toast.makeText(this@SelectCityActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                showErrorDialog { fetchCities(onComplete) } // Gọi lại API khi người dùng nhấn "Reload"
             }
         })
     }
@@ -389,5 +390,21 @@ class SelectCityActivity : AppCompatActivity() {
             .replace("District", "", ignoreCase = true) // Loại bỏ từ "District"
             .trim()
             .let { removeAccents(it) } // Loại bỏ dấu tiếng Việt
+    }
+
+    private fun showErrorDialog(onRetry: () -> Unit) {
+        AlertDialog.Builder(this)
+            .setTitle("Data loading error")
+            .setMessage("Unable to load data from API. Please check your network connection and try again.")
+            .setCancelable(false)
+            .setPositiveButton("Reload") { dialog, _ ->
+                dialog.dismiss()
+                onRetry()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+                finish()
+            }
+            .show()
     }
 }
