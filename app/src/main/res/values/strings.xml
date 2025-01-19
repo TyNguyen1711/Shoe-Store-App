@@ -17,4 +17,11 @@
     <string name="enter_username">Enter usernanme</string>
     <string name="enter_email">Enter email</string>
     <string name="enter_password">Enter password</string>
+    <string-array name="order_statuses">
+        <item>Đang xử lý</item>
+        <item>Đã xác nhận</item>
+        <item>Đang giao hàng</item>
+        <item>Đã giao hàng</item>
+        <item>Đã hủy</item>
+    </string-array>
 </resources>
