@@ -145,6 +145,7 @@ class HomeFragment :
     private fun createBestSelling() {
         lifecycleScope.launch {
             bestSellingRepository.createBestSellingCollection()
+            exclusiveOfferRepository.createExclusiveOfferCollection()
         }
     }
 

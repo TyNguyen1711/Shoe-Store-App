@@ -14,8 +14,6 @@ class BestSellingRepository(
     private val bestSellingCollection: CollectionReference = firestore.collection("best selling")
     private val productCollection: CollectionReference = firestore.collection("products")
 
-    private val productRepository = ProductRepository()
-
     suspend fun createBestSellingCollection(): Result<Unit> = runCatching {
         val snapshot = productCollection
             .orderBy("soldCount", Query.Direction.DESCENDING)
@@ -73,7 +71,6 @@ class BestSellingRepository(
             throw Exception("Document with productId $productId does not exist.")
         }
     }
-
 
     suspend fun getAllProducts(): Result<List<Product>> = runCatching {
         val snapshot = bestSellingCollection.get().await()

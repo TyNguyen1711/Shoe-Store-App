@@ -11,32 +11,26 @@ import com.google.firebase.firestore.Query
 class ExclusiveOfferRepository(
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 ) {
-    private val productsCollection: CollectionReference = firestore.collection("exclusive offer")
-    private val categoriesCollection: CollectionReference = firestore.collection("categories")
+    private val exclusiveOfferCollection: CollectionReference = firestore.collection("exclusive offer")
+    private val productCollection: CollectionReference = firestore.collection("products")
 
-    suspend fun createProductWithNames(
-        product: Product,
-        categoryName: String,
-        brandName: String
-    ): Result<Product> = runCatching {
-        val categorySnapshot = categoriesCollection
-            .whereEqualTo("name", categoryName)
+    suspend fun createExclusiveOfferCollection(): Result<Unit> = runCatching {
+        val snapshot = productCollection
+            .orderBy("salePercentage", Query.Direction.DESCENDING)
+            .limit(8)
             .get()
             .await()
-        val categoryId = categorySnapshot.documents.firstOrNull()?.id
-            ?: throw Exception("Category not found: $categoryName")
 
-        val productToCreate = product.copy(
-            categoryId = categoryId,
-            brand = brandName
-        )
-
-        val documentReference = productsCollection.add(productToCreate).await()
-        productToCreate.copy(id = documentReference.id)
+        for (product in snapshot.documents) {
+            val data = product.data // Trích xuất dữ liệu thực tế
+            if (data != null) {
+                exclusiveOfferCollection.document(product.id).set(data).await()
+            }
+        }
     }
 
     suspend fun getProduct(id: String): Result<Product> = runCatching {
-        val document = productsCollection.document(id).get().await()
+        val document = exclusiveOfferCollection.document(id).get().await()
         val documentData = document.data ?: throw Exception("Product not found")
 
         // Lấy danh sách variants và ánh xạ từng phần tử
@@ -66,7 +60,7 @@ class ExclusiveOfferRepository(
     }
 
     suspend fun updateProductAverageRating(productId: String, averageRating: Double): Result<Unit> = runCatching {
-        val documentRef = productsCollection.document(productId)
+        val documentRef = exclusiveOfferCollection.document(productId)
         val snapshot = documentRef.get().await()
 
         if (snapshot.exists()) {
@@ -78,7 +72,7 @@ class ExclusiveOfferRepository(
 
 
     suspend fun getAllProducts(): Result<List<Product>> = runCatching {
-        val snapshot = productsCollection.get().await()
+        val snapshot = exclusiveOfferCollection.get().await()
 
         // Ánh xạ tài liệu thành danh sách Product và xử lý variants riêng
         snapshot.documents.map { document ->
@@ -113,15 +107,15 @@ class ExclusiveOfferRepository(
     }
 
     suspend fun updateProduct(product: Product): Result<Unit> = runCatching {
-        productsCollection.document(product.id).set(product).await()
+        exclusiveOfferCollection.document(product.id).set(product).await()
     }
 
     suspend fun deleteProduct(id: String): Result<Unit> = runCatching {
-        productsCollection.document(id).delete().await()
+        exclusiveOfferCollection.document(id).delete().await()
     }
 
     suspend fun getProductsByCategory(categoryId: String): Result<List<Product>> = runCatching {
-        val snapshot = productsCollection
+        val snapshot = exclusiveOfferCollection
             .whereEqualTo("category_id", categoryId)
             .get()
             .await()
@@ -129,7 +123,7 @@ class ExclusiveOfferRepository(
     }
 
     suspend fun getProductsByBrand(brandId: String): Result<List<Product>> = runCatching {
-        val snapshot = productsCollection
+        val snapshot = exclusiveOfferCollection
             .whereEqualTo("brand_id", brandId)
             .get()
             .await()
@@ -166,7 +160,7 @@ class ExclusiveOfferRepository(
     }
 
     suspend fun searchProducts(query: String): Result<List<Product>> = runCatching {
-        val snapshot = productsCollection
+        val snapshot = exclusiveOfferCollection
             .orderBy("name")
             .startAt(query)
             .endAt(query + '\uf8ff')
