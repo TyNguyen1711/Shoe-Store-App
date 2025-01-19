@@ -26,8 +26,8 @@ class HomeActivity : AppCompatActivity() {
             insets
         }
 
-        val code = intent.getStringExtra("selectedCoupon")
-        val discount = intent.getStringExtra("discountCoupon")
+        val code = intent.getStringExtra("code")
+        val discount = intent.getStringExtra("discount")
         val selectedProductIds = intent.getStringArrayListExtra("selectedProductIds")
         Log.d("code", code.toString())
         Log.d("discount", discount.toString())
@@ -36,8 +36,8 @@ class HomeActivity : AppCompatActivity() {
         if (!code.isNullOrEmpty() && !discount.isNullOrEmpty()) {
             // Tạo Bundle và truyền dữ liệu vào MyCartFragment
             val bundle = Bundle().apply {
-                putString("selectedCoupon", code)
-                putString("discountCoupon", discount)
+                putString("code", code)
+                putString("discount", discount)
                 putStringArrayList("selectedProductIds", selectedProductIds)
             }
 

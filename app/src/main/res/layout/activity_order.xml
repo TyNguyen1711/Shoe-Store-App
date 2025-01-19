@@ -62,22 +62,33 @@
         tools:ignore="MissingConstraints">
 
         <TextView
-            android:id="@+id/delivering"
-            android:layout_width="106dp"
+            android:id="@+id/confirming"
+            android:layout_width="80dp"
             android:layout_height="40dp"
             android:layout_marginHorizontal="10dp"
-            android:layout_marginStart="24dp"
             android:layout_marginTop="14dp"
             android:background="@drawable/corner_shape_chosen"
             android:gravity="center"
-            android:text="Delivering"
+            android:text="Confirming"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/delivering"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="14dp"
+            android:gravity="center"
+            android:text="Delivering"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/confirming"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/received"
-            android:layout_width="106dp"
+            android:layout_width="80dp"
             android:layout_height="40dp"
             android:layout_marginStart="7dp"
             android:layout_marginTop="14dp"
@@ -89,7 +100,7 @@
 
         <TextView
             android:id="@+id/cancelled"
-            android:layout_width="106dp"
+            android:layout_width="80dp"
             android:layout_height="40dp"
             android:layout_marginStart="7dp"
             android:layout_marginTop="14dp"
@@ -100,7 +111,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/imageDelivering"
+            android:id="@+id/imageConfirming"
             android:layout_width="25dp"
             android:layout_height="27dp"
             android:layout_marginStart="10dp"
@@ -113,7 +124,7 @@
             android:id="@+id/imageReceived"
             android:layout_width="21dp"
             android:layout_height="20dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="15dp"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toEndOf="@+id/delivering"
             app:layout_constraintTop_toTopOf="parent"
@@ -123,15 +134,26 @@
             android:id="@+id/imageCancelled"
             android:layout_width="21dp"
             android:layout_height="20dp"
-            android:layout_marginStart="-112dp"
+            android:layout_marginStart="-75dp"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toEndOf="@+id/cancelled"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/cancel_icon" />
 
+        <ImageView
+            android:id="@+id/imageDelivering"
+            android:layout_width="21dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="7dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/delivery_man" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
+        android:id="@+id/splitImport"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginHorizontal="20dp"
@@ -140,6 +162,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/block_2" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintTop_toBottomOf="@id/splitImport"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

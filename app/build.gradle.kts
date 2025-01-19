@@ -37,7 +37,12 @@ android {
 }
 
 dependencies {
-    implementation("com.github.bumptech.glide:glide:4.15.1")
+    implementation("com.cloudinary:cloudinary-android:2.3.1")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation("com.cloudinary:cloudinary-core:1.33.0")
+    implementation("at.blogc:expandabletextview:1.0.5")
+    implementation("io.coil-kt:coil:2.4.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation(libs.play.services.analytics.impl)
     implementation(libs.firebase.firestore.ktx)
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")

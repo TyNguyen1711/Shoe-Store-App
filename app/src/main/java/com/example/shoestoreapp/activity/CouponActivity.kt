@@ -1,17 +1,21 @@
 package com.example.shoestoreapp.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.CouponAdapter
 import com.example.shoestoreapp.data.model.Coupon
+import com.example.shoestoreapp.data.repository.CouponRepository
+import kotlinx.coroutines.launch
 
 class CouponActivity : AppCompatActivity() {
     private lateinit var adapter: CouponAdapter
@@ -32,27 +36,23 @@ class CouponActivity : AppCompatActivity() {
         btnClearSelection = findViewById(R.id.btn_clear_selection)
         btnFinish = findViewById(R.id.btn_finish)
 
-        val coupons = listOf(
-            Coupon("1","WELCOME200", "Add items worth $2 more to unlock", "Get 50% OFF", 5),
-            Coupon("2","SUMMER50", "Minimum purchase $10", "Get 50% OFF on summer collection", 8),
-            Coupon("3", "FIRST10", "First time users", "Get $10 OFF on first purchase", 5),
-            Coupon("4","HOLIDAY25", "Holiday special", "25% OFF on all items", 6)
-        )
-
-        adapter = CouponAdapter(
-            coupons = coupons,
-            onCouponSelected = { coupon ->
-                btnClearSelection.visibility = View.VISIBLE
-                btnFinish.visibility = View.VISIBLE
-            },
-            onCouponDeselected = {
-                btnClearSelection.visibility = View.GONE
-                btnFinish.visibility = View.GONE
-            }
-        )
-
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
+
+        lifecycleScope.launch {
+            val coupons = getCouponsList()
+            adapter = CouponAdapter(
+                coupons = coupons,
+                onCouponSelected = { coupon ->
+                    btnClearSelection.visibility = View.VISIBLE
+                    btnFinish.visibility = View.VISIBLE
+                },
+                onCouponDeselected = {
+                    btnClearSelection.visibility = View.GONE
+                    btnFinish.visibility = View.GONE
+                }
+            )
+            recyclerView.adapter = adapter
+        }
 
         val backButton = findViewById<Button>(R.id.btn_back)
         backButton.setOnClickListener {
@@ -65,10 +65,15 @@ class CouponActivity : AppCompatActivity() {
             btnFinish.visibility = View.GONE
         }
 
-
         btnFinish.setOnClickListener {
             setResult(RESULT_OK)
             finish()
         }
+    }
+
+    private suspend fun getCouponsList(): List<Coupon> {
+        Log.e("Firestore", "Failed to fetch coupons!")
+        val repository = CouponRepository()
+        return repository.getAllCoupons()
     }
 }

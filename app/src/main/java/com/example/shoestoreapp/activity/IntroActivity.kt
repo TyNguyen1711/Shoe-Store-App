@@ -26,8 +26,11 @@ class IntroActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         findViewById<View>(R.id.btnIntro).setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)
+//            val intent = Intent(this, DashboardAdmin::class.java)
+
             startActivity(intent)
             finish()
 
@@ -51,9 +54,6 @@ class IntroActivity : AppCompatActivity() {
 //            wishlistRepository.addToWishlist(userId = "lyHYPLDPQaexgmxgYwMfULW8vLE2", productId = "z7dSFUDqx2RMdp744vPc")
 //
 //        }
-        lifecycleScope.launch {
-
-        }
 
 
     }

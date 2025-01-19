@@ -21,6 +21,7 @@ class CouponAdapter(
         val code: TextView = itemView.findViewById(R.id.code)
         val description: TextView = itemView.findViewById(R.id.description)
         val time: TextView = itemView.findViewById(R.id.time)
+        val threshold: TextView = itemView.findViewById(R.id.threshold)
         val discountPercent: TextView = itemView.findViewById(R.id.discountPercent)
         val btnSelect: Button = itemView.findViewById(R.id.btnSelect)
     }
@@ -35,7 +36,8 @@ class CouponAdapter(
         val coupon = coupons[position]
         holder.code.text = coupon.code
         holder.description.text = coupon.description
-        holder.time.text = coupon.endTime
+        holder.time.text = coupon.quantity.toString()
+        holder.threshold.text = coupon.threshold.toString()
         holder.discountPercent.text = coupon.discount.toString() + " %"
 
         if (holder.bindingAdapterPosition == selectedPosition) {

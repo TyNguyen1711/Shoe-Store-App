@@ -1,11 +1,7 @@
 package com.example.shoestoreapp.activity
 
-import android.Manifest
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.location.Geocoder
-import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -18,12 +14,12 @@ import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.shoestoreapp.classes.ApiService
 import com.example.shoestoreapp.data.model.City
 import com.example.shoestoreapp.data.model.CityResponse
 import com.example.shoestoreapp.data.model.District
-import com.google.android.gms.common.api.ResolvableApiException
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -101,7 +97,6 @@ class SelectCityActivity : AppCompatActivity() {
         val city = parts[2]
         val district = parts[1]
         val ward = parts[0]
-
         // Bắt đầu cập nhật Spinner tuần tự
         setSpinnerSelection(citySpinner, city) {
             // Khi thành phố được chọn, tải dữ liệu quận/huyện
@@ -142,7 +137,7 @@ class SelectCityActivity : AppCompatActivity() {
         val task = client.checkLocationSettings(builder.build())
 
         // Kiểm tra quyền truy cập vị trí
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
             task.addOnSuccessListener {
                 // Nếu GPS đã bật, lấy vị trí
                 fusedLocationClient.lastLocation
@@ -158,7 +153,7 @@ class SelectCityActivity : AppCompatActivity() {
             }
 
             task.addOnFailureListener { e ->
-                if (e is ResolvableApiException) {
+                if (e is com.google.android.gms.common.api.ResolvableApiException) {
                     e.startResolutionForResult(this, 100)
                 } else {
                     Toast.makeText(this, "Location services are not available.", Toast.LENGTH_SHORT).show()
@@ -166,7 +161,7 @@ class SelectCityActivity : AppCompatActivity() {
             }
         } else {
             // Yêu cầu quyền nếu chưa có
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 100)
+            requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 100)
         }
     }
 
@@ -176,7 +171,7 @@ class SelectCityActivity : AppCompatActivity() {
 
         if (requestCode == 100) {
             // Nếu quyền được cấp, gọi lại phương thức để lấy vị trí
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
                 onUseLocationClick(View(this))  // Gọi lại phương thức để lấy vị trí
             } else {
                 Toast.makeText(this, "Permission denied. Cannot get location.", Toast.LENGTH_SHORT).show()
@@ -236,7 +231,7 @@ class SelectCityActivity : AppCompatActivity() {
         var bestMatchDistance = Int.MAX_VALUE
 
         for (i in 0 until adapter.count) {
-            val item = adapter.getItem(i).toString()
+            val item = normalizeName(adapter.getItem(i).toString())
             val distance = levenshtein.apply(item, value)
             if (distance < bestMatchDistance) {
                 bestMatchDistance = distance
@@ -248,6 +243,17 @@ class SelectCityActivity : AppCompatActivity() {
             spinner.setSelection(bestMatchIndex, false) // Đặt giá trị mà không kích hoạt sự kiện
             onItemSelected?.invoke() // Gọi callback sau khi đặt xong
         }
+    }
+
+    // Hàm chuẩn hóa tên thành phố
+    private fun normalizeName(ward: String): String {
+        return ward
+            .replace("Phường", "", ignoreCase = true)
+            .replace("Xã", "", ignoreCase = true)
+            .replace("Thành phố", "")
+            .replace("Huyện", "")
+            .replace("Thị xã", "")
+            .trim()
     }
 
     private fun fetchCities(onComplete: () -> Unit) {
@@ -279,13 +285,13 @@ class SelectCityActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<CityResponse>, t: Throwable) {
                 showLoading(false)
-                Toast.makeText(this@SelectCityActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                showErrorDialog { fetchCities(onComplete) } // Gọi lại API khi người dùng nhấn "Reload"
             }
         })
     }
 
     private fun fetchDistricts(city: City) {
-        val districtNames = city.data2.map { it.name }
+        val districtNames = city.data2.map { it.full_name }
         val districtAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, districtNames)
         districtSpinner.adapter = districtAdapter
 
@@ -302,7 +308,7 @@ class SelectCityActivity : AppCompatActivity() {
     }
 
     private fun fetchWards(district: District) {
-        val wardNames = district.data3.map { it.name }
+        val wardNames = district.data3.map { it.full_name }
         val wardAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, wardNames)
         wardSpinner.adapter = wardAdapter
     }
@@ -318,12 +324,12 @@ class SelectCityActivity : AppCompatActivity() {
                     // Chuẩn hóa tên thành phố để so sánh
                     val normalizedCityName = normalizeCityName(cityName)
                     val selectedCity = cityList.find {
-                        normalizeCityName(it.name).contains(normalizedCityName, ignoreCase = true) ||
-                                normalizedCityName.contains(normalizeCityName(it.name), ignoreCase = true)
+                        normalizeCityName(it.full_name).contains(normalizedCityName, ignoreCase = true) ||
+                                normalizedCityName.contains(normalizeCityName(it.full_name), ignoreCase = true)
                     }
 
                     if (selectedCity != null) {
-                        val districtNames = selectedCity.data2.map { it.name }
+                        val districtNames = selectedCity.data2.map { it.full_name }
                         val districtAdapter = ArrayAdapter(this@SelectCityActivity, android.R.layout.simple_spinner_item, districtNames)
                         districtSpinner.adapter = districtAdapter
                         onComplete() // Hoàn tất và gọi callback
@@ -365,9 +371,9 @@ class SelectCityActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val cityList = response.body()?.data ?: emptyList()
                     val normalizedDistrictName = normalizeDistrictName(districtName)
-                    val selectedDistrict = cityList.flatMap { it.data2 }.find { normalizeDistrictName(it.name).equals(normalizedDistrictName, ignoreCase = true) }
+                    val selectedDistrict = cityList.flatMap { it.data2 }.find { normalizeDistrictName(it.full_name).equals(normalizedDistrictName, ignoreCase = true) }
                     if (selectedDistrict != null) {
-                        val wardNames = selectedDistrict.data3.map { it.name }
+                        val wardNames = selectedDistrict.data3.map { it.full_name }
                         val wardAdapter = ArrayAdapter(this@SelectCityActivity, android.R.layout.simple_spinner_item, wardNames)
                         wardSpinner.adapter = wardAdapter
                         onComplete() // Hoàn tất và gọi callback
@@ -389,8 +395,27 @@ class SelectCityActivity : AppCompatActivity() {
     // Chuẩn hóa tên quận/huyện
     private fun normalizeDistrictName(districtName: String): String {
         return districtName
+            .replace("Thị xã", "", ignoreCase = true)
+            .replace("Thành phố", "", ignoreCase = true)
+            .replace("Huyện", "", ignoreCase = true)
             .replace("District", "", ignoreCase = true) // Loại bỏ từ "District"
             .trim()
             .let { removeAccents(it) } // Loại bỏ dấu tiếng Việt
+    }
+
+    private fun showErrorDialog(onRetry: () -> Unit) {
+        AlertDialog.Builder(this)
+            .setTitle("Data loading error")
+            .setMessage("Unable to load data from API. Please check your network connection and try again.")
+            .setCancelable(false)
+            .setPositiveButton("Reload") { dialog, _ ->
+                dialog.dismiss()
+                onRetry()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+                finish()
+            }
+            .show()
     }
 }

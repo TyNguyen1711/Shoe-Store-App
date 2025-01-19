@@ -84,7 +84,6 @@
 
     </LinearLayout>
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
@@ -100,8 +99,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/filter"
         app:layout_constraintBottom_toBottomOf="parent" />
-
-
 
     <HorizontalScrollView
         android:id="@+id/filter"

@@ -3,7 +3,9 @@ package com.example.shoestoreapp.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,30 +32,50 @@ class AddressSelectionActivity : AppCompatActivity() {
         }
     }
 
+    private fun showLoading(isLoading: Boolean) {
+        val loadingLayout = findViewById<FrameLayout>(R.id.loadingLayout)
+        val progressBar = findViewById<ProgressBar>(R.id.loadingProgressBar)
+
+        if (isLoading) {
+            loadingLayout.visibility = View.VISIBLE
+            progressBar.visibility = View.VISIBLE
+        } else {
+            loadingLayout.visibility = View.GONE
+            progressBar.visibility = View.GONE
+        }
+    }
+
     fun onAddNewAddressClick(view: View) {
         val intent = Intent(this, NewAddressActivity::class.java)
+        intent.putExtra("userId", userId)
         startActivityForResult(intent, 1)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            // Dữ liệu đã được thêm, gọi lại load lại địa chỉ từ Firestore
+        if ((requestCode == 1 || requestCode == 2) && resultCode == RESULT_OK) {
+            // Hiển thị loading khi tải lại dữ liệu
+            showLoading(true)
             loadAddressesFromFirestore(userId!!)
         }
     }
 
     override fun onResume() {
         super.onResume()
+        showLoading(true)
         loadAddressesFromFirestore(userId!!)
     }
 
     private fun loadAddressesFromFirestore(userId: String) {
+        showLoading(true) // Hiển thị loading trước khi bắt đầu tải dữ liệu
+
         val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
         val addressesRef = db.collection("address").document(userId).collection("addresses")
 
         // Lắng nghe sự thay đổi trong Firestore
         addressesRef.addSnapshotListener { querySnapshot, e ->
+            showLoading(false) // Ẩn loading sau khi hoàn tất tải dữ liệu
+
             if (e != null) {
                 showToast("Error loading addresses: ${e.message}")
                 return@addSnapshotListener
@@ -74,8 +96,6 @@ class AddressSelectionActivity : AppCompatActivity() {
 
                 // Hiển thị danh sách địa chỉ trên RecyclerView.
                 setupRecyclerView(addressList)
-            } else {
-                showToast("No addresses found.")
             }
         }
     }

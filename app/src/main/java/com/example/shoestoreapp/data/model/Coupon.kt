@@ -8,6 +8,7 @@ data class Coupon (
     val id: String = "",
     val code: String = "",
     val description: String = "",
-    val endTime: String = "",
-    val discount: Int = 0
+    val discount: Int = 0,
+    val quantity: Int = 0,
+    val threshold: Long = 0
 )

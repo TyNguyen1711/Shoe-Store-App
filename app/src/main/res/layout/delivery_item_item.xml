@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_marginStart="-120dp"
+    android:layout_marginBottom="5dp">
+
+        <ImageView
+            android:id="@+id/imageProduct"
+            android:layout_width="92dp"
+            android:layout_height="97dp"
+            android:layout_marginStart="120dp"
+            android:layout_marginEnd="14dp"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            android:background="@drawable/border_rounded"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/nameProduct"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/sneaker" />
+
+    <TextView
+        android:id="@+id/nameProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="Loading shoe's name......"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/imageProduct"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <TextView
+        android:id="@+id/sizeProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="3dp"
+        android:text="Size: M"
+        app:layout_constraintStart_toEndOf="@+id/imageProduct"
+        app:layout_constraintTop_toBottomOf="@+id/nameProduct" />
+
+    <TextView
+        android:id="@+id/priceProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="185dp"
+        android:layout_marginTop="26dp"
+        android:text="₫2.412.000"
+        app:layout_constraintStart_toEndOf="@+id/imageProduct"
+        app:layout_constraintTop_toBottomOf="@+id/quantityProduct" />
+
+    <TextView
+        android:id="@+id/quantityProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="-28dp"
+        android:layout_marginTop="3dp"
+        android:text="x4"
+        app:layout_constraintStart_toEndOf="@+id/priceProduct"
+        app:layout_constraintTop_toBottomOf="@+id/nameProduct" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

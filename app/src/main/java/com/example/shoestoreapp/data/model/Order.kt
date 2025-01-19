@@ -1,18 +1,41 @@
 package com.example.shoestoreapp.data.model
 
-import com.google.firebase.firestore.DocumentId
-import com.google.firebase.firestore.PropertyName
-
 data class Order(
-    @DocumentId
-    val id: String = "",
+    var id: String,
+    val userId: String,
+    val products: List<ProductItem>,
+    val totalPayment: Double,
+    val recipientName: String,
+    val recipientPhone: String,
+    val recipientAddress: String,
+    val message: String,
+    val paymentMethod: String,
+    val orderTime: String,
+    val status: String,
+    val voucher: Double
+){
+    constructor() : this(
+        id = "",
+        userId = "",
+        products = emptyList(),
+        totalPayment = 0.0,
+        recipientName = "",
+        recipientPhone = "",
+        recipientAddress = "",
+        message = "",
+        paymentMethod = "",
+        orderTime = "",
+        status = "",
+        voucher = 0.0
+    )
+}
 
-    @field:PropertyName("user_id")
-    val userId: String = "",
+data class ProductItem(
+    var productId: String = "",
+    var quantity: Int = 0,
+    var size: String = ""
+) {
+    // Constructor không tham số (Firebase yêu cầu)
+    constructor() : this("", 0, "")
+}
 
-    val items: List<OrderItem> = emptyList(),
-    val totalAmount: Double = 0.0,
-    val status: OrderStatus = OrderStatus.PENDING,
-    val paymentMethod: PaymentMethod = PaymentMethod.COD,
-    val paymentStatus: PaymentStatus = PaymentStatus.PENDING
-)

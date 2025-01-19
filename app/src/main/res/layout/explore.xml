@@ -66,72 +66,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/Item1"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_gravity="center_horizontal"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center_vertical"
-                    android:hint="Item 1"
-                    android:paddingStart="15dp"
-                    android:textSize="15sp"
-                    android:textStyle="normal" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0"/>
-
-                <TextView
-                    android:id="@+id/Item2"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:gravity="center_vertical"
-                    android:hint="Item 2"
-                    android:layout_gravity="center_horizontal"
-                    android:textStyle="normal"
-                    android:paddingStart="15dp"
-                    android:textSize="15sp"
-                    android:focusable="true"
-                    android:clickable="true" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0"/>
-
-                <TextView
-                    android:id="@+id/Item3"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:gravity="center_vertical"
-                    android:hint="Item 3"
-                    android:layout_gravity="center_horizontal"
-                    android:textStyle="normal"
-                    android:paddingStart="15dp"
-                    android:textSize="15sp"
-                    android:focusable="true"
-                    android:clickable="true" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0"/>
-
-                <TextView
-                    android:id="@+id/see_all"
-                    android:hint="See all"
-                    android:textStyle="normal"
-                    android:textSize="15sp"
-                    android:gravity="center"
-                    android:layout_gravity="center_horizontal|center_vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:focusable="true"
-                    android:clickable="true" />
             </LinearLayout>
 
             <View
@@ -180,14 +114,14 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item1">
 
                             <ImageView
                                 android:id="@+id/avatarTV1"
                                 android:layout_width="match_parent"
-                                android:layout_height="72.69dp"
+                                android:layout_height="120dp"
                                 android:scaleType="centerCrop"
-                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -197,15 +131,18 @@
                                 android:id="@+id/fullNameTV1"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="20dp"
+                                android:layout_margin="15dp"
                                 android:text="Item 1"
                                 android:textColor="@color/black"
-                                android:textSize="17sp"
+                                android:textSize="15sp"
                                 android:gravity="center"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.5"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/avatarTV1" />
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV1"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.cardview.widget.CardView>
 
@@ -223,14 +160,14 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item2">
 
                             <ImageView
                                 android:id="@+id/avatarTV2"
                                 android:layout_width="match_parent"
-                                android:layout_height="72.69dp"
+                                android:layout_height="120dp"
                                 android:scaleType="centerCrop"
-                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -240,15 +177,18 @@
                                 android:id="@+id/fullNameTV2"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="20dp"
+                                android:layout_margin="15dp"
                                 android:text="Item 2"
                                 android:textColor="@color/black"
-                                android:textSize="17sp"
+                                android:textSize="15sp"
                                 android:gravity="center"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.5"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/avatarTV2" />
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV2"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.cardview.widget.CardView>
                 </LinearLayout>
@@ -273,14 +213,14 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item3">
 
                             <ImageView
                                 android:id="@+id/avatarTV3"
                                 android:layout_width="match_parent"
-                                android:layout_height="72.69dp"
+                                android:layout_height="120dp"
                                 android:scaleType="centerCrop"
-                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -290,15 +230,18 @@
                                 android:id="@+id/fullNameTV3"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="20dp"
+                                android:layout_margin="15dp"
                                 android:text="Item 3"
                                 android:textColor="@color/black"
-                                android:textSize="17sp"
+                                android:textSize="15sp"
                                 android:gravity="center"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.5"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/avatarTV3" />
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV3"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.cardview.widget.CardView>
 
@@ -316,14 +259,14 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item4">
 
                             <ImageView
                                 android:id="@+id/avatarTV4"
                                 android:layout_width="match_parent"
-                                android:layout_height="72.69dp"
+                                android:layout_height="120dp"
                                 android:scaleType="centerCrop"
-                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -333,15 +276,18 @@
                                 android:id="@+id/fullNameTV4"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="20dp"
+                                android:layout_margin="15dp"
                                 android:text="Item 4"
                                 android:textColor="@color/black"
-                                android:textSize="17sp"
+                                android:textSize="15sp"
                                 android:gravity="center"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.5"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/avatarTV4" />
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV4"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.cardview.widget.CardView>
                 </LinearLayout>
@@ -366,14 +312,14 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item5">
 
                             <ImageView
                                 android:id="@+id/avatarTV5"
                                 android:layout_width="match_parent"
-                                android:layout_height="72.69dp"
+                                android:layout_height="120dp"
                                 android:scaleType="centerCrop"
-                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -383,15 +329,18 @@
                                 android:id="@+id/fullNameTV5"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="20dp"
+                                android:layout_margin="15dp"
                                 android:text="Item 5"
                                 android:textColor="@color/black"
-                                android:textSize="17sp"
+                                android:textSize="15sp"
                                 android:gravity="center"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.5"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/avatarTV5" />
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV5"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.cardview.widget.CardView>
 
@@ -409,14 +358,14 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item6">
 
                             <ImageView
                                 android:id="@+id/avatarTV6"
                                 android:layout_width="match_parent"
-                                android:layout_height="72.69dp"
+                                android:layout_height="120dp"
                                 android:scaleType="centerCrop"
-                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -426,15 +375,18 @@
                                 android:id="@+id/fullNameTV6"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="20dp"
+                                android:layout_margin="15dp"
                                 android:text="Item 6"
                                 android:textColor="@color/black"
-                                android:textSize="17sp"
+                                android:textSize="15sp"
                                 android:gravity="center"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.5"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/avatarTV6" />
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV6"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.cardview.widget.CardView>
                 </LinearLayout>
@@ -459,14 +411,14 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item7">
 
                             <ImageView
                                 android:id="@+id/avatarTV7"
                                 android:layout_width="match_parent"
-                                android:layout_height="72.69dp"
+                                android:layout_height="120dp"
                                 android:scaleType="centerCrop"
-                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -476,15 +428,18 @@
                                 android:id="@+id/fullNameTV7"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="20dp"
+                                android:layout_margin="15dp"
                                 android:text="Item 7"
                                 android:textColor="@color/black"
-                                android:textSize="17sp"
+                                android:textSize="15sp"
                                 android:gravity="center"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.5"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/avatarTV7" />
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV7"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.cardview.widget.CardView>
 
@@ -502,14 +457,14 @@
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:id="@+id/item8">
 
                             <ImageView
                                 android:id="@+id/avatarTV8"
                                 android:layout_width="match_parent"
-                                android:layout_height="72.69dp"
+                                android:layout_height="120dp"
                                 android:scaleType="centerCrop"
-                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -519,15 +474,18 @@
                                 android:id="@+id/fullNameTV8"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="20dp"
+                                android:layout_margin="15dp"
                                 android:text="Item 8"
                                 android:textColor="@color/black"
-                                android:textSize="17sp"
+                                android:textSize="15sp"
                                 android:gravity="center"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.5"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/avatarTV8" />
+                                app:layout_constraintTop_toBottomOf="@+id/avatarTV8"
+                                android:ellipsize="end"
+                                android:maxLines="2"
+                                android:paddingHorizontal="8dp"/>
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.cardview.widget.CardView>
                 </LinearLayout>

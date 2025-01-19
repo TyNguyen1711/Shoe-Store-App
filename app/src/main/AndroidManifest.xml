@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
+        android:name=".classes.ConfigCloudinary"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -16,6 +17,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ShoeStoreApp"
         tools:targetApi="31">
+        <activity
+            android:name=".activity.OrderDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AddProductActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.DashboardAdmin"
+            android:exported="false" />
+        <activity
+            android:name=".activity.EditProductActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ReportActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.EditAddressActivity"
             android:exported="false" />
@@ -32,13 +48,19 @@
             android:name=".activity.SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.PayActivity"
+            android:name=".activity.DisplayProductListActivity"
             android:exported="false" />
         <activity
             android:name=".activity.PaymentActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.NotificationActivity"
+            android:name=".activity.PayActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ReviewActivity"
             android:exported="false" />
         <activity
             android:name=".activity.OrderActivity"
@@ -47,7 +69,10 @@
             android:name=".activity.DetailsActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.AddressActivity"
+            android:name=".activity.NotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CouponCartActivity"
             android:exported="false" />
         <activity
             android:name=".activity.AddAddressActivity"
@@ -76,9 +101,6 @@
             android:exported="false" />
         <activity
             android:name=".activity.CouponActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.CouponCartActivity"
             android:exported="false" />
         <activity
             android:name=".activity.SuccessOrderActivity"

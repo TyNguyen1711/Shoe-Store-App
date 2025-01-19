@@ -1,0 +1,109 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    android:layout_marginBottom="25dp"
+    app:cardBackgroundColor="@android:color/white">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/orderId"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:textStyle="italic"
+                android:text="ID: 1234567890GGGG" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="85dp"
+                android:text="Received"
+                android:textColor="#3CA640" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/splitImport"
+            android:layout_width="175dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="-14dp"
+            android:layout_marginBottom="7dp"
+            android:background="#808080" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvItems"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/divider"
+            android:showDividers="middle"
+            android:layout_marginBottom="5dp"/>
+
+        <TextView
+            android:id="@+id/totalPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="195dp"
+            android:layout_marginBottom="9dp"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:text="Total Price: 1.000.000đ"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="#EAEDED"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/dateReceived"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="   Order date:  23/01/2024"
+                android:textColor="#2196F3"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/dateReceivedReal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="   Received date:  23/01/2024"
+                android:textColor="#55AF58"
+                android:textSize="13sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="   Your order has been cancelled."
+
+                android:textSize="13sp" />
+
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/receivedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="275dp"
+            android:textColor="@color/text_color"
+            android:background="@drawable/button_pretty_received"
+            android:text="REPORT" />
+
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
