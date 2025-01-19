@@ -39,6 +39,7 @@ class ProductRepository(
         val document = productsCollection.document(id).get().await()
         val documentData = document.data ?: throw Exception("Product not found")
         // Lấy danh sách variants và ánh xạ từng phần tử
+        Log.d("333: ", "${documentData}")
         val variants = (documentData["variants"] as? List<Map<String, Any>>)?.map { variantMap ->
             ProductVariant(
                 id = variantMap["id"] as? String ?: "",
@@ -60,7 +61,7 @@ class ProductRepository(
             thumbnail =  documentData["thumbnail"] as? String?: "",
             images = documentData["images"] as? List<String> ?: emptyList(),
             soldCount = documentData["soldCount"] as? Int ?: 0,
-            salePercentage = document["salePercentage"] as? Int ?: 0
+            salePercentage = (documentData["salePercentage"] as? Number)?.toInt() ?: 0
         )
     }
 
@@ -81,7 +82,6 @@ class ProductRepository(
                 )
             } ?: emptyList()
 
-            // Trả về Product với danh sách variants đã được xử lý
             Product(
                 id = document.id,
                 averageRating = (document["averageRating"] as? Number)?.toDouble() ?: 0.0,

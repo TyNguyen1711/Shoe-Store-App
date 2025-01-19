@@ -28,7 +28,6 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
 
 class AddProductActivity : AppCompatActivity() {
     private lateinit var thumbnailImageView: ImageView
@@ -44,6 +43,7 @@ class AddProductActivity : AppCompatActivity() {
     private lateinit var variantsRecyclerView: RecyclerView
     private lateinit var btnDeleteThumbnail: ImageButton
     private lateinit var btnAddVariant: Button
+    private lateinit var btnBack: Button
     private val productRepository = ProductRepository()
     private val imagesList = mutableListOf<Uri>()
     private var thumbnailUri: Uri? = null
@@ -77,7 +77,7 @@ class AddProductActivity : AppCompatActivity() {
         variantsRecyclerView = findViewById(R.id.rv_variants)
         btnAddVariant = findViewById(R.id.btn_add_variant)
         btnDeleteThumbnail = findViewById(R.id.btn_delete_thumbnail)
-
+        btnBack = findViewById(R.id.btn_back)
     }
 
     private fun setupRecyclerView() {
@@ -108,6 +108,9 @@ class AddProductActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.btn_add).setOnClickListener {
             addProduct()
+        }
+        btnBack.setOnClickListener {
+            finish()
         }
         btnDeleteThumbnail.setOnClickListener {
             thumbnailUri = null

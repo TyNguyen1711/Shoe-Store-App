@@ -8,17 +8,31 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
-
-        <TextView
-            android:id="@+id/tv_title"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Thêm sản phẩm mới"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="24dp"/>
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/btn_back"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/rounded_button"
+                android:drawableStart="@drawable/arrow_left"
+                android:paddingStart="10dp"
+                android:paddingEnd="16dp" />
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Thêm sản phẩm mới"
+                android:layout_marginLeft="30dp"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="24dp"/>
+        </LinearLayout>
 
-        <!-- Phần hình ảnh -->
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
