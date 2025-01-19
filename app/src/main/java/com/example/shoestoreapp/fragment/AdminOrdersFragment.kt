@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.fragment
 import OrdersAdapter
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,11 +18,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+
 class AdminOrdersFragment : Fragment() {
     private lateinit var rvOrders: RecyclerView
     private lateinit var ordersAdapter: OrdersAdapter
     private val repository = OrderRepository()
-
+    private val REQUEST_CODE = 1
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,13 +39,20 @@ class AdminOrdersFragment : Fragment() {
         setupRecyclerView()
         loadOrders()
     }
+    override fun onResume() {
+        super.onResume()
+        loadOrders()
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+    }
 
     private fun setupRecyclerView() {
         ordersAdapter = OrdersAdapter { order ->
-            // Navigate to detail activity
             val intent = Intent(requireContext(), OrderDetailActivity::class.java)
             intent.putExtra("ORDER_ID", order.first.id)
-            startActivity(intent)
+            startActivityForResult(intent, REQUEST_CODE)
         }
 
         rvOrders.apply {

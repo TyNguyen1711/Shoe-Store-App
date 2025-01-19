@@ -18,10 +18,11 @@
     <string name="enter_email">Enter email</string>
     <string name="enter_password">Enter password</string>
     <string-array name="order_statuses">
-        <item>Đang xử lý</item>
-        <item>Đã xác nhận</item>
-        <item>Đang giao hàng</item>
-        <item>Đã giao hàng</item>
-        <item>Đã hủy</item>
+        <item>Pending</item>
+        <item>Confirmed</item>
+        <item>Shipping</item>
+        <item>Delivered</item>
+        <item>Cancelled</item>
     </string-array>
+
 </resources>

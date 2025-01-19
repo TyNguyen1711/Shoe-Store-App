@@ -1,5 +1,7 @@
 package com.example.shoestoreapp.activity
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -38,7 +40,7 @@ class OrderDetailActivity : AppCompatActivity() {
     private lateinit var btnUpdateStatus: Button
     private lateinit var rvOrderProducts: RecyclerView
     private lateinit var orderProductsAdapter: OrderProductsAdapter
-
+    private lateinit var btnBack: Button
     private val repository = OrderRepository()
     private var orderId: String? = null
 
@@ -55,6 +57,7 @@ class OrderDetailActivity : AppCompatActivity() {
         setupStatusSpinner()
         loadOrderDetails()
         setupUpdateButton()
+        setupBackButton()
     }
 
     private fun initViews() {
@@ -71,6 +74,7 @@ class OrderDetailActivity : AppCompatActivity() {
         spnNewStatus = findViewById(R.id.spnNewStatus)
         btnUpdateStatus = findViewById(R.id.btnUpdateStatus)
         rvOrderProducts = findViewById(R.id.rvOrderProducts)
+        btnBack = findViewById(R.id.btn_back)
     }
 
     private fun setupRecyclerView() {
@@ -87,6 +91,20 @@ class OrderDetailActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spnNewStatus.adapter = adapter
     }
+
+    private fun setupBackButton() {
+        btnBack.setOnClickListener {
+            val newStatus = spnNewStatus.selectedItem.toString()
+
+            val resultIntent = Intent()
+            resultIntent.putExtra("NEW_STATUS", newStatus)
+            setResult(Activity.RESULT_OK, resultIntent)
+
+            finish()
+        }
+    }
+
+
 
     private fun loadOrderDetails() {
         orderId?.let { id ->
@@ -141,6 +159,7 @@ class OrderDetailActivity : AppCompatActivity() {
         tvPaymentMethod.text = "Phương thức thanh toán: ${order.paymentMethod}"
         tvCurrentStatus.text = "Trạng thái hiện tại: ${order.status}"
 
+        // Đồng bộ Spinner với trạng thái hiện tại
         val statusArray = resources.getStringArray(R.array.order_statuses)
         val currentStatusPosition = statusArray.indexOf(order.status)
         if (currentStatusPosition != -1) {
@@ -150,13 +169,29 @@ class OrderDetailActivity : AppCompatActivity() {
         orderProductsAdapter.submitList(products)
     }
 
+
     private fun setupUpdateButton() {
         btnUpdateStatus.setOnClickListener {
             val newStatus = spnNewStatus.selectedItem.toString()
-            Log.d("OrderDetail", "Updating order ${orderId} status to: $newStatus")
-            // TODO: Implement API call to update status
+
+            orderId?.let { id ->
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val result = repository.updateOrderStatus(id, newStatus)
+                    withContext(Dispatchers.Main) {
+                        if (result.isSuccess) {
+                            tvCurrentStatus.text = "Trạng thái hiện tại: $newStatus"
+                            spnNewStatus.setSelection(spnNewStatus.selectedItemPosition) // Đồng bộ Spinner
+                            Toast.makeText(this@OrderDetailActivity, "Cập nhật thành công!", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this@OrderDetailActivity, "Cập nhật thất bại!", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            } ?: Toast.makeText(this, "Mã đơn hàng không hợp lệ", Toast.LENGTH_SHORT).show()
         }
+
     }
+
 
     private fun formatCurrency(amount: Double): String {
         val format = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))

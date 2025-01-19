@@ -24,10 +24,8 @@ class OrderRepository(private val firestore: FirebaseFirestore = FirebaseFiresto
     suspend fun getOrders(userId: String? = null): Result<List<Order>> {
         return try {
             val querySnapshot = if (userId != null) {
-                // Nếu truyền userId, chỉ lấy danh sách order của user đó
                 ordersCollection.whereEqualTo("userId", userId).get().await()
             } else {
-                // Lấy tất cả orders
                 ordersCollection.get().await()
             }
 
@@ -47,8 +45,7 @@ class OrderRepository(private val firestore: FirebaseFirestore = FirebaseFiresto
         val ordersSnapshot = ordersCollection.get().await()
         ordersSnapshot.documents.map { orderDocument ->
             val orderData = orderDocument.data ?: throw Exception("Order not found")
- 
-            // Lấy danh sách ProductItem từ order
+
             val productItems = (orderData["products"] as? List<Map<String, Any>>)?.map { productMap ->
                 ProductItem(
                     productId = productMap["productId"] as? String ?: "",
@@ -57,7 +54,6 @@ class OrderRepository(private val firestore: FirebaseFirestore = FirebaseFiresto
                 )
             } ?: emptyList()
 
-            // Lấy thông tin chi tiết cho từng sản phẩm
             val productDetails = productItems.map { productItem ->
                 val productSnapshot = productsCollection.document(productItem.productId).get().await()
                 val productData = productSnapshot.data ?: throw Exception("Product not found: ${productItem.productId}")
@@ -72,7 +68,6 @@ class OrderRepository(private val firestore: FirebaseFirestore = FirebaseFiresto
                 )
             }
 
-            // Trả về Pair gồm Order và danh sách ProductDetailItem
             Pair(
                 Order(
                     id = orderDocument.id,
@@ -96,7 +91,6 @@ class OrderRepository(private val firestore: FirebaseFirestore = FirebaseFiresto
         val orderSnapshot = ordersCollection.document(orderId).get().await()
         val orderData = orderSnapshot.data ?: throw Exception("Order not found: $orderId")
 
-        // Lấy danh sách ProductItem từ order
         val productItems = (orderData["products"] as? List<Map<String, Any>>)?.map { productMap ->
             ProductItem(
                 productId = productMap["productId"] as? String ?: "",
@@ -136,6 +130,16 @@ class OrderRepository(private val firestore: FirebaseFirestore = FirebaseFiresto
             ),
             productDetails
         )
+    }
+    suspend fun updateOrderStatus(orderId: String, newStatus: String): Result<Boolean> {
+        return try {
+            ordersCollection.document(orderId)
+                .update("status", newStatus)
+                .await()
+            Result.success(true)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
 }

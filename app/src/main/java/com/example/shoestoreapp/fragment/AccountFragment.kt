@@ -56,10 +56,8 @@ class AccountFragment : Fragment() {
 
         // Khi bấm vào nút "Logout"
         logoutButton.setOnClickListener {
-            // Đăng xuất người dùng
             FirebaseAuth.getInstance().signOut()
 
-            // Chuyển hướng người dùng về menu
             val intent = Intent(requireContext(), HomeActivity::class.java)
             startActivity(intent)
 
