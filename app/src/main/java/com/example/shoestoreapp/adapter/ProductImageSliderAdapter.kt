@@ -69,11 +69,9 @@ class ImageSliderAdapter(
 
             // Kết nối DotsIndicator với ViewPager2
             dotsIndicator.attachTo(viewImageSlider)
-            Log.d("currentPos1", currentPos.toString())
             val numberTV = dialog.findViewById<TextView>(R.id.numberImageTV)
             val dismissBtn = dialog.findViewById<Button>(R.id.dismissDialogBtn)
 
-            Log.d("currentPos2", currentPos.toString())
 
             numberTV.setText("${currentPos.toString()}/${imageList.size.toString()}")
 

@@ -26,6 +26,7 @@ import com.example.shoestoreapp.adapter.ImageSliderAdapter
 import com.example.shoestoreapp.classes.CartDialog
 import com.example.shoestoreapp.data.model.Comment
 import com.example.shoestoreapp.data.model.Product
+import com.example.shoestoreapp.data.model.Review
 import com.example.shoestoreapp.data.model.Wishlist
 import com.example.shoestoreapp.data.repository.CartRepository
 import com.example.shoestoreapp.data.repository.ProductRepository
@@ -101,14 +102,11 @@ class ProductDetailActivity : AppCompatActivity() {
         if (userId != null) {
             lifecycleScope.launch {
                 val result = wishListRepository.getUserWishlist(userId)
-                Log.d("Favourite Button Repo1", "$userId")
                 result.onSuccess { items ->
-                    Log.d("Favourite Button Repo2", "$items")
                     wishlists = items
 
                     // Di chuyển logic cập nhật giao diện vào đây
                     wishlists!!.userId = userId
-                    Log.d("Favourite Button UpdateUI", "${wishlists!!.products?.contains(product.id)}")
                     if (wishlists!!.products?.contains(product.id) == true) {
                         favouriteBtn.setBackgroundResource(R.drawable.favorite_full)
                     } else {
@@ -126,7 +124,6 @@ class ProductDetailActivity : AppCompatActivity() {
                 commentList.clear()
                 commentList.addAll(items.commentList)
                 ratingStar.rating = averageRating(commentList).toFloat()
-                Log.d("Review Success1", "$commentList")
             }.onFailure { e ->
                 Log.d("Review Error", "$e")
             }
@@ -161,7 +158,6 @@ class ProductDetailActivity : AppCompatActivity() {
 
         addToCartBtn.setOnClickListener {
             if (userId == null) {
-                Log.d("Favourite Button UID", "$userId")
                 showSignUpDialog()
             }
             else {
@@ -172,15 +168,12 @@ class ProductDetailActivity : AppCompatActivity() {
 
         favouriteBtn.setOnClickListener {
             if (userId == null) {
-                Log.d("Favourite Button UID", "$userId")
                 showSignUpDialog()
             }
             else {
-                Log.d("Favourite Button UID", "$userId")
                 lifecycleScope.launch {
                     val result = wishListRepository.getUserWishlist(userId)
                     result.onSuccess { items ->
-                        Log.d("Favourite Button Repo", "$items")
                         wishlists = items
                     }.onFailure { error ->
                         // Xử lý lỗi nếu không lấy được danh sách giỏ hàng
@@ -193,13 +186,11 @@ class ProductDetailActivity : AppCompatActivity() {
                 if (wishlists!!.products?.contains(product.id) == false) {
                     favouriteBtn.setBackgroundResource(R.drawable.favorite_full)
                     wishlists!!.products!!.add(product.id)
-                    Log.d("Favourite Button WishList", "$wishlists")
                     updateUserWishlist(wishlists!!)
                 }
                 else {
                     favouriteBtn.setBackgroundResource(R.drawable.favorite_border)
                     wishlists!!.products!!.remove(product.id)
-                    Log.d("Favourite Button WishList", "$wishlists")
                     updateUserWishlist(wishlists!!)
                 }
             }
@@ -216,7 +207,6 @@ class ProductDetailActivity : AppCompatActivity() {
 
     private fun updateUserWishlist(wishlist: Wishlist) {
         lifecycleScope.launch {
-            Log.d("Favourite Button UpdateWishlist", "$wishlist")
             wishListRepository.updateUserWishlist(wishlist)
         }
     }

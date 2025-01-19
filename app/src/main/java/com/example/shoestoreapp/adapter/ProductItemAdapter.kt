@@ -147,7 +147,10 @@
                     reviewRepo.onSuccess { items ->
                         commentList.clear()
                         commentList.addAll(items.commentList)
-                        productRating.text = "${averageRating(commentList)} stars"
+                        if (commentList.size == 0)
+                            productRating.text = "0.0 stars"
+                        else
+                            productRating.text = "${averageRating(commentList)} stars"
                     }.onFailure { e ->
                         Log.d("Review Error", "$e")
                     }

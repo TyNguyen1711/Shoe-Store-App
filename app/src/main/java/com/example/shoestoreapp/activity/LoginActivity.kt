@@ -33,7 +33,6 @@ class LoginActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 var flag = false
                 val userRepo = userRepository.getUser(currentUser.uid)
-                Log.d("test13", "User: $userRepo")
                 userRepo.onSuccess {
                     flag = it.isAdmin
                 }.onFailure {
@@ -73,7 +72,6 @@ class LoginActivity : AppCompatActivity() {
 
         forgotPasswordTV.setOnClickListener() {
             forgotPasswordTV.setPaintFlags(forgotPasswordTV.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
-            Log.d("ForgotPassword1", "First")
             val intent = Intent(this, ForgotPasswordActivity::class.java)
             startActivity(intent)
             finish()
@@ -99,7 +97,6 @@ class LoginActivity : AppCompatActivity() {
                             val user = Firebase.auth.currentUser
                             var flag = false
                             val userRepo = userRepository.getUser(user!!.uid)
-                            Log.d("test13", "User: $userRepo")
                             userRepo.onSuccess {
                                 flag = it.isAdmin
                             }.onFailure {

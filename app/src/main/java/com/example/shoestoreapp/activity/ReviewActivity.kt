@@ -44,7 +44,6 @@ class ReviewActivity : AppCompatActivity() {
             reviewRepo.onSuccess { items ->
                 commentList.clear()
                 commentList.addAll(items.commentList)
-                Log.d("Review Success1", "$commentList")
                 commentAdapter.notifyDataSetChanged()
             }.onFailure { error ->
                 Log.d("Review Error", "$error")

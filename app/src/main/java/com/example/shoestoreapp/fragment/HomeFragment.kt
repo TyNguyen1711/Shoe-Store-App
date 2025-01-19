@@ -23,10 +23,12 @@ import com.example.shoestoreapp.activity.ProductDetailActivity
 import com.example.shoestoreapp.adapter.ProductItemAdapter
 import com.example.shoestoreapp.adapter.SliderAdapter
 import com.example.shoestoreapp.data.model.Product
+import com.example.shoestoreapp.data.model.Review
 import com.example.shoestoreapp.data.model.Wishlist
 import com.example.shoestoreapp.data.repository.BestSellingRepository
 import com.example.shoestoreapp.data.repository.ExclusiveOfferRepository
 import com.example.shoestoreapp.data.repository.ProductRepository
+import com.example.shoestoreapp.data.repository.ReviewRepository
 import com.example.shoestoreapp.data.repository.WishListRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
@@ -121,7 +123,6 @@ class HomeFragment :
                             result = brandProductRepository.getProductsByBrand(brand)
                         }
                     }
-                    Log.d("BRAND1", "$brand")
                     result.onSuccess { items ->
                         brandProductList.clear()
                         if (items.size > 5) {
@@ -140,11 +141,19 @@ class HomeFragment :
         }
     }
 
+    private fun createBestSelling() {
+        lifecycleScope.launch {
+            bestSellingRepository.createBestSellingCollection()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+        createBestSelling()
 
         // Setup Slider
         viewPagerSlider = view.findViewById(R.id.viewPageSlider)
@@ -209,7 +218,7 @@ class HomeFragment :
             exclusiveOfferRepo.onSuccess { items ->
                 exclusiveProducts.clear()
                 if (items.size > 5) {
-                    exclusiveProducts.addAll(items.subList(0, 5))
+                    exclusiveProducts.addAll(items.subList(0, 4))
                 } else {
                     exclusiveProducts.addAll(items)
                 }
@@ -222,7 +231,7 @@ class HomeFragment :
             bestSellingRepo.onSuccess { items ->
                 bestSellingProducts.clear()
                 if (items.size > 5) {
-                    bestSellingProducts.addAll(items.subList(0, 5))
+                    bestSellingProducts.addAll(items.subList(0, 4))
                 } else {
                     bestSellingProducts.addAll(items)
                 }
@@ -239,7 +248,6 @@ class HomeFragment :
                 } else {
                     brandProductList.addAll(items)
                 }
-                Log.d("BRAND2", "${brandProductAdapter.toString()}")
                 brandProductAdapter.notifyDataSetChanged()
             }.onFailure { error ->
                 Log.e("HomeFragment", "Failed to fetch brand products: ${error.message}")

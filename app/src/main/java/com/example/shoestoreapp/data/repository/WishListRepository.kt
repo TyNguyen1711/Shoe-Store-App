@@ -13,6 +13,7 @@ import kotlinx.coroutines.tasks.await
 class WishListRepository(private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()) {
     private val productsCollection: CollectionReference = firestore.collection("products")
     private val wishlistsCollection: CollectionReference = firestore.collection("wishlists")
+
     suspend fun getUserWishlist(userId: String): Result<Wishlist> = runCatching {
         val document = try {
             Log.d("WishlistRepo", "Fetching document for user: $userId")

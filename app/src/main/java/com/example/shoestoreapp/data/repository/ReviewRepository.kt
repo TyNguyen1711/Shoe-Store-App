@@ -16,10 +16,8 @@ class ReviewRepository (private val firestore: FirebaseFirestore = FirebaseFires
 
     suspend fun getReview(id: String): Result<Review> = runCatching {
         val document = reviewCollection.document(id).get().await()
-        Log.d("Review Success2", "${document.data}")
         val documentData = document.data ?: throw Exception("Review not found")
         // Lấy danh sách comment và ánh xạ từng phần tử
-        Log.d("Review Success3", "${documentData["commentList"]}")
         val commentList = (documentData["commentList"] as? List<Map<String, Any>>)?.map { commentMap ->
             val rating = when (val ratingValue = commentMap["rating"]) {
                 is Number -> ratingValue.toDouble()
@@ -34,9 +32,7 @@ class ReviewRepository (private val firestore: FirebaseFirestore = FirebaseFires
             )
         } ?: emptyList()
 
-
         // Trả về Product với danh sách variants đã được xử lý
-        Log.d("Review Success4", "${commentList}")
         Review(
             productId = document.id,
             commentList = commentList

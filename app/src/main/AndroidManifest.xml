@@ -21,11 +21,14 @@
             android:name=".activity.AddProductActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.DashboardAdmin"
+            android:name=".activity.ReviewActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.EditProductActivity"
+            android:name=".activity.DashboardAdmin"
             android:exported="false" />
+<!--        <activity
+            android:name=".activity.EditProductActivity"
+            android:exported="false" />-->
         <activity
             android:name=".activity.ReportActivity"
             android:exported="false" />

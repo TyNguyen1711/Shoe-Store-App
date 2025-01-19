@@ -119,7 +119,6 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun addUser(user: User) {
-        Log.d("Add User", "User: $user")
         lifecycleScope.launch {
             userRepository.createUser(user)
         }

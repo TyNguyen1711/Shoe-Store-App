@@ -19,6 +19,8 @@ import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.repository.BestSellingRepository
 import com.example.shoestoreapp.data.repository.ExclusiveOfferRepository
 import com.example.shoestoreapp.data.repository.ProductRepository
+import com.example.shoestoreapp.data.repository.WishListRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class DisplayProductListActivity : AppCompatActivity(), ProductItemAdapter.OnProductClickListener {
@@ -27,6 +29,22 @@ class DisplayProductListActivity : AppCompatActivity(), ProductItemAdapter.OnPro
     private val bestSellingRepository = BestSellingRepository()
     private val productListRepository = ProductRepository()
     private var productList = mutableListOf<Product>()
+    private val wishListRepository = WishListRepository()
+    private val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+    override fun onResume() {
+        super.onResume()
+        if (userId != null) {
+            lifecycleScope.launch {
+                val result = wishListRepository.getUserWishlist(userId)
+                result.onSuccess { items ->
+                    productListAdapters.updateWishlist(items)
+                }.onFailure { error ->
+                    Log.e("HomeFragment", "Failed to fetch wishlist: ${error.message}")
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,12 +87,19 @@ class DisplayProductListActivity : AppCompatActivity(), ProductItemAdapter.OnPro
     private fun loadAllProducts() {
         lifecycleScope.launch {
             val result = productListRepository.getAllProducts()
+            val wishlistRepo = wishListRepository.getUserWishlist(userId!!)
             result.onSuccess { items ->
                 productList.clear()
                 productList.addAll(items)
                 productListAdapters.notifyDataSetChanged()
             }.onFailure { error ->
                 Log.e("DisplayProduct", "Failed to fetch products: ${error.message}")
+            }
+
+            wishlistRepo.onSuccess { items ->
+                productListAdapters.updateWishlist(items)
+            }.onFailure { error ->
+                Log.e("DisplayProduct", "Failed to fetch wishlist: ${error.message}")
             }
         }
     }
@@ -82,12 +107,19 @@ class DisplayProductListActivity : AppCompatActivity(), ProductItemAdapter.OnPro
     private fun loadBrandProducts(brand: String) {
         lifecycleScope.launch {
             val result = productListRepository.getProductsByBrand(brand)
+            val wishlistRepo = wishListRepository.getUserWishlist(userId!!)
             result.onSuccess { items ->
                 productList.clear()
                 productList.addAll(items)
                 productListAdapters.notifyDataSetChanged()
             }.onFailure { error ->
                 Log.e("DisplayProduct", "Failed to fetch products: ${error.message}")
+            }
+
+            wishlistRepo.onSuccess { items ->
+                productListAdapters.updateWishlist(items)
+            }.onFailure { error ->
+                Log.e("DisplayProduct", "Failed to fetch wishlist: ${error.message}")
             }
         }
     }
@@ -95,6 +127,8 @@ class DisplayProductListActivity : AppCompatActivity(), ProductItemAdapter.OnPro
     private fun loadExclusiveOffer() {
         lifecycleScope.launch {
             val result = exclusiveOfferRepository.getAllProducts()
+            val wishlistRepo = wishListRepository.getUserWishlist(userId!!)
+
             result.onSuccess { items ->
                 productList.clear()
                 productList.addAll(items)
@@ -102,18 +136,32 @@ class DisplayProductListActivity : AppCompatActivity(), ProductItemAdapter.OnPro
             }.onFailure { error ->
                 Log.e("DisplayProduct", "Failed to fetch products: ${error.message}")
             }
+
+            wishlistRepo.onSuccess { items ->
+                productListAdapters.updateWishlist(items)
+            }.onFailure { error ->
+                Log.e("DisplayProduct", "Failed to fetch wishlist: ${error.message}")
+            }
         }
     }
 
     private fun loadBestSelling() {
         lifecycleScope.launch {
             val result = bestSellingRepository.getAllProducts()
+            val wishlistRepo = wishListRepository.getUserWishlist(userId!!)
+
             result.onSuccess { items ->
                 productList.clear()
                 productList.addAll(items)
                 productListAdapters.notifyDataSetChanged()
             }.onFailure { error ->
                 Log.e("DisplayProduct", "Failed to fetch products: ${error.message}")
+            }
+
+            wishlistRepo.onSuccess { items ->
+                productListAdapters.updateWishlist(items)
+            }.onFailure { error ->
+                Log.e("DisplayProduct", "Failed to fetch wishlist: ${error.message}")
             }
         }
     }
