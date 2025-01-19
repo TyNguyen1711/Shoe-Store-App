@@ -107,7 +107,9 @@ class LoginActivity : AppCompatActivity() {
                                 flag = false
                             }
                             if (flag) {
-                                Toast.makeText(this@LoginActivity, "Admin", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(this@LoginActivity, DashboardAdmin::class.java)
+                                startActivity(intent)
+                                finish()
                             }
                             else {
                                 // Sign in success, switch to home activity
