@@ -24,7 +24,7 @@
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
-            app:srcCompat="@drawable/ic_launcher_background" />
+            app:srcCompat="@drawable/logo" />
 
         <ScrollView
             android:layout_width="match_parent"

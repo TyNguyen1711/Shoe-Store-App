@@ -53,6 +53,12 @@ class ReceivedFragment : Fragment() {
     private suspend fun getListOrders(): List<Order> {
         val repository = OrderRepository()
         val allOrders = repository.getOrders()
-        return allOrders.filter { it.status == "Delivered" }
+        allOrders.onSuccess { product ->
+            return product.filter { it.status == "Delivered" }
+
+        }.onFailure { error ->
+
+        }
+        return emptyList()
     }
 }

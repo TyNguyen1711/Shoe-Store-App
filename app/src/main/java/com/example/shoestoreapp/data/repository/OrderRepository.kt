@@ -1,16 +1,15 @@
 package com.example.shoestoreapp.data.repository
 
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
+
+import android.util.Log
 import com.example.shoestoreapp.data.model.Order
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.model.ProductDetailItem
 import com.example.shoestoreapp.data.model.ProductItem
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
 class OrderRepository(private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()) {
-
-    private val db = FirebaseFirestore.getInstance()
     private val ordersCollection = firestore.collection("orders")
     private val productsCollection = firestore.collection("products")
     suspend fun saveOrder(order: Order): Result<Boolean> {
@@ -22,18 +21,26 @@ class OrderRepository(private val firestore: FirebaseFirestore = FirebaseFiresto
         }
     }
 
-    // Lấy danh sách các đơn hàng từ Firestore
-    suspend fun getOrders(): List<Order> {
+    suspend fun getOrders(userId: String? = null): Result<List<Order>> {
         return try {
-            val ordersRef = db.collection("orders") // Thay "orders" bằng tên collection trong Firestore của bạn
-            val snapshot = ordersRef.get().await()
-            snapshot.documents.mapNotNull { document ->
-                document.toObject<Order>()
+            val querySnapshot = if (userId != null) {
+                ordersCollection.whereEqualTo("userId", userId).get().await()
+            } else {
+                ordersCollection.get().await()
             }
+
+            val orders = querySnapshot.documents.mapNotNull { document ->
+                document.toObject(Order::class.java)?.apply {
+                    id = document.id
+                }
+            }
+
+            Result.success(orders)
         } catch (e: Exception) {
-            emptyList() // Trả về danh sách rỗng nếu có lỗi
+            Result.failure(e)
         }
     }
+
 
     suspend fun getAllOrders(): Result<List<Pair<Order, List<ProductDetailItem>>>> = runCatching {
         val ordersSnapshot = ordersCollection.get().await()
@@ -137,4 +144,3 @@ class OrderRepository(private val firestore: FirebaseFirestore = FirebaseFiresto
     }
 
 }
-

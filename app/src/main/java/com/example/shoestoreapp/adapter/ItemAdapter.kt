@@ -10,13 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.data.model.OrderMainMain
+import com.example.shoestoreapp.data.model.ProductItem
 import com.example.shoestoreapp.data.repository.ProductRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 
-class ItemAdapter(private val items: List<OrderMainMain>) : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
+class ItemAdapter(private val items: List<ProductItem>) : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
     val productRepository = ProductRepository()
 

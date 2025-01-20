@@ -123,58 +123,18 @@ class ExploreFragment : Fragment() {
                 productList.clear()
                 productList.addAll(items)
 
-                if(searchHistory.size == 0){
-                    // Cập nhật UI sau khi dữ liệu được tải xong
-
-                    for (i in 0..7) {
-                        fullNameTextViews[i].text = productList[i].name
-                        Glide.with(this@ExploreFragment) // Hoặc context nếu không trong Activity
-                            .load(productList[i].thumbnail)
-                            .into(avatarImageViews[i]) // Gán vào ImageView
-                    }
-
+                for (i in 0..7) {
+                    fullNameTextViews[i].text = productList[i].name
+                    Glide.with(this@ExploreFragment) // Hoặc context nếu không trong Activity
+                        .load(productList[i].thumbnail)
+                        .into(avatarImageViews[i]) // Gán vào ImageView
+                    itemList[i].setOnClickListener{
+                        // Chuyển sang Activity khác với dữ liệu sản phẩm
+                        val intent = Intent(requireContext(), ProductDetailActivity::class.java).apply {
+                            putExtra("productId", productList[i].id)
+                        }
+                        startActivity(intent)
                 }
-                else
-                {
-                    val quantity = minOf(1,(8/searchHistory.size))
-                    var cnt = 0
-                    val rcmdList = mutableListOf<Product>()
-                    var idx = 0
-
-                    while(cnt < 8){
-                        val result = productRepos.searchProducts(searchHistory[idx % searchHistory.size])
-                        // Cập nhật UI sau khi dữ liệu được tải xong
-                        result.onSuccess { items ->
-                            if (quantity * idx/searchHistory.size < items.size){
-                            for (j in quantity * idx/searchHistory.size until minOf(quantity * (1 + idx/searchHistory.size),items.size)) {
-                                if(cnt == 8)
-                                    break
-                                if(!rcmdList.contains(items[j])) {
-                                    rcmdList.add(items[j])
-                                    cnt += 1
-                                }
-                            }
-                            }
-
-                        }.onFailure { error ->
-                            println("Failed to fetch search items: ${error.message}")
-                        }
-                        idx += 1
-                    }
-
-                    for(i in 0..7) {
-                        fullNameTextViews[i].text = rcmdList[i].name
-                        Glide.with(this@ExploreFragment) // Hoặc context nếu không trong Activity
-                            .load(rcmdList[i].thumbnail)
-                            .into(avatarImageViews[i]) // Gán vào ImageView
-                        itemList[i].setOnClickListener{
-                            // Chuyển sang Activity khác với dữ liệu sản phẩm
-                            val intent = Intent(requireContext(), ProductDetailActivity::class.java).apply {
-                                putExtra("productId", rcmdList[i].id)
-                            }
-                            startActivity(intent)
-                        }
-                    }
                 }
             }.onFailure { error ->
                 // Xử lý lỗi nếu không lấy được danh sách giỏ hàng

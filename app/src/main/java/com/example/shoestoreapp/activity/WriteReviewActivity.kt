@@ -38,19 +38,19 @@ class WriteReviewActivity : AppCompatActivity() {
         }
 
         val productId = intent.getStringExtra("productId")     // Truyền productId của sản phẩm mà người dùng mua vào đây
-        val productVariantIdx = intent.getStringExtra("variant")!!.toInt()  // Truyền index trong danh sách variant của variant mà người dùng chọn vào đây
+        val productVariant = intent.getStringExtra("variant")  // Truyền index trong danh sách variant của variant mà người dùng chọn vào đây
 
         lifecycleScope.launch {
             val productRepo = productRepository.getProduct(productId!!)
             productRepo.onSuccess { product ->
-                updateUI(product, product.variants[productVariantIdx])
+                updateUI(product, productVariant!!)
             }.onFailure { error ->
                 Log.d("Review Error", "$error")
             }
         }
     }
 
-    private fun updateUI(product: Product, productVariant: ProductVariant) {
+    private fun updateUI(product: Product, productVariant: String) {
         val productThumbnailIV = findViewById<ImageView>(R.id.productThumbnailIV)
         val productVariantTV = findViewById<TextView>(R.id.productVariantTV)
         val productNameTV = findViewById<TextView>(R.id.productNameTV)
@@ -63,10 +63,9 @@ class WriteReviewActivity : AppCompatActivity() {
         backBtn.setOnClickListener {
             finish()
         }
-
         Glide.with(productThumbnailIV.context).load(product.thumbnail).into(productThumbnailIV)
 
-        productVariantTV.text = "Size: ${productVariant.size}"
+        productVariantTV.text = "Size: $productVariant"
         productNameTV.text = product.name
 
         submitReviewBtn.setOnClickListener {
@@ -86,5 +85,3 @@ class WriteReviewActivity : AppCompatActivity() {
         }
     }
 }
-
-

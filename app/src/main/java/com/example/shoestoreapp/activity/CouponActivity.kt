@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.CouponAdapter
 import com.example.shoestoreapp.data.model.Coupon
-import com.example.shoestoreapp.data.repository.CouponRepository
+import com.example.shoestoreapp.data.repository.VoucherRepository
 import kotlinx.coroutines.launch
 
 class CouponActivity : AppCompatActivity() {
@@ -73,7 +73,7 @@ class CouponActivity : AppCompatActivity() {
 
     private suspend fun getCouponsList(): List<Coupon> {
         Log.e("Firestore", "Failed to fetch coupons!")
-        val repository = CouponRepository()
+        val repository = VoucherRepository()
         return repository.getAllCoupons()
     }
 }

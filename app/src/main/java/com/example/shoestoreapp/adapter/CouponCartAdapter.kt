@@ -64,14 +64,24 @@ class CouponCartAdapter(
             holder.moreTV.visibility = VISIBLE
             // Nếu threshold nhỏ hơn totalPrice, làm mờ item
             holder.cardView.alpha = 0.5f  // Thay đổi độ mờ của card
+            holder.cardView.isClickable = false  // Không cho phép click
+            holder.cardView.isEnabled = false // Không cho phép tương tác
+            holder.btnSelect.isClickable = false  // Không cho phép click
+            holder.btnSelect.isEnabled = false
         } else {
             holder.cardView.alpha = 1f  // Bảo đảm card không bị mờ khi điều kiện không thỏa mãn
+            holder.cardView.isClickable = true
+            holder.cardView.isEnabled = true
+            holder.btnSelect.isClickable = true
+            holder.btnSelect.isEnabled = true
         }
 
         // Gắn sự kiện khi bấm nút
         holder.btnSelect.setOnClickListener {
             // Gọi callback khi coupon được chọn
+
             onCouponSelected(coupon)
+
         }
 
     }

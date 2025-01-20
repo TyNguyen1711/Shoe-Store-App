@@ -98,7 +98,7 @@ class VoucherManagementFragment : Fragment() {
                     description = etDescription.text.toString(),
                     quantity = etQuantity.text.toString().toIntOrNull() ?: 0,
                     discount = etDiscount.text.toString().toIntOrNull() ?: 0,
-                    threshold = etThreshold.text.toString().toIntOrNull() ?: 0,
+                    threshold = etThreshold.text.toString().toLongOrNull() ?: 0,
                 )
 
                 if (coupon == null) addVoucher(newCoupon) else updateVoucher(newCoupon)

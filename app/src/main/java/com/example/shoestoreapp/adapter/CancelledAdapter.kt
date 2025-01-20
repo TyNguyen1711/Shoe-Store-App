@@ -17,6 +17,7 @@ import com.example.shoestoreapp.R
 import com.example.shoestoreapp.activity.PayActivity
 import com.example.shoestoreapp.data.model.OrderMain
 import com.example.shoestoreapp.data.repository.ProductRepository
+import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -44,7 +45,9 @@ class CancelledAdapter(private val orders: List<OrderMain>) : RecyclerView.Adapt
     override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
         val order = orders[position]
         holder.orderId.text = "ID: ${order.orderId}"
-        holder.totalPrice.text = "Total Price: ${order.totalPrice}đ"
+        val decimalFormat = DecimalFormat("#,###")
+        val formattedAmount = decimalFormat.format(order.totalPrice)
+        holder.totalPrice.text = "Total Price: ${formattedAmount}đ"
         holder.dateRec.text = "   Ordered date: " + order.dateRec
 
         val currentDateTime = LocalDateTime.now()

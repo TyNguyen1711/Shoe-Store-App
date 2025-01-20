@@ -54,6 +54,13 @@ class CancelledFragment : Fragment() {
     private suspend fun getListOrders(): List<Order> {
         val repository = OrderRepository()
         val allOrders = repository.getOrders()
-        return allOrders.filter { it.status == "Cancelled" }
+        allOrders.onSuccess { product ->
+            return product.filter { it.status == "Cancelled" }
+
+        }.onFailure { error ->
+
+        }
+        return emptyList()
     }
+
 }

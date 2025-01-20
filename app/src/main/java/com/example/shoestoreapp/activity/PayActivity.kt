@@ -29,6 +29,7 @@ import com.example.shoestoreapp.data.repository.CartRepository
 import com.example.shoestoreapp.data.repository.CouponRepository
 import com.example.shoestoreapp.data.repository.OrderRepository
 import com.example.shoestoreapp.data.repository.ProductRepository
+import com.example.shoestoreapp.data.repository.VoucherRepository
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
@@ -66,7 +67,7 @@ class PayActivity : AppCompatActivity() {
     private lateinit var nameOrdererTV: TextView
     private lateinit var sdtPayTV: TextView
     private var selectedAddressId: String? = null // AddressID currently
-    private lateinit var couponRepository: CouponRepository
+    private lateinit var couponRepository: VoucherRepository
     private var merchandiseSubtotal: Double = 0.0
     private lateinit var messageET: EditText
     private lateinit var paymentMethodRG: RadioGroup
@@ -82,7 +83,7 @@ class PayActivity : AppCompatActivity() {
         val selectedProductIds = intent.getStringArrayListExtra("selectedProductIds") ?: emptyList<String>()
         Log.d("First", ArrayList(selectedProductIds).toString())
         val selectedSize = intent.getStringArrayListExtra("selectedSize") ?: emptyList<String>()
-        val userId = intent.getStringExtra("userId")
+        userId = intent.getStringExtra("userId")
         var code = intent?.getStringExtra("code")
         var discount = intent?.getStringExtra("discount")
         val quantities = intent.getIntegerArrayListExtra("quantities") ?: emptyList()
@@ -116,10 +117,10 @@ class PayActivity : AppCompatActivity() {
             }
         } else if (selectedProductIds.isNotEmpty() && userId != null) {
             if (discount != null) {
-                loadSelectedProducts(selectedProductIds, userId, discount.toInt())
+                loadSelectedProducts(selectedProductIds, userId!!, discount.toInt())
             }
             else {
-                loadSelectedProducts(selectedProductIds, userId, 0)
+                loadSelectedProducts(selectedProductIds, userId!!, 0)
             }
         } else {
             finish()
@@ -198,7 +199,7 @@ class PayActivity : AppCompatActivity() {
         }
 
         orderMain = findViewById<Button>(R.id.orderBT)
-        couponRepository = CouponRepository()
+        couponRepository = VoucherRepository()
         orderMain.setOnClickListener {
             lifecycleScope.launch {
                 try {

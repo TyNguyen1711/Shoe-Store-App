@@ -24,7 +24,12 @@ class CouponViewModel(private val repository: CouponRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 val couponList = repository.getAllCoupons()
-                _coupons.value = couponList
+                couponList.onSuccess { product ->
+                    _coupons.value = product
+
+                }.onFailure { error ->
+
+                }
             } catch (e: Exception) {
                 Log.e("CouponViewModel", "Error fetching coupons: ${e.message}")
             }

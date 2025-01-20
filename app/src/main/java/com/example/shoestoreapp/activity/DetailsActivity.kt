@@ -2,6 +2,7 @@ package com.example.shoestoreapp.activity
 
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -31,7 +32,9 @@ import com.example.shoestoreapp.classes.ConfigCloudinary
 import com.example.shoestoreapp.classes.SaveInformationDialog
 import com.example.shoestoreapp.data.model.User
 import com.example.shoestoreapp.data.repository.UserRepository
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -48,6 +51,7 @@ class DetailsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_my_details)
 
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
+        val thisUser = Firebase.auth.currentUser
 
         val birthdayBtn = findViewById<ImageView>(R.id.birthdayBtn)
         val birthday: TextView = findViewById(R.id.birthdayEdit)
@@ -140,14 +144,14 @@ class DetailsActivity : AppCompatActivity() {
                         val shouldSave = SaveInformationDialog(this@DetailsActivity) // Sử dụng dialog
                         if (shouldSave) {
                             userRepos.updateUser(newUser) // Cập nhật thông tin nếu người dùng đồng ý
-                            if(userData.email != newUser.email)
-                            {
-//                                userId.updateEmail("user@example.com")
-//                                    .addOnCompleteListener { task ->
-//                                        if (task.isSuccessful) {
-//                                            Log.d(TAG, "User email address updated.")
-//                                        }
-//                                    }
+                            if(userData.email != newUser.email){
+                                println("Ming3993 $thisUser")
+                                thisUser!!.updateEmail(newUser.email)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            Log.d(TAG, "User email address updated.")
+                                        }
+                                    }
                             }
                         }
                     }

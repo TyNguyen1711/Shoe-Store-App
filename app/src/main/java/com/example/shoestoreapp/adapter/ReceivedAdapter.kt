@@ -8,15 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
-import com.example.shoestoreapp.activity.OrderActivity
-import com.example.shoestoreapp.activity.OrderDetailActivity
+import com.example.shoestoreapp.activity.OrderDetailActivityMain
+import com.example.shoestoreapp.activity.WriteReviewActivity
 import com.example.shoestoreapp.data.model.OrderMain
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -44,7 +44,9 @@ class ReceivedAdapter(private val orders: List<OrderMain>) : RecyclerView.Adapte
     override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
         val order = orders[position]
         holder.orderId.text = "ID: ${order.orderId}"
-        holder.totalPrice.text = "Total Price: ${order.totalPrice}đ"
+        val decimalFormat = DecimalFormat("#,###")
+        val formattedAmount = decimalFormat.format(order.totalPrice)
+        holder.totalPrice.text = "Total Price: ${formattedAmount}đ"
         holder.dateRec.text = "   Ordered date: " + order.dateRec
 
         val currentDateTime = LocalDateTime.now()
@@ -59,11 +61,16 @@ class ReceivedAdapter(private val orders: List<OrderMain>) : RecyclerView.Adapte
 
         // Handle button click
         holder.reportButton.setOnClickListener {
-
+            val idProduct = order.items[0].productId
+            val size = order.items[0].size
+            val intent = Intent(holder.itemView.context,WriteReviewActivity::class.java)
+            intent.putExtra("productId",idProduct)
+            intent.putExtra("variant",size)
+            holder.itemView.context.startActivity(intent)
         }
 
         holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView.context, OrderDetailActivity::class.java)
+            val intent = Intent(holder.itemView.context, OrderDetailActivityMain::class.java)
             intent.putExtra("type", "received")
             intent.putExtra("idOrder", order.orderId.toString())
             holder.itemView.context.startActivity(intent)

@@ -53,6 +53,12 @@ class ConfirmingFragment : Fragment() {
     private suspend fun getListOrders(): List<Order> {
         val repository = OrderRepository()
         val allOrders = repository.getOrders()
-        return allOrders.filter { it.status == "Pending" }
+        allOrders.onSuccess { product ->
+            return product.filter { it.status == "Pending" }
+
+        }.onFailure { error ->
+
+        }
+        return emptyList()
     }
 }
