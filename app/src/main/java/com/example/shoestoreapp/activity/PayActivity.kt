@@ -74,8 +74,7 @@ class PayActivity : AppCompatActivity() {
     private var selectedPaymentMethod: String? = null // Lưu phương thức thanh toán được chọn
 
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
+override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pay)
 
@@ -83,7 +82,7 @@ class PayActivity : AppCompatActivity() {
         val selectedProductIds = intent.getStringArrayListExtra("selectedProductIds") ?: emptyList<String>()
         Log.d("First", ArrayList(selectedProductIds).toString())
         val selectedSize = intent.getStringArrayListExtra("selectedSize") ?: emptyList<String>()
-        userId = intent.getStringExtra("userId")
+        val userId = intent.getStringExtra("userId")
         var code = intent?.getStringExtra("code")
         var discount = intent?.getStringExtra("discount")
         val quantities = intent.getIntegerArrayListExtra("quantities") ?: emptyList()
@@ -115,7 +114,8 @@ class PayActivity : AppCompatActivity() {
                 updateUI(selectedProducts) // Cập nhật UI sau khi dữ liệu được lấy về
                 calculatePrices(selectedProducts, 0) // Tính giá tiền sau khi cập nhật sản phẩm
             }
-        } else if (selectedProductIds.isNotEmpty() && userId != null) {
+        } else if (selectedProductIds.isNotEmpty()) {
+            Log.d("here", "here")
             if (discount != null) {
                 loadSelectedProducts(selectedProductIds, userId!!, discount.toInt())
             }
@@ -125,6 +125,7 @@ class PayActivity : AppCompatActivity() {
         } else {
             finish()
         }
+
 
         loadAddressDefault()
         Log.d("done", "done")
