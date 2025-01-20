@@ -30,7 +30,7 @@ class DisplayProductListActivity : AppCompatActivity(), ProductItemAdapter.OnPro
     private val productListRepository = ProductRepository()
     private var productList = mutableListOf<Product>()
     private val wishListRepository = WishListRepository()
-    private val userId = FirebaseAuth.getInstance().currentUser?.uid
+    private val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
 
     override fun onResume() {
         super.onResume()
