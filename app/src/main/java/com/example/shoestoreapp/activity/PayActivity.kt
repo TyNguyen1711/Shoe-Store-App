@@ -82,7 +82,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
         val selectedProductIds = intent.getStringArrayListExtra("selectedProductIds") ?: emptyList<String>()
         Log.d("First", ArrayList(selectedProductIds).toString())
         val selectedSize = intent.getStringArrayListExtra("selectedSize") ?: emptyList<String>()
-        val userId = intent.getStringExtra("userId")
+        userId = intent.getStringExtra("userId")
         var code = intent?.getStringExtra("code")
         var discount = intent?.getStringExtra("discount")
         val quantities = intent.getIntegerArrayListExtra("quantities") ?: emptyList()
