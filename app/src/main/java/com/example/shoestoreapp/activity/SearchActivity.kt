@@ -21,8 +21,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.FilterItemAdapter
 import com.example.shoestoreapp.adapter.ProductItemAdapter
-import com.example.shoestoreapp.adapter.SliderAdapter
-import com.example.shoestoreapp.adapter.WishlistAdapter
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.repository.ProductRepository
 import com.example.shoestoreapp.data.repository.UserRepository

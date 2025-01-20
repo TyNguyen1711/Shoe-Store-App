@@ -8,7 +8,7 @@
     app:cardElevation="4dp"
     app:cardCornerRadius="12dp"
     app:cardBackgroundColor="#FFFFFF"
-    tools:context=".WishlistProduct">
+    tools:context=".WishlistFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"

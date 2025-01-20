@@ -58,7 +58,6 @@ class PayActivity : AppCompatActivity() {
     private lateinit var saveOrderTV: TextView
     private lateinit var voucherSelect: TextView
     private lateinit var voucherArea: ConstraintLayout
-    private lateinit var orderMain: Button
     private var costDelivery: Double = 0.0
     private var costVoucher: Double = 0.0
     private var totalPayment: Double = 0.0
@@ -174,6 +173,18 @@ class PayActivity : AppCompatActivity() {
             saveOrderToFirestore { isSuccess ->
                 showLoading(false)
                 if (isSuccess) {
+                    lifecycleScope.launch {
+                        try {
+                            if (!code.isNullOrEmpty()) {
+                                couponRepository.decrementCouponQuantity(code)
+                                Toast.makeText(this@PayActivity, "Order placed successfully!", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this@PayActivity, "Invalid coupon code", Toast.LENGTH_SHORT).show()
+                            }
+                        } catch (e: Exception) {
+                            Toast.makeText(this@PayActivity, "Failed to place order: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                     showOrderSuccessDialog()
                 } else {
                     Toast.makeText(this, "Failed to place order. Please try again.", Toast.LENGTH_SHORT).show()
@@ -198,22 +209,8 @@ class PayActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        orderMain = findViewById<Button>(R.id.orderBT)
         couponRepository = VoucherRepository()
-        orderMain.setOnClickListener {
-            lifecycleScope.launch {
-                try {
-                    if (!code.isNullOrEmpty()) {
-                        couponRepository.decrementCouponQuantity(code)
-                        Toast.makeText(this@PayActivity, "Order placed successfully!", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this@PayActivity, "Invalid coupon code", Toast.LENGTH_SHORT).show()
-                    }
-                } catch (e: Exception) {
-                    Toast.makeText(this@PayActivity, "Failed to place order: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
+
     }
 
     private fun showLoading(isLoading: Boolean) {
@@ -252,7 +249,7 @@ class PayActivity : AppCompatActivity() {
             message = messageET.text.toString(),
             paymentMethod = selectedPaymentMethod ?: "",
             orderTime = currentDate,
-            status = "pending",
+            status = "Pending",
             voucher = costVoucher
         )
 
@@ -367,7 +364,8 @@ class PayActivity : AppCompatActivity() {
         viewOrderDetailsBT.setOnClickListener {
             dialog.dismiss()
             // Xem chi tiết đơn hàng
-
+            val intent = Intent(this, OrderActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -441,7 +439,7 @@ class PayActivity : AppCompatActivity() {
 
             withContext(Dispatchers.Main) {
                 val savingMoney = merchandiseSubtotal * discount / 100
-                val totalPayment = merchandiseSubtotal + costDelivery - savingMoney
+                totalPayment = merchandiseSubtotal + costDelivery - savingMoney
 
                 costProductsTV.text = "${String.format("%,.0f", merchandiseSubtotal)}đ"
                 costDeliveryTV.text = "${String.format("%,.0f", costDelivery)}đ"

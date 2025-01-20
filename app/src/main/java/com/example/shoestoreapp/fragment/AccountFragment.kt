@@ -56,27 +56,41 @@ class AccountFragment : Fragment() {
         userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
         userRepos = UserRepository()
 
+        if(userId == "example_user_id")
+        {
+            logoutButton.text = "Sign Up"
+            ordersSection.visibility = View.GONE
+            deliveryAddressSection.visibility = View.GONE
+            paymentMethodsSection.visibility = View.GONE
+            couponSection.visibility = View.GONE
+        }
+
         // Lấy thông tin người dùng
         loadUserData()
 
         // Khi bấm vào nút "Logout"
         logoutButton.setOnClickListener {
-            // Đăng xuất người dùng
-            FirebaseAuth.getInstance().signOut()
+            if(userId != "example_user_id") {
+                // Đăng xuất người dùng
+                FirebaseAuth.getInstance().signOut()
 
-            // Chuyển hướng người dùng về menu
-            val intent = Intent(requireContext(), HomeActivity::class.java)
-            startActivity(intent)
+                // Chuyển hướng người dùng về menu
+                val intent = Intent(requireContext(), HomeActivity::class.java)
+                startActivity(intent)
 
-            activity?.finish()
+                activity?.finish()
+            }
+            else
+            {
+                val intent = Intent(requireContext(), SignupActivity::class.java)
+                startActivity(intent)
+
+                activity?.finish()
+            }
         }
 
         couponSection.setOnClickListener {
             startActivity(Intent(requireContext(), CouponActivity::class.java))
-        }
-
-        notificationsSection.setOnClickListener {
-            startActivity(Intent(requireContext(), NotificationActivity::class.java))
         }
 
         helpSection.setOnClickListener {

@@ -22,7 +22,8 @@ class WishlistAdapter(
     products: List<Product>,
     private val productCountListener: ProductCountListener? = null,
     private val onHeartClickListener: OnHeartClickListener? = null,
-    private val onCartClickListener: OnCartClickListener? = null
+    private val onCartClickListener: OnCartClickListener? = null,
+    private val onItemClick: (productId: String) -> Unit
 ) : RecyclerView.Adapter<WishlistAdapter.WishlistViewHolder>() {
     private val lock = Any()
     interface ProductCountListener {
@@ -68,6 +69,7 @@ class WishlistAdapter(
         holder.soldTV.text = "${product.soldCount} sold"
         holder.costTV.text = "${String.format("%,.0f", product.price)}đ"
         holder.salePercentageTV.text = "sale ${product.salePercentage}%"
+        holder.heartBtn.setImageResource(R.drawable.favorite_full)
         holder.heartBtn.setOnClickListener {
             onHeartClickListener?.onHeartClick(product, position)
         }
@@ -75,6 +77,10 @@ class WishlistAdapter(
         holder.cartBtn.setOnClickListener {
             val dialog = CartDialog(context, product, CartRepository())
             dialog.show()
+        }
+
+        holder.itemView.setOnClickListener {
+            onItemClick(product.id) // Gọi callback khi bấm vào item
         }
     }
 

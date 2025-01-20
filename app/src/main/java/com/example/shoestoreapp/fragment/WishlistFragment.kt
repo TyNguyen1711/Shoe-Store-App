@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.fragment
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
@@ -16,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
+import com.example.shoestoreapp.activity.ProductDetailActivity
 import com.example.shoestoreapp.adapter.WishlistAdapter
 import com.example.shoestoreapp.data.model.CartItem
 import com.example.shoestoreapp.data.model.Product
@@ -146,7 +148,14 @@ class WishlistFragment : Fragment(), WishlistAdapter.ProductCountListener,
             productList,
             productCountListener = this,
             onHeartClickListener = this,
-            onCartClickListener = this
+            onCartClickListener = this,
+            onItemClick = { productId ->
+                // Chuyển sang Activity khác với dữ liệu sản phẩm
+                val intent = Intent(requireContext(), ProductDetailActivity::class.java).apply {
+                    putExtra("productId", productId)
+                }
+                startActivity(intent)
+            }
         )
         recyclerView.adapter = wishlistAdapter
     }
