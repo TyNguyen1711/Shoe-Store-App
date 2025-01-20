@@ -18,6 +18,7 @@ import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.CouponAdapter
 import com.example.shoestoreapp.adapter.CouponCartAdapter
 import com.example.shoestoreapp.data.model.Coupon
+//import com.example.shoestoreapp.data.repository.CouponRepository
 import com.example.shoestoreapp.data.repository.VoucherRepository
 import com.example.shoestoreapp.fragment.MyCartFragment
 import kotlinx.coroutines.launch
@@ -41,15 +42,24 @@ class CouponCartActivity : AppCompatActivity() {
         val selectedProductIds = intent.getStringArrayListExtra("selectedProductIds") ?: arrayListOf()
         val totalPrice = intent.getStringExtra("totalPrice")
         Log.d("totalPrice", totalPrice.toString())
+        val type = intent.getStringExtra("pay")
 
         lifecycleScope.launch {
             val coupons = getCouponsList()
+            var intent: Intent
             if (coupons.isNotEmpty() && totalPrice != null) {
                 adapter = CouponCartAdapter(
                     coupons = coupons,
                     totalPrice = totalPrice,
                     onCouponSelected = { coupon ->
-                        val intent = Intent(this@CouponCartActivity, HomeActivity::class.java)
+                        if (type != null && type == "pay") {
+                            intent = Intent(this@CouponCartActivity, PayActivity::class.java)
+                            Log.d("pay", "pay")
+                        }
+                        else {
+                            intent = Intent(this@CouponCartActivity, HomeActivity::class.java)
+                            Log.d("normal", "normal")
+                        }
                         intent.putExtra("code", coupon.code) // Truyền mã coupon
                         intent.putExtra("discount", coupon.discount.toString()) // Truyền giảm giá
                         intent.putStringArrayListExtra("selectedProductIds", ArrayList(selectedProductIds))
