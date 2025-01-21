@@ -15,7 +15,9 @@ class ConfigCloudinary : Application() {
         val config = hashMapOf(
             "cloud_name" to "dpystprxq",
             "api_key" to "841139129692236",
-            "api_secret" to "b4mjQt_ky6u99sgNCPALFImg4KU"
+            "api_secret" to "b4mjQt_ky6u99sgNCPALFImg4KU",
+            "secure" to true
+
         )
         MediaManager.init(this, config)
 
