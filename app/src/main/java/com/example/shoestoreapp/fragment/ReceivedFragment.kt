@@ -14,6 +14,7 @@ import com.example.shoestoreapp.adapter.ReceivedAdapter
 import com.example.shoestoreapp.data.model.Order
 import com.example.shoestoreapp.data.model.OrderMain
 import com.example.shoestoreapp.data.repository.OrderRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class ReceivedFragment : Fragment() {
@@ -21,6 +22,7 @@ class ReceivedFragment : Fragment() {
     private lateinit var rvOrders: RecyclerView
     private lateinit var orderAdapter: ReceivedAdapter
     private lateinit var orderRepository: OrderRepository
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
 
 
     override fun onCreateView(
@@ -54,7 +56,9 @@ class ReceivedFragment : Fragment() {
         val repository = OrderRepository()
         val allOrders = repository.getOrders()
         allOrders.onSuccess { product ->
-            return product.filter { it.status == "Delivered" }
+            return product.filter {
+                it.userId == userId &&
+                it.status == "Delivered" }
 
         }.onFailure { error ->
 

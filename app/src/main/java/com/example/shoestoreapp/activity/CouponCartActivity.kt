@@ -21,10 +21,12 @@ import com.example.shoestoreapp.data.model.Coupon
 //import com.example.shoestoreapp.data.repository.CouponRepository
 import com.example.shoestoreapp.data.repository.VoucherRepository
 import com.example.shoestoreapp.fragment.MyCartFragment
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class CouponCartActivity : AppCompatActivity() {
     private lateinit var adapter: CouponCartAdapter
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +62,7 @@ class CouponCartActivity : AppCompatActivity() {
                             intent = Intent(this@CouponCartActivity, HomeActivity::class.java)
                             Log.d("normal", "normal")
                         }
+                        intent.putExtra("userId", userId)
                         intent.putExtra("code", coupon.code) // Truyền mã coupon
                         intent.putExtra("discount", coupon.discount.toString()) // Truyền giảm giá
                         intent.putStringArrayListExtra("selectedProductIds", ArrayList(selectedProductIds))

@@ -14,6 +14,7 @@ import com.example.shoestoreapp.adapter.DeliveringAdapter
 import com.example.shoestoreapp.data.model.Order
 import com.example.shoestoreapp.data.model.OrderMain
 import com.example.shoestoreapp.data.repository.OrderRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class DeliveringFragment : Fragment() {
@@ -21,7 +22,7 @@ class DeliveringFragment : Fragment() {
     private lateinit var rvOrders: RecyclerView
     private lateinit var orderAdapter: DeliveringAdapter
     private lateinit var orderRepository: OrderRepository
-
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,7 +55,8 @@ class DeliveringFragment : Fragment() {
         val repository = OrderRepository()
         val allOrders = repository.getOrders()
         allOrders.onSuccess { product ->
-            return product.filter { it.status == "Shipping" }
+            return product.filter {
+                it.userId == userId && (it.status == "Shipping" || it.status == "Confirmed") }
 
         }.onFailure { error ->
 

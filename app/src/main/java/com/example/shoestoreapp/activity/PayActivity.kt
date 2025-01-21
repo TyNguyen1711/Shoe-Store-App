@@ -29,6 +29,7 @@ import com.example.shoestoreapp.data.repository.CartRepository
 import com.example.shoestoreapp.data.repository.CouponRepository
 import com.example.shoestoreapp.data.repository.OrderRepository
 import com.example.shoestoreapp.data.repository.ProductRepository
+import com.example.shoestoreapp.data.repository.UserRepository
 import com.example.shoestoreapp.data.repository.VoucherRepository
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
@@ -72,6 +73,7 @@ class PayActivity : AppCompatActivity() {
     private lateinit var messageET: EditText
     private lateinit var paymentMethodRG: RadioGroup
     private var selectedPaymentMethod: String? = null // Lưu phương thức thanh toán được chọn
+    private var discount: Int = 0
 
 
 override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,8 +85,8 @@ override fun onCreate(savedInstanceState: Bundle?) {
         Log.d("First", ArrayList(selectedProductIds).toString())
         val selectedSize = intent.getStringArrayListExtra("selectedSize") ?: emptyList<String>()
         userId = intent.getStringExtra("userId")
-        var code = intent?.getStringExtra("code")
-        var discount = intent?.getStringExtra("discount")
+        val code = intent?.getStringExtra("code")
+        discount = intent?.getStringExtra("discount")?.toInt() ?: 0
         val quantities = intent.getIntegerArrayListExtra("quantities") ?: emptyList()
         val sizes = intent.getStringArrayListExtra("sizes") ?: emptyList()
         val source = intent?.getStringExtra("source")
@@ -115,8 +117,10 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 calculatePrices(selectedProducts, 0) // Tính giá tiền sau khi cập nhật sản phẩm
             }
         } else if (selectedProductIds.isNotEmpty()) {
-            Log.d("here", "here")
+            Log.d("heree", "heree")
             if (discount != null) {
+                Log.d("heree-1", selectedProductIds.toString())
+                Log.d("user-1", userId.toString())
                 loadSelectedProducts(selectedProductIds, userId!!, discount.toInt())
             }
             else {
@@ -158,6 +162,8 @@ override fun onCreate(savedInstanceState: Bundle?) {
             }
         }
 
+
+        couponRepository = VoucherRepository()
         // Click Place Order
         placeOrderBT.setOnClickListener {
             if (selectedAddressId == null) {
@@ -170,8 +176,11 @@ override fun onCreate(savedInstanceState: Bundle?) {
                 return@setOnClickListener
             }
 
-            showLoading(true)
-
+            if (code != null) {
+                lifecycleScope.launch {
+                    couponRepository.decrementCouponQuantity(code)
+                }
+            }
             saveOrderToFirestore { isSuccess ->
                 showLoading(false)
                 if (isSuccess) {
@@ -180,6 +189,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
                     Toast.makeText(this, "Failed to place order. Please try again.", Toast.LENGTH_SHORT).show()
                 }
             }
+            showLoading(true)
+            val intent = Intent(this, OrderActivity::class.java)
+            startActivity(intent)
         }
 
         // Click Back Button
@@ -199,22 +211,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
             startActivity(intent)
         }
 
-        orderMain = findViewById<Button>(R.id.orderBT)
-        couponRepository = VoucherRepository()
-        orderMain.setOnClickListener {
-            lifecycleScope.launch {
-                try {
-                    if (!code.isNullOrEmpty()) {
-                        couponRepository.decrementCouponQuantity(code)
-                        Toast.makeText(this@PayActivity, "Order placed successfully!", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this@PayActivity, "Invalid coupon code", Toast.LENGTH_SHORT).show()
-                    }
-                } catch (e: Exception) {
-                    Toast.makeText(this@PayActivity, "Failed to place order: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
+
     }
 
     private fun showLoading(isLoading: Boolean) {
@@ -239,6 +236,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
         val dateFormatter = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
         val currentDate = dateFormatter.format(Date(System.currentTimeMillis()))
 
+
         // Chuẩn bị dữ liệu đơn hàng
         val order = Order(
             id = firestore.collection("orders").document().id,
@@ -246,15 +244,15 @@ override fun onCreate(savedInstanceState: Bundle?) {
             products = selectedProducts.map { cartItem ->
                 ProductItem(cartItem.productId, cartItem.quantity, cartItem.size)
             },
-            totalPayment = totalPayment,
+            totalPayment = merchandiseSubtotal,
             recipientName = nameOrdererTV.text.toString(),
             recipientPhone = sdtPayTV.text.toString(),
             recipientAddress = "${addressDetailTV.text}, ${cityNameTV.text}",
             message = messageET.text.toString(),
             paymentMethod = selectedPaymentMethod ?: "",
             orderTime = currentDate,
-            status = "pending",
-            voucher = costVoucher
+            status = "Pending",
+            voucher = merchandiseSubtotal * (discount.toDouble()/100)
         )
 
         // Kiểm tra và cập nhật stock từng sản phẩm
@@ -374,19 +372,18 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
     private fun loadAddressDefault() {
         val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-        val addressesRef = db.collection("address").document(userId!!).collection("addresses")
+        val addressesRef = userId?.let { db.collection("address").document(it).collection("addresses") }
 
-        addressesRef.get()
-            .addOnSuccessListener { querySnapshot ->
-                for (document in querySnapshot) {
-                    val address = document.toObject(Address::class.java)
-                    if (address.default == true) {
-                        selectedAddressId = address.id
-                        updateAddressUI(address)
-                        break
-                    }
+        addressesRef?.get()?.addOnSuccessListener { querySnapshot ->
+            for (document in querySnapshot) {
+                val address = document.toObject(Address::class.java)
+                if (address.default == true) {
+                    selectedAddressId = address.id
+                    updateAddressUI(address)
+                    break
                 }
             }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -454,7 +451,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
         }
     }
 
-    private fun loadSelectedProducts(productIds: List<String>,  userId: String, discount: Int) {
+    private fun loadSelectedProducts(productIds: List<String>, userId: String, discount: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             val cartResult = cartRepository.getCartItems(userId)
 
@@ -480,18 +477,21 @@ override fun onCreate(savedInstanceState: Bundle?) {
                         }
                     }
                 }
+
+                // Cập nhật giao diện sau khi hoàn thành việc lấy dữ liệu
+                withContext(Dispatchers.Main) {
+                    selectedProducts.clear()
+                    selectedProducts.addAll(validProducts)
+                    Log.d("crit", selectedProducts.toString())
+                    updateUI(selectedProducts)
+                    calculatePrices(selectedProducts, discount)
+                }
             }.onFailure { error ->
                 Log.e("CartFetch", "Failed to fetch cart items: ${error.message}")
             }
-
-            withContext(Dispatchers.Main) {
-                selectedProducts.clear()
-                selectedProducts.addAll(validProducts)
-                updateUI(selectedProducts)
-                calculatePrices(selectedProducts, discount)
-            }
         }
     }
+
 
 
     private fun updateUI(selectedProducts: List<CartItem>) {

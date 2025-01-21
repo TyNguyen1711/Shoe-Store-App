@@ -2,7 +2,7 @@ package com.example.shoestoreapp.data.model
 
 data class Order(
     var id: String,
-    val userId: String,
+    var userId: String,
     val products: List<ProductItem>,
     val totalPayment: Double,
     val recipientName: String,

@@ -31,7 +31,6 @@ class OrderRepository(private val firestore: FirebaseFirestore = FirebaseFiresto
 
             val orders = querySnapshot.documents.mapNotNull { document ->
                 document.toObject(Order::class.java)?.apply {
-                    id = document.id
                 }
             }
 

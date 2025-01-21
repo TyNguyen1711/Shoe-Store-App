@@ -15,13 +15,14 @@ import com.example.shoestoreapp.adapter.DeliveringAdapter
 import com.example.shoestoreapp.data.model.Order
 import com.example.shoestoreapp.data.model.OrderMain
 import com.example.shoestoreapp.data.repository.OrderRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class ConfirmingFragment : Fragment() {
 
     private lateinit var rvOrders: RecyclerView
     private lateinit var orderAdapter: ConfirmingAdapter
-
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,6 +32,8 @@ class ConfirmingFragment : Fragment() {
 
         rvOrders = view.findViewById(R.id.rvOrders)
         rvOrders.layoutManager = LinearLayoutManager(requireContext())
+
+        Log.d("userIDDD:", userId)
 
         lifecycleScope.launch {
             val orders = getListOrders()
@@ -54,7 +57,9 @@ class ConfirmingFragment : Fragment() {
         val repository = OrderRepository()
         val allOrders = repository.getOrders()
         allOrders.onSuccess { product ->
-            return product.filter { it.status == "Pending" }
+            return product.filter {
+                it.userId == userId &&
+                it.status == "Pending"}
 
         }.onFailure { error ->
 
