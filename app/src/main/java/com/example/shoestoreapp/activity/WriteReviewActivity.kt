@@ -17,15 +17,20 @@ import com.example.shoestoreapp.data.model.Comment
 import com.example.shoestoreapp.data.model.Product
 import com.example.shoestoreapp.data.model.ProductVariant
 import com.example.shoestoreapp.data.model.Review
+import com.example.shoestoreapp.data.model.User
 import com.example.shoestoreapp.data.repository.ProductRepository
 import com.example.shoestoreapp.data.repository.ReviewRepository
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class WriteReviewActivity : AppCompatActivity() {
     private val productRepository = ProductRepository()
     private val reviewRepository = ReviewRepository()
     private val commentList = mutableListOf<Comment>()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +55,14 @@ class WriteReviewActivity : AppCompatActivity() {
         }
     }
 
+    private fun getExampleUser(): User {
+        return User(
+            id = "example_user_id",
+            username = "Example User",
+            email = "example_user_email@example.com"
+        )
+    }
+
     private fun updateUI(product: Product, productVariant: String) {
         val productThumbnailIV = findViewById<ImageView>(R.id.productThumbnailIV)
         val productVariantTV = findViewById<TextView>(R.id.productVariantTV)
@@ -58,7 +71,6 @@ class WriteReviewActivity : AppCompatActivity() {
         val commentET = findViewById<TextView>(R.id.commentET)
         val submitReviewBtn = findViewById<TextView>(R.id.submitReviewBtn)
         val backBtn = findViewById<Button>(R.id.reviewact_backBtn)
-        val user = FirebaseAuth.getInstance().currentUser
 
         backBtn.setOnClickListener {
             finish()
@@ -69,8 +81,16 @@ class WriteReviewActivity : AppCompatActivity() {
         productNameTV.text = product.name
 
         submitReviewBtn.setOnClickListener {
-            lifecycleScope.launch {
-                val comment = Comment(user!!.displayName, user.email, productRatingBar.rating.toDouble(), commentET.text.toString())
+            CoroutineScope(Dispatchers.IO).launch {
+                val user = FirebaseAuth.getInstance().currentUser?.let {
+                    User(
+                        id = it.uid,
+                        username = it.displayName ?: "Unknown",  // ánh xạ từ displayName sang username
+                        email = it.email ?: "No email"
+                    )
+                } ?: getExampleUser()
+
+                val comment = Comment(user!!.username, user.email, productRatingBar.rating.toDouble(), commentET.text.toString())
                 val reviewRepo = reviewRepository.getReview(product.id)
                 reviewRepo.onSuccess { review ->
                     commentList.clear()
@@ -82,6 +102,7 @@ class WriteReviewActivity : AppCompatActivity() {
                     Log.d("Review Error", "$e")
                 }
             }
+            finish()
         }
     }
 }

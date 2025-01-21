@@ -119,7 +119,8 @@
                 productPrice.text = formattedPrice
 
                 productName.text = product.name
-                productRating.text = "${product.averageRating} stars"
+                val formattedRating = String.format("%.1f", product.averageRating)
+                productRating.text = "$formattedRating stars"
                 productSoldCount.text = product.soldCount.toString()
                 productSalePercentage.text = "-${product.salePercentage}%"
 

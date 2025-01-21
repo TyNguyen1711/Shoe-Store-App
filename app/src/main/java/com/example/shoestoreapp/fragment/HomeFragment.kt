@@ -66,16 +66,59 @@ class HomeFragment :
     override fun onResume() {
         super.onResume()
 
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val userId = FirebaseAuth.getInstance().currentUser?.uid?: "example_user_id"
         if (userId != null) {
             lifecycleScope.launch {
+                val exclusiveOfferRepo = exclusiveOfferRepository.getAllProducts()
+                val bestSellingRepo = bestSellingRepository.getAllProducts()
+                val brandProductRepo = brandProductRepository.getAllProducts()
                 val result = wishListRepository.getUserWishlist(userId)
+
                 result.onSuccess { items ->
                     brandProductAdapter.updateWishlist(items)
                     exclusiveAdapter.updateWishlist(items)
                     bestSellingAdapter.updateWishlist(items)
                 }.onFailure { error ->
                     Log.e("HomeFragment", "Failed to fetch wishlist: ${error.message}")
+                }
+
+                // Sử dụng CoroutineScope để xử lý các hàm suspend
+                exclusiveOfferRepo.onSuccess { items ->
+                    exclusiveProducts.clear()
+                    if (items.size > 5) {
+                        exclusiveProducts.addAll(items.subList(0, 4))
+                    } else {
+                        exclusiveProducts.addAll(items)
+                    }
+                    exclusiveAdapter.notifyDataSetChanged()
+                }.onFailure { error ->
+                    // Xử lý lỗi nếu không lấy được danh sách giỏ hàng
+                    Log.e("HomeFragment", "Failed to fetch exclusive offer products: ${error.message}")
+                }
+
+                bestSellingRepo.onSuccess { items ->
+                    bestSellingProducts.clear()
+                    if (items.size > 5) {
+                        bestSellingProducts.addAll(items.subList(0, 4))
+                    } else {
+                        bestSellingProducts.addAll(items)
+                    }
+                    bestSellingAdapter.notifyDataSetChanged()
+                }.onFailure { error ->
+                    // Xử lý lỗi nếu không lấy được danh sách giỏ hàng
+                    Log.e("HomeFragment", "Failed to fetch best selling products: ${error.message}")
+                }
+
+                brandProductRepo.onSuccess { items ->
+                    brandProductList.clear()
+                    if (items.size > 7) {
+                        brandProductList.addAll(items.subList(0, 5))
+                    } else {
+                        brandProductList.addAll(items)
+                    }
+                    brandProductAdapter.notifyDataSetChanged()
+                }.onFailure { error ->
+                    Log.e("HomeFragment", "Failed to fetch brand products: ${error.message}")
                 }
             }
         }

@@ -44,7 +44,7 @@ import java.util.Locale
 
 class ProductDetailActivity : AppCompatActivity() {
     private val productRepository = ProductRepository()
-    private val userId = FirebaseAuth.getInstance().currentUser?.uid
+    private val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "example_user_id"
     private val wishListRepository = WishListRepository()
     private var wishlists: Wishlist? = Wishlist()
     private lateinit var auth: FirebaseAuth

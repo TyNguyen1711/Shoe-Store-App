@@ -59,18 +59,6 @@ class ExclusiveOfferRepository(
         )
     }
 
-    suspend fun updateProductAverageRating(productId: String, averageRating: Double): Result<Unit> = runCatching {
-        val documentRef = exclusiveOfferCollection.document(productId)
-        val snapshot = documentRef.get().await()
-
-        if (snapshot.exists()) {
-            documentRef.update("averageRating", averageRating).await()
-        } else {
-            throw Exception("Document with productId $productId does not exist.")
-        }
-    }
-
-
     suspend fun getAllProducts(): Result<List<Product>> = runCatching {
         val snapshot = exclusiveOfferCollection.get().await()
 

@@ -104,6 +104,7 @@ class ProductRepository(
         val snapshot = documentRef.get().await()
 
         if (snapshot.exists()) {
+            Log.d("Review product", "$averageRating")
             documentRef.update("averageRating", averageRating).await()
         } else {
             throw Exception("Document with productId $productId does not exist.")

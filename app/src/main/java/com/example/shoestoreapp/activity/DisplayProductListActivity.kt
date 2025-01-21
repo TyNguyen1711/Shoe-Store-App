@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shoestoreapp.R
 import com.example.shoestoreapp.adapter.ProductItemAdapter
 import com.example.shoestoreapp.data.model.Product
+import com.example.shoestoreapp.data.model.Wishlist
 import com.example.shoestoreapp.data.repository.BestSellingRepository
 import com.example.shoestoreapp.data.repository.ExclusiveOfferRepository
 import com.example.shoestoreapp.data.repository.ProductRepository
@@ -30,7 +31,7 @@ class DisplayProductListActivity : AppCompatActivity(), ProductItemAdapter.OnPro
     private val productListRepository = ProductRepository()
     private var productList = mutableListOf<Product>()
     private val wishListRepository = WishListRepository()
-    private val userId = FirebaseAuth.getInstance().currentUser?.uid
+    private val userId = FirebaseAuth.getInstance().currentUser?.uid?: "example_user_id"
 
     override fun onResume() {
         super.onResume()
@@ -87,7 +88,10 @@ class DisplayProductListActivity : AppCompatActivity(), ProductItemAdapter.OnPro
     private fun loadAllProducts() {
         lifecycleScope.launch {
             val result = productListRepository.getAllProducts()
-            val wishlistRepo = wishListRepository.getUserWishlist(userId!!)
+            var wishlistRepo: Result<Wishlist> = Result.success(Wishlist())
+
+            if (userId != null)
+                wishlistRepo = wishListRepository.getUserWishlist(userId)
             result.onSuccess { items ->
                 productList.clear()
                 productList.addAll(items)
@@ -95,11 +99,12 @@ class DisplayProductListActivity : AppCompatActivity(), ProductItemAdapter.OnPro
             }.onFailure { error ->
                 Log.e("DisplayProduct", "Failed to fetch products: ${error.message}")
             }
-
-            wishlistRepo.onSuccess { items ->
-                productListAdapters.updateWishlist(items)
-            }.onFailure { error ->
-                Log.e("DisplayProduct", "Failed to fetch wishlist: ${error.message}")
+            if (userId != null) {
+                wishlistRepo.onSuccess { items ->
+                    productListAdapters.updateWishlist(items)
+                }.onFailure { error ->
+                    Log.e("DisplayProduct", "Failed to fetch wishlist: ${error.message}")
+                }
             }
         }
     }
